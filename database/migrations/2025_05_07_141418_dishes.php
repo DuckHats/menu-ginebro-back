@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('menu_id')->constrained('menus')->onDelete('cascade');
             $table->date('dish_date');
-            $table->enum('type', ['Primer', 'Segon', 'Segon plat + Postres']);
+            $table->enum('type', ['Primer', 'Segon', 'Postre']);
             $table->json('options');
             $table->timestamps();
         });
