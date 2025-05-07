@@ -14,7 +14,13 @@ class User extends Authenticatable
     const STATUS_INACTIVE = 0;
 
     const STATUS_ACTIVE = 1;
-    
+
+    const ROLE_ADMIN = 'administrador';
+    const ROLE_COOK = 'cuina';
+
+    // Per a l'usuari normal
+    //const ROLE_USER = 'usuari';
+
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -51,5 +57,15 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function isAdmin()
+    {
+        return $this->role == $this::ROLE_ADMIN;
+    }
+    
+    public function isCook()
+    {
+        return $this->role == $this::ROLE_COOK;
     }
 }
