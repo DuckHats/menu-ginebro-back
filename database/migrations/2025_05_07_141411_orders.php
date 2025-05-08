@@ -16,10 +16,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->date('order_date');
             $table->string('allergies')->nullable();
-            $table->enum('type', ['Primer plat + Segon plat + Postres', 'Primer plat + Postres', 'Segon plat + Postres']);
+            $table->foreignId('order_type_id')->constrained('order_types')->onDelete('cascade');
             $table->enum('status', ['pendent', 'preparat', 'entregat']);
             $table->timestamps();
-        });
+        }); 
     }
 
     /**

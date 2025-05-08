@@ -2,26 +2,25 @@
 
 namespace Database\Factories;
 
+use App\Models\OrderType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class OrderFactory extends Factory
+class OrderTypeFactory extends Factory
 {
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
+
+
     public function definition(): array
     {
         return [
-            'user_id' => \App\Models\User::factory(),
-            'order_date' => $this->faker->date,
-            'allergies' => $this->faker->word,
-            'order_type_id' => \App\Models\OrderType::factory(),
-            'status' => $this->faker->randomElement(['pendent', 'preparat', 'entregat']),
+            
         ];
     }
 }
