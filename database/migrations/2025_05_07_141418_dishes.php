@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('dishes', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->enum('role', ['cuina', 'administrador', 'usuari']);
-            $table->rememberToken();
+            $table->foreignId('menu_id')->constrained('menus')->onDelete('cascade');
+            $table->date('dish_date');
+            $table->enum('type', ['Primer', 'Segon', 'Postre']);
+            $table->json('options');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('dishes');
     }
 };
