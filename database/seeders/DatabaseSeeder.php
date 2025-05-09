@@ -21,11 +21,12 @@ class DatabaseSeeder extends Seeder
 
         // Executar seeders en ordre
         $this->call([
+            UsersSeeder::class,
             DaysSeeder::class,
             ImagesSeeder::class,
             MenusSeeder::class,
             MenuDaysSeeder::class,
-            UsersSeeder::class,
+            OrderTypeSeeder::class,
             OrdersSeeder::class,
             DishesSeeder::class,
             OrderDetailsSeeder::class,
