@@ -9,7 +9,11 @@ class Dish extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['menu_id', 'dish_date', 'type', 'options'];
+    protected $fillable = [
+        'menu_id',
+        'dish_date', 
+        'dish_type_id',
+        'options'];
 
     protected $casts = ['options' => 'array'];
 

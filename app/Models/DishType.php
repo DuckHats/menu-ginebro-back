@@ -18,6 +18,6 @@ class DishType extends Model
      */
     public function Dish()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Dish::class);
     }
 }

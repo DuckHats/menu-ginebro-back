@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Helpers\EmailHelper;
-use App\Helpers\PhoneHelper;
 use App\Helpers\ValidationHelper;
 use App\Mail\EmailVerificationMail;
 use App\Mail\PasswordChangedMail;
@@ -11,7 +10,6 @@ use App\Mail\ResetPasswordCodeMail;
 use App\Mail\WelcomeMail;
 use App\Models\EmailVerification;
 use App\Models\User;
-use App\Repositories\AuthRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,12 +17,8 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
-    protected $authRepository;
 
-    public function __construct(AuthRepository $authRepository)
-    {
-        $this->authRepository = $authRepository;
-    }
+    public function __construct() {}
 
     public function register(Request $request)
     {
@@ -36,10 +30,7 @@ class AuthService
         $fields = $fields['data'];
         $fields['password'] = Hash::make($fields['password']);
         $user = User::create($fields);
-        $this->authRepository->createBasicSettings($user->id);
-        $this->authRepository->setWelcomeNotification($user->id);
-        $this->authRepository->setBasicPolicies($user->id);
-        $this->authRepository->setAdminRole($user->id);
+
         Auth::login($user);
         $token = $user->createToken('auth_token')->plainTextToken;
 

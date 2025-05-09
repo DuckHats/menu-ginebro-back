@@ -14,10 +14,10 @@ class UserType extends Model
     protected $fillable = ['name']; // Define los campos que se pueden llenar de forma masiva
 
     /**
-     * Relación con Orders: Un tipo de pedido puede tener muchos pedidos.
+     * Relación con User: Un tipo de pedido puede tener muchos pedidos.
      */
-    public function orders()
+    public function User()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(User::class);
     }
 }
