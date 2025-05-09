@@ -14,7 +14,7 @@ class OrderStatusSeeder extends Seeder
     public function run(): void
     {
         OrderStatus::create(['name' => 'pendent']);
-        OrderStatus::create(['name' => 'en preparacio']);
+        OrderStatus::create(['name' => 'en preparació']);
         OrderStatus::create(['name' => 'entregat']);
     }
 }
