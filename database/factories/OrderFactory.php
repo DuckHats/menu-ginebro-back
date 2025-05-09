@@ -22,7 +22,7 @@ class OrderFactory extends Factory
             'order_date' => $this->faker->date,
             'allergies' => $this->faker->word,
             'order_type_id' => $this->faker->numberBetween(1, 3),
-            'status' => $this->faker->randomElement(['pendent', 'preparat', 'entregat']),
+            'order_status_id' => $this->faker->numberBetween(1, 3),
         ];
     }
 }

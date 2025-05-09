@@ -59,13 +59,9 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-    public function isAdmin()
+
+    public function userType()
     {
-        return $this->role == $this::ROLE_ADMIN;
-    }
-    
-    public function isCook()
-    {
-        return $this->role == $this::ROLE_COOK;
+        return $this->hasMany(UserType::class, 'user_type_id');
     }
 }

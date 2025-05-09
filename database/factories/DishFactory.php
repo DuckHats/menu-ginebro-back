@@ -19,7 +19,7 @@ class DishFactory extends Factory
         return [
             'menu_id' => \App\Models\Menu::factory(),
             'dish_date' => $this->faker->date(),
-            'type' => $this->faker->randomElement(['Primer', 'Segon', 'Postre']),
+            'dish_type_id' => $this->faker->numberBetween(1, 3),
             'options' => json_encode([$this->faker->word(), $this->faker->word()]),
         ];
     }

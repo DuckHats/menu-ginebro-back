@@ -17,5 +17,10 @@ class Dish extends Model
     {
         return $this->belongsTo(Menu::class);
     }
+
+    public function dishType()
+    {
+        return $this->hasMany(DishType::class, 'dish_type_id');
+    }
 }
 

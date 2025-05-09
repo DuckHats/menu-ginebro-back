@@ -20,5 +20,15 @@ class Order extends Model
     {
         return $this->hasMany(OrderDetail::class);
     }
+
+    public function orderStatus()
+    {
+        return $this->hasMany(OrderStatus::class);
+    }
+
+    public function orderType()
+    {
+        return $this->hasMany(OrderType::class);
+    }
 }
 
