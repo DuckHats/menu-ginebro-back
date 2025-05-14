@@ -126,13 +126,13 @@ return [
         'store' => [
             'menu_id' => 'required|integer|exists:menus,id',
             'dish_date' => 'required|date',
-            'dish_type_id' => 'required|integer|exists:dish_types,id',
+            'dish_type_id' => 'required|integer|exists:dish_type,id',
             'options' => 'nullable|string',
         ],
         'update' => [
             'menu_id' => 'required|integer|exists:menus,id',
-            'dish_date' => 'required|date',
-            'dish_type_id' => 'required|integer|exists:dish_types,id',
+            'dish_date' => 'nullable|date',
+            'dish_type_id' => 'required|integer|exists:dish_type,id',
             'options' => 'nullable|string',
         ],
     ],
@@ -141,7 +141,7 @@ return [
             'name' => 'required|string|max:255',
         ],
         'update' => [
-            'name' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255',
         ],
     ],
     'orders' => [
@@ -149,14 +149,14 @@ return [
             'user_id' => 'required|integer|exists:users,id',
             'menu_id' => 'required|integer|exists:menus,id',
             'dish_id' => 'required|integer|exists:dishes,id',
-            'dish_type_id' => 'required|integer|exists:dish_types,id',
+            'dish_type_id' => 'required|integer|exists:dish_type,id',
             'options' => 'nullable|string',
         ],
         'update' => [
             'user_id' => 'required|integer|exists:users,id',
             'menu_id' => 'required|integer|exists:menus,id',
             'dish_id' => 'required|integer|exists:dishes,id',
-            'dish_type_id' => 'required|integer|exists:dish_types,id',
+            'dish_type_id' => 'required|integer|exists:dish_type,id',
             'options' => 'nullable|string',
         ],
     ],

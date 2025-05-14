@@ -78,5 +78,20 @@ class RouteConstants
 
     const MENUS_ENABLE = '/menus/enable';
 
+    // Dish Routes
+    const DISHES = '/dishes';
+
+    const DISHES_EXPORT = '/dishes/export';
+
+    const DISHES_DETAIL = '/dishes/{id}';
+
+    const DISHES_CREATE = '/dishes';
+
+    const DISHES_UPDATE = '/dishes/{id}';
+
+    const DISHES_PATCH = '/dishes/{id}';
+
+    const DISHES_DESTROY = '/dishes/{id}';
+
 
 }

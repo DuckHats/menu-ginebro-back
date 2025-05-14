@@ -3,6 +3,7 @@
 use App\Constants\RouteConstants;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DishController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\MenuController;
 use Illuminate\Support\Facades\Route;
@@ -69,6 +70,19 @@ Route::middleware('throttle:api')->group(function () {
 
             Route::post(RouteConstants::MENUS_DISABLE, 'disableMenu')->name('menus.disable')->middleware('auth:sanctum');
             Route::post(RouteConstants::MENUS_ENABLE, 'enableMenu')->name('menus.enable')->middleware('auth:sanctum');
+        });
+
+        // Dish routes
+        Route::controller(DishController::class)->group(function () {
+            Route::get(RouteConstants::DISHES, 'index')->name('dishes.index')->middleware('auth:sanctum');
+            Route::get(RouteConstants::DISHES_EXPORT, 'export')->name('dishes.export')->middleware('auth:sanctum');
+
+            Route::get(RouteConstants::DISHES_DETAIL, 'show')->name('dishes.show')->middleware('auth:sanctum');
+
+            Route::post(RouteConstants::DISHES_CREATE, 'store')->name('dishes.store')->middleware('auth:sanctum');
+            Route::put(RouteConstants::DISHES_UPDATE, 'update')->name('dishes.update')->middleware('auth:sanctum');
+            Route::patch(RouteConstants::DISHES_PATCH, 'patch')->name('dishes.patch')->middleware('auth:sanctum');
+            Route::delete(RouteConstants::DISHES_DESTROY, 'destroy')->name('dishes.destroy')->middleware('auth:sanctum');
         });
     });
 });

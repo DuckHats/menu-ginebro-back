@@ -15,7 +15,7 @@ class DishService extends BaseService
 
     protected function getRelations(): array
     {
-        return [];
+        return ['dishType'];
     }
 
     protected function resourceClass()
@@ -28,3 +28,4 @@ class DishService extends BaseService
         return [];
     }
 }
+
