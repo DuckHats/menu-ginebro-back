@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Model;
 
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
+use App\Services\Generic\BaseService;
 
 class OrderService extends BaseService
 {

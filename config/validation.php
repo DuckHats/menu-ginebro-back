@@ -88,11 +88,17 @@ return [
             'end_date' => 'required|date',
         ],
         'update' => [
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'image_id' => 'required|integer|exists:images,id',
-            'day_id' => 'required|integer|exists:days,id',
+            'month' => 'nullable|integer',
+            'week' => 'nullable|string|max:255',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+        ],
+
+        'patch' => [
+            'month' => 'nullable|integer',
+            'week' => 'nullable|string|max:255',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
         ],
     ],
 

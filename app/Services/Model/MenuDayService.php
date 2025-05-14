@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Model;
 
 use App\Http\Resources\MenuDayResource;
 use App\Models\MenuDay;
+use App\Services\Generic\BaseService;
 
 class MenuDayService extends BaseService
 {
@@ -14,9 +15,7 @@ class MenuDayService extends BaseService
 
     protected function getRelations(): array
     {
-        return [
-            ''
-        ];
+        return [];
     }
 
     protected function resourceClass()
@@ -26,8 +25,6 @@ class MenuDayService extends BaseService
 
     protected function getSyncableRelations(): array
     {
-        return [
-            ''
-        ];
+        return [];
     }
 }

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Model;
 
 use App\Http\Resources\ImageResource;
 use App\Models\Image;
+use App\Services\Generic\BaseService;
 
 class ImageService extends BaseService
 {
@@ -14,9 +15,7 @@ class ImageService extends BaseService
 
     protected function getRelations(): array
     {
-        return [
-            ''
-        ];
+        return [];
     }
 
     protected function resourceClass()
@@ -26,8 +25,6 @@ class ImageService extends BaseService
 
     protected function getSyncableRelations(): array
     {
-        return [
-            ''
-        ];
+        return [];
     }
 }

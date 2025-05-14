@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Model;
 
 use App\Http\Resources\DishResource;
 use App\Models\Dish;
+use App\Services\Generic\BaseService;
 
 class DishService extends BaseService
 {
@@ -14,9 +15,7 @@ class DishService extends BaseService
 
     protected function getRelations(): array
     {
-        return [
-            ''
-        ];
+        return [];
     }
 
     protected function resourceClass()
@@ -26,8 +25,6 @@ class DishService extends BaseService
 
     protected function getSyncableRelations(): array
     {
-        return [
-            ''
-        ];
+        return [];
     }
 }

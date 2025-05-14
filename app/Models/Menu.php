@@ -9,7 +9,7 @@ class Menu extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['week', 'start_date', 'end_date'];
+    protected $fillable = ['month', 'week', 'start_date', 'end_date'];
 
     public function menuDays()
     {

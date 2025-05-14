@@ -21,10 +21,6 @@ class RouteConstants
 
     const VERIFY_EMAIL_CONFIRM = '/verify/email/confirm';
 
-    const VERIFY_PHONE = '/verify/phone';
-
-    const VERIFY_PHONE_CONFIRM = '/verify/phone/confirm';
-
     // User Routes
     const USERS = '/users';
 
@@ -48,8 +44,6 @@ class RouteConstants
 
     const USERS_ENABLE = '/users/{id}/enable';
 
-    const USERS_BULK = '/users/bulk';
-
     const USERS_ADMIN_CHECK = '/users/is_admin';
 
     // Error Routes
@@ -65,166 +59,24 @@ class RouteConstants
 
     const ERROR_DELETE = '/errors/{id}';
 
-    // Post Routes
-    const POSTS = '/posts';
+    // Menu Routes
+    const MENUS = '/menus';
 
-    const POST_DETAIL = '/posts/{id}';
+    const MENUS_EXPORT = '/menus/export';
 
-    const POST_CREATE = '/posts';
+    const MENUS_DETAIL = '/menus/{id}';
 
-    const POST_UPADTE = '/posts/{id}';
+    const MENUS_CREATE = '/menus';
 
-    const POST_PATCH = '/posts/{id}';
+    const MENUS_UPDATE = '/menus/{id}';
 
-    const POST_DELETE = '/posts/{id}';
+    const MENUS_PATCH = '/menus/{id}';
 
-    // User Settings Routes
-    const USER_SETTINGS = '/usettings';
+    const MENUS_DESTROY = '/menus/{id}';
 
-    const USER_SETTING_DETAIL = '/usettings/{id}';
+    const MENUS_DISABLE = '/menus/disable';
 
-    const USER_SETTING_CREATE = '/usettings';
+    const MENUS_ENABLE = '/menus/enable';
 
-    const USER_SETTING_UPDATE = '/usettings/{id}';
 
-    const USER_SETTING_PATCH = '/usettings/{id}';
-
-    const USER_SETTING_DELETE = '/usettings/{id}';
-
-    // Childs Routes
-    const CHILDS = '/childs';
-
-    const CHILDS_EXPORT = '/childs/export';
-
-    const CHILD_DETAIL = '/childs/{id}';
-
-    const CHILD_INSPECT = '/childs/{id}/inspect';
-
-    const CHILD_MULTIPLE_INSPECT = '/childs/bulk/inspect';
-
-    const CHILD_CREATE = '/childs';
-
-    const CHILD_UPDATE = '/childs/{id}';
-
-    const CHILD_PATCH = '/childs/{id}';
-
-    const CHILD_UPLOAD_IMAGE = '/childs/{id}/upload-image';
-
-    const CHILD_DELETE = '/childs/{id}';
-
-    // Policy Routes
-    const USER_POLICY = '/upolicy';
-
-    const USER_POLICY_DETAIL = '/upolicy/{id}';
-
-    const USER_POLICY_CREATE = '/upolicy';
-
-    const USER_POLICY_UPDATE = '/upolicy/{id}';
-
-    const USER_POLICY_PATCH = '/upolicy/{id}';
-
-    const USER_POLICY_DELETE = '/upolicy/{id}';
-
-    // Notification Routes
-    const USER_NOTIFICATION = '/unotification';
-
-    const USER_NOTIFICATION_DETAIL = '/unotification/{id}';
-
-    const USER_NOTIFICATION_CREATE = '/unotification';
-
-    const USER_NOTIFICATION_UPDATE = '/unotification/{id}';
-
-    const USER_NOTIFICATION_PATCH = '/unotification/{id}';
-
-    const USER_NOTIFICATION_DELETE = '/unotification/{id}';
-
-    // Group Routes
-    const GROUPS = '/groups';
-
-    const GROUPS_EXPORT = '/groups/export';
-
-    const GROUP_DETAIL = '/groups/{id}';
-
-    const GROUP_CREATE = '/groups';
-
-    const GROUP_BULK = '/groups/bulk';
-
-    const GROUP_UPDATE = '/groups/{id}';
-
-    const GROUP_PATCH = '/groups/{id}';
-
-    const GROUP_UPLOAD_IMAGE = '/groups/{id}/upload-image';
-
-    const GROUP_DELETE = '/groups/{id}';
-
-    // Activity Routes
-    const ACTIVITIES = '/activities';
-
-    const ACTIVITIES_EXPORT = '/activities/export';
-
-    const ACTIVITY_DETAIL = '/activities/{id}';
-
-    const ACTIVITY_CREATE = '/activities';
-
-    const ACTIVITY_BULK = '/activities/bulk';
-
-    const ACTIVITY_UPDATE = '/activities/{id}';
-
-    const ACTIVITY_PATCH = '/activities/{id}';
-
-    const ACTIVITY_UPLOAD_IMAGE = '/activities/{id}/upload-image';
-
-    const ACTIVITY_DELETE = '/activities/{id}';
-
-    // Monitor Routes
-    const MONITORS = '/monitors';
-
-    const MONITORS_EXPORT = '/monitors/export';
-
-    const MONITOR_DETAIL = '/monitors/{id}';
-
-    const MONITOR_CREATE = '/monitors';
-
-    const MONITOR_BULK = '/monitors/bulk';
-
-    const MONITOR_UPDATE = '/monitors/{id}';
-
-    const MONITOR_PATCH = '/monitors/{id}';
-
-    const MONITOR_UPLOAD_IMAGE = '/monitors/{id}/upload-image';
-
-    const MONITOR_DELETE = '/monitors/{id}';
-
-    // Photo Routes
-    const PHOTOS = '/photos';
-
-    const PHOTOS_EXPORT = '/photos/export';
-
-    const PHOTO_DETAIL = '/photos/{id}';
-
-    const PHOTO_CREATE = '/photos';
-
-    const PHOTO_UPDATE = '/photos/{id}';
-
-    const PHOTO_PATCH = '/photos/{id}';
-
-    const PHOTO_DELETE = '/photos/{id}';
-
-    // Scheduled Activity Routes
-
-    const SCHEDULED_ACTIVITIES = '/scheduled-activities';
-
-    const SCHEDULED_ACTIVITIES_EXPORT = '/scheduled-activities/export';
-
-    const SCHEDULED_ACTIVITY_DETAIL = '/scheduled-activities/{id}';
-
-    const SCHEDULED_ACTIVITY_CREATE = '/scheduled-activities';
-
-    const SCHEDULED_ACTIVITY_BULK = '/scheduled-activities/bulk';
-
-    const SCHEDULED_ACTIVITY_UPDATE = '/scheduled-activities/{id}';
-
-    const SCHEDULED_ACTIVITY_PATCH = '/scheduled-activities/{id}';
-
-    const SCHEDULED_ACTIVITY_DELETE = '/scheduled-activities/{id}';
 }

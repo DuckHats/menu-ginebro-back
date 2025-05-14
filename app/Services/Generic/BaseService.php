@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Generic;
 
 use App\Helpers\ApiResponse;
 use App\Helpers\ValidationHelper;
@@ -75,7 +75,7 @@ abstract class BaseService implements ServiceInterface
 
         try {
             $data = $validatedData['data'];
-            $data = $this->handleImageUpload($request, $data, $imageFieldName);
+            // $data = $this->handleImageUpload($request, $data, $imageFieldName);
 
             $item = $this->model->create($data);
             $this->syncRelations($item, $data);
@@ -149,34 +149,6 @@ abstract class BaseService implements ServiceInterface
         }
     }
 
-    public function uploadImage(Request $request, $id, string $imageFieldName)
-    {
-        $item = $this->model->find($id);
-        if (! $item) {
-            return ApiResponse::error('NOT_FOUND', 'Item not found.', [], ApiResponse::NOT_FOUND_STATUS);
-        }
-
-        if (! $this->isAuthorized('update', $item)) {
-            return ApiResponse::error('UNAUTHORIZED', 'No tens permisos.', [], ApiResponse::FORBIDDEN_STATUS);
-        }
-
-        if (! $request->hasFile($imageFieldName)) {
-            return ApiResponse::error('NO_FILE', "No file found in field '$imageFieldName'.", [], ApiResponse::INVALID_PARAMETERS_STATUS);
-        }
-
-        try {
-            $data = [];
-            $data = $this->handleImageUpload($request, $data, $imageFieldName);
-            $item->update([$imageFieldName => $data[$imageFieldName]]);
-
-            return ApiResponse::success(new ($this->resourceClass())($item), 'Image uploaded and field updated.', ApiResponse::OK_STATUS);
-        } catch (\Throwable $e) {
-            Log::error('Error uploading image', ['exception' => $e->getMessage()]);
-
-            return ApiResponse::error('UPLOAD_FAILED', 'Error while uploading image.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
-        }
-    }
-
     public function delete(Request $request, $id)
     {
         $item = $this->model->find($id);
@@ -199,17 +171,6 @@ abstract class BaseService implements ServiceInterface
         }
     }
 
-    protected function handleImageUpload(Request $request, array $data, string $imageFieldName)
-    {
-        if ($request->hasFile($imageFieldName)) {
-            $image = $request->file($imageFieldName);
-            $uniqueFileName = uniqid().'_'.time().'.'.$image->getClientOriginalExtension();
-            $image->storeAs('pictures', $uniqueFileName, 'public');
-            $data[$imageFieldName] = env('APP_URL').'storage/pictures/'.$uniqueFileName;
-        }
-
-        return $data;
-    }
 
     protected function isAuthorized(string $ability, $model = null)
     {
