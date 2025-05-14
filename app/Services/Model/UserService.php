@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Model;
 
 use App\Helpers\ApiResponse;
 use App\Helpers\ValidationHelper;
 use App\Http\Resources\UserResource;
-use App\Jobs\BulkUserCreationJob;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

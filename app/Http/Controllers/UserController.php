@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Child;
 use App\Models\User;
-use App\Services\ExportService;
-use App\Services\UserService;
+use App\Services\Generic\ExportService;
+use App\Services\Model\UserService;
 use Illuminate\Http\Request;
 
 class UserController extends Controller

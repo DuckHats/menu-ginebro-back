@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Generic;
 
 use App\Helpers\ApiResponse;
 use Illuminate\Database\Eloquent\Model;

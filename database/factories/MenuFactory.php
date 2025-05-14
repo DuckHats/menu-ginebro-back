@@ -17,7 +17,7 @@ class MenuFactory extends Factory
     public function definition(): array
     {
         // Assignar el mes i l'any correctament
-        $month = $this->faker->monthName();
+        $month = $this->faker->month();
         $year = $this->faker->numberBetween(2024, 2025);
 
         // Trobar el número del mes

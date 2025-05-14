@@ -2,12 +2,8 @@
 
 namespace App\Services;
 
-use App\Helpers\ApiResponse;
-use App\Helpers\ValidationHelper;
 use App\Http\Resources\OrderResource;
-use App\Jobs\BulkOrderCreationJob;
 use App\Models\Order;
-use Illuminate\Http\Request;
 
 class OrderService extends BaseService
 {
@@ -18,7 +14,7 @@ class OrderService extends BaseService
 
     protected function getRelations(): array
     {
-        return [        
+        return [
             'user',
             'orderDetails',
             'orderStatus',
@@ -33,6 +29,11 @@ class OrderService extends BaseService
 
     protected function getSyncableRelations(): array
     {
-        return [''];
+        return [
+            'user',
+            'orderDetails',
+            'orderStatus',
+            'orderType'
+        ];
     }
 }

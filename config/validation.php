@@ -3,6 +3,8 @@
 // Path: config/validation.php
 // Validation rules for all the api endpoints
 
+use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Week;
+
 return [
     'auth' => [
         'login' => [
@@ -10,7 +12,7 @@ return [
             'password' => 'required',
         ],
         'register' => [
-            'username' => 'required|string|max:255|unique:users',
+            'name' => 'required|string|max:255|unique:users',
             'email' => 'required|email|unique:users',
             // Modificar especificacions de password
             'password' => 'required|confirmed|min:8',
@@ -36,19 +38,19 @@ return [
     ],
     'users' => [
         'store' => [
-            'username' => 'required|string|max:255|unique:users',
+            'name' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             // Modificar especificacions de password
             'password' => 'required|string|min:8',
         ],
         'update' => [
-            'username' => 'required|string|max:255|unique:users,username,{id}',
+            'name' => 'required|string|max:255|unique:users,name,{id}',
             'email' => 'required|string|email|max:255|unique:users,email,{id}',
             // Modificar especificacions de password
             'password' => 'nullable|string|min:8',
         ],
         'patch' => [
-            'username' => 'nullable|string|max:255|unique:users,username,{id}',
+            'name' => 'nullable|string|max:255|unique:users,name,{id}',
             'email' => 'nullable|string|email|max:255|unique:users,email,{id}',
             // Modificar especificacions de password
             'password' => 'nullable|string|min:8',
@@ -59,12 +61,117 @@ return [
         'avatar' => [
             'avatar' => 'required|string',
         ],
-        'bulkUsers' => [
-            'users' => 'required|array',
-            'users.*.username' => 'required|string|unique:users,username',
-            'users.*.email' => 'required|email|unique:users,email',
-            'users.*.status' => 'nullable|integer|in:0,1',
-            'users.*.password' => 'required|string|min:6',
+    ],
+
+    'images' => [
+        'store' => [
+            'path' => 'required|string',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+            'month' => 'required|integer',
+            'year' => 'required|integer',
+        ],
+        'update' => [
+            'path' => 'required|string',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+            'month' => 'required|integer',
+            'year' => 'required|integer',
         ],
     ],
+
+    'menus' => [
+        'store' => [
+            'month' => 'required|integer',
+            'week' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+        ],
+        'update' => [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric',
+            'image_id' => 'required|integer|exists:images,id',
+            'day_id' => 'required|integer|exists:days,id',
+        ],
+    ],
+
+    'menu_days' => [
+        'store' => [
+            'menu_id' => 'required|integer|exists:menus,id',
+            'day_id' => 'required|integer|exists:days,id',
+        ],
+        'update' => [
+            'menu_id' => 'required|integer|exists:menus,id',
+            'day_id' => 'required|integer|exists:days,id',
+        ],
+    ],
+
+    'days' => [
+        'store' => [
+            'name' => 'required|string|max:255',
+        ],
+        'update' => [
+            'name' => 'required|string|max:255',
+        ],
+    ],
+
+    'dishes' => [
+        'store' => [
+            'menu_id' => 'required|integer|exists:menus,id',
+            'dish_date' => 'required|date',
+            'dish_type_id' => 'required|integer|exists:dish_types,id',
+            'options' => 'nullable|string',
+        ],
+        'update' => [
+            'menu_id' => 'required|integer|exists:menus,id',
+            'dish_date' => 'required|date',
+            'dish_type_id' => 'required|integer|exists:dish_types,id',
+            'options' => 'nullable|string',
+        ],
+    ],
+    'dish_types' => [
+        'store' => [
+            'name' => 'required|string|max:255',
+        ],
+        'update' => [
+            'name' => 'required|string|max:255',
+        ],
+    ],
+    'orders' => [
+        'store' => [
+            'user_id' => 'required|integer|exists:users,id',
+            'menu_id' => 'required|integer|exists:menus,id',
+            'dish_id' => 'required|integer|exists:dishes,id',
+            'dish_type_id' => 'required|integer|exists:dish_types,id',
+            'options' => 'nullable|string',
+        ],
+        'update' => [
+            'user_id' => 'required|integer|exists:users,id',
+            'menu_id' => 'required|integer|exists:menus,id',
+            'dish_id' => 'required|integer|exists:dishes,id',
+            'dish_type_id' => 'required|integer|exists:dish_types,id',
+            'options' => 'nullable|string',
+        ],
+    ],
+    'order_details' => [
+        'store' => [
+            'order_id' => 'required|integer|exists:orders,id',
+            'dish_id' => 'required|integer|exists:dishes,id',
+        ],
+        'update' => [
+            'order_id' => 'required|integer|exists:orders,id',
+            'dish_id' => 'required|integer|exists:dishes,id',
+        ],
+    ],
+    'order_status' => [
+        'store' => [
+            'name' => 'required|string|max:255',
+        ],
+        'update' => [
+            'name' => 'required|string|max:255',
+        ],
+    ],
+
+
 ];

@@ -64,8 +64,9 @@ class User extends Authenticatable
 
     public function userType()
     {
-        return $this->hasMany(UserType::class, 'user_type_id');
+        return $this->belongsTo(UserType::class);
     }
+
 
     public function isAdmin()
     {
