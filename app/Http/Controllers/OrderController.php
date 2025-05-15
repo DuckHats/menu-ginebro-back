@@ -3,74 +3,94 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Services\Generic\ExportService;
+use App\Services\Model\OrderService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+
 
 class OrderController extends Controller
 {
-    public function index()
+    private $orderService;
+
+    public function __construct(OrderService $orderService)
     {
-        $orders = Order::with(['orderDetails.dish', 'user', 'orderType', 'orderStatus'])->get();
-        return response()->json($orders);
+        $this->orderService = $orderService;
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        return $this->orderService->getAll($request);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'order_date' => 'required|date',
-            'order_type_id' => 'required|exists:order_types,id',
-            'order_status_id' => 'required|exists:order_status,id',
-            'allergies' => 'nullable|string',
-            'dish_ids' => 'required|array|min:1',
-            'dish_ids.*' => 'exists:dishes,id',
-        ]);
-
-        DB::beginTransaction();
-        try {
-            $order = Order::create([
-                'user_id' => $validated['user_id'],
-                'order_date' => $validated['order_date'],
-                'order_type_id' => $validated['order_type_id'],
-                'order_status_id' => $validated['order_status_id'],
-                'allergies' => $validated['allergies'] ?? null,
-            ]);
-
-            foreach ($validated['dish_ids'] as $dishId) {
-                $order->orderDetails()->create(['dish_id' => $dishId]);
-            }
-
-            DB::commit();
-            return response()->json($order->load('orderDetails.dish'), 201);
-
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Error al crear el pedido', 'message' => $e->getMessage()], 500);
-        }
+        return $this->orderService->createOrder($request);
     }
 
-    public function show($id)
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, $id)
     {
-        $order = Order::with(['orderDetails.dish', 'user', 'orderType', 'orderStatus'])->findOrFail($id);
-        return response()->json($order);
+        return $this->orderService->getById($request, $id);
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        return $this->orderService->update($request, $id);
+    }
+
+    /**
+     * Partially update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function patch(Request $request, $id)
     {
-        $order = Order::findOrFail($id);
-
-        $validated = $request->validate([
-            'order_status_id' => 'required|exists:order_status,id',
-        ]);
-
-        $order->update($validated);
-
-        return response()->json($order);
+        return $this->orderService->patch($request, $id);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request, $id)
+    {
+        return $this->orderService->delete($request, $id);
+    }
+
+    /**
+     * Export the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function export(Request $request)
     {
-        $exportService = new \App\Services\Generic\ExportService(new Order);
+        $exportService = new ExportService(new Order);
+
         return $exportService->export($request);
     }
 }

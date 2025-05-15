@@ -4,14 +4,15 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MenuResource extends JsonResource
+class OrderDetailResource extends JsonResource
 {
     public function toArray($request)
     {
         return [
             'id' => $this->id,
-            'day' => $this->day,
-            'dishes' => DishResource::collection($this->whenLoaded('dishes')),
+            'option1' => $this->option1,
+            'option2' => $this->option2,
+            'option3' => $this->option3,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

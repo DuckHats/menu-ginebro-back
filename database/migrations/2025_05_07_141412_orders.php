@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('order_date');
             $table->string('allergies')->nullable();
             $table->foreignId('order_type_id')->constrained('order_types')->onDelete('cascade');
-            $table->foreignId('order_status_id')->constrained('order_status')->onDelete('cascade');
+            $table->foreignId('order_status_id')->default(1)->constrained('order_status')->onDelete('cascade');
             $table->timestamps();
         }); 
     }

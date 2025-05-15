@@ -15,7 +15,7 @@ class MenuService extends BaseService
 
     protected function getRelations(): array
     {
-        return [];
+        return ['dishes'];
     }
 
     protected function resourceClass()

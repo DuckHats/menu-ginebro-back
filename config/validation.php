@@ -17,7 +17,6 @@ return [
             // Modificar especificacions de password
             'password' => 'required|confirmed|min:8',
             'password_confirmation' => 'required',
-            'phone' => 'nullable|string|max:20',
         ],
         'reset_password' => [
             'email' => 'required|email|exists:users,email',
@@ -82,23 +81,14 @@ return [
 
     'menus' => [
         'store' => [
-            'month' => 'required|integer',
-            'week' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
+            'day' => 'required|date',
         ],
         'update' => [
-            'month' => 'nullable|integer',
-            'week' => 'nullable|string|max:255',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date',
+            'day' => 'nullable|date',
         ],
-
         'patch' => [
-            'month' => 'nullable|integer',
-            'week' => 'nullable|string|max:255',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date',
+            'day' => 'nullable|date',
+
         ],
     ],
 
@@ -125,13 +115,11 @@ return [
     'dishes' => [
         'store' => [
             'menu_id' => 'required|integer|exists:menus,id',
-            'dish_date' => 'required|date',
             'dish_type_id' => 'required|integer|exists:dish_type,id',
             'options' => 'nullable|string',
         ],
         'update' => [
             'menu_id' => 'required|integer|exists:menus,id',
-            'dish_date' => 'nullable|date',
             'dish_type_id' => 'required|integer|exists:dish_type,id',
             'options' => 'nullable|string',
         ],
