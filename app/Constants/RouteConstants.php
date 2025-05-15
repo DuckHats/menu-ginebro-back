@@ -109,4 +109,36 @@ class RouteConstants
 
     const ORDERS_DESTROY = '/orders/{id}';
 
+    
+    // Menu Days Routes
+    const MENU_DAYS = '/menu_days';
+
+    const MENU_DAYS_EXPORT = '/menu_days/export';
+
+    const MENU_DAYS_DETAIL = '/menu_days/{id}';
+
+    const MENU_DAYS_CREATE = '/menu_days';
+
+    const MENU_DAYS_UPDATE = '/menu_days/{id}';
+
+    const MENU_DAYS_PATCH = '/menu_days/{id}';
+
+    const MENU_DAYS_DESTROY = '/menu_days/{id}';
+
+    
+    // Order Details Routes
+    const ORDER_DETAILS = '/order_details';
+
+    const ORDER_DETAILS_EXPORT = '/order_details/export';
+
+    const ORDER_DETAILS_DETAIL = '/order_details/{id}';
+
+    const ORDER_DETAILS_CREATE = '/order_details';
+
+    const ORDER_DETAILS_UPDATE = '/order_details/{id}';
+
+    const ORDER_DETAILS_PATCH = '/order_details/{id}';
+
+    const ORDER_DETAILS_DESTROY = '/order_details/{id}';
+
 }

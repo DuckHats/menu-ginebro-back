@@ -6,7 +6,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DishController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\MenuDaysController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderDetailsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -98,5 +100,31 @@ Route::middleware('throttle:api')->group(function () {
             Route::patch(RouteConstants::ORDERS_PATCH, 'patch')->name('orders.patch')->middleware('auth:sanctum');
             Route::delete(RouteConstants::ORDERS_DESTROY, 'destroy')->name('orders.destroy')->middleware('auth:sanctum');
         });
+
+        // Menu days routes
+        Route::controller(MenuDaysController::class)->group(function () {
+            Route::get(RouteConstants::MENU_DAYS, 'index')->name('menu_days.index')->middleware('auth:sanctum');
+            Route::get(RouteConstants::MENU_DAYS_EXPORT, 'export')->name('menu_days.export')->middleware('auth:sanctum');
+
+            Route::get(RouteConstants::MENU_DAYS_DETAIL, 'show')->name('menu_days.show')->middleware('auth:sanctum');
+
+            Route::post(RouteConstants::MENU_DAYS_CREATE, 'store')->name('menu_days.store')->middleware('auth:sanctum');
+            Route::put(RouteConstants::MENU_DAYS_UPDATE, 'update')->name('menu_days.update')->middleware('auth:sanctum');
+            Route::patch(RouteConstants::MENU_DAYS_PATCH, 'patch')->name('menu_days.patch')->middleware('auth:sanctum');
+            Route::delete(RouteConstants::MENU_DAYS_DESTROY, 'destroy')->name('menu_days.destroy')->middleware('auth:sanctum');
+        });
+
+        // Order Details routes
+        // Route::controller(OrderDetailsController::class)->group(function () {
+        //     Route::get(RouteConstants::ORDER_DETAILS, 'index')->name('order_details.index')->middleware('auth:sanctum');
+        //     Route::get(RouteConstants::ORDER_DETAILS_EXPORT, 'export')->name('order_details.export')->middleware('auth:sanctum');
+
+        //     Route::get(RouteConstants::ORDER_DETAILS_DETAIL, 'show')->name('order_details.show')->middleware('auth:sanctum');
+
+        //     Route::post(RouteConstants::ORDER_DETAILS_CREATE, 'store')->name('order_details.store')->middleware('auth:sanctum');
+        //     Route::put(RouteConstants::ORDER_DETAILS_UPDATE, 'update')->name('order_details.update')->middleware('auth:sanctum');
+        //     Route::patch(RouteConstants::ORDER_DETAILS_PATCH, 'patch')->name('order_details.patch')->middleware('auth:sanctum');
+        //     Route::delete(RouteConstants::ORDER_DETAILS_DESTROY, 'destroy')->name('order_details.destroy')->middleware('auth:sanctum');
+        // });
     });
 });

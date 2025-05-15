@@ -21,4 +21,3 @@ class OrderDetail extends Model
         return $this->belongsTo(Dish::class);
     }
 }
-
