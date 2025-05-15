@@ -5,6 +5,11 @@ namespace App\Services\Model;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Services\Generic\BaseService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Helpers\ApiResponse;
+use Illuminate\Http\Request;
+
 
 class OrderService extends BaseService
 {
@@ -16,9 +21,13 @@ class OrderService extends BaseService
     protected function getRelations(): array
     {
         return [
-
+            'orderDetails',
+            'user',
+            'orderType',
+            'orderStatus',
         ];
     }
+
 
     protected function resourceClass()
     {
@@ -27,8 +36,50 @@ class OrderService extends BaseService
 
     protected function getSyncableRelations(): array
     {
-        return [
+        return ['orderDetails'];
+    }
 
-        ];
+    public function createOrder(Request $request, string $imageFieldName = 'image_url')
+    {
+        if (! $this->isAuthorized('create')) {
+            return ApiResponse::error('UNAUTHORIZED', 'No tens permisos.', [], ApiResponse::FORBIDDEN_STATUS);
+        }
+
+        $validatedData = $this->validateRequest($request, 'store');
+
+        if (! $validatedData['success']) {
+            return ApiResponse::error('VALIDATION_ERROR', 'Invalid parameters provided.', $validatedData['errors'], ApiResponse::INVALID_PARAMETERS_STATUS);
+        }
+
+        try {
+            $data = $validatedData['data'];
+
+            DB::beginTransaction();
+
+            $item = Order::create([
+                'user_id' => $data['user_id'],
+                'order_date' => $data['order_date'],
+                'order_type_id' => $data['order_type_id'],
+                'order_status_id' => $data['order_status_id'],
+                'allergies' => $data['allergies'] ?? null,
+            ]);
+
+            if (isset($data['dish_ids']) && is_array($data['dish_ids'])) {
+                foreach ($data['dish_ids'] as $dishId) {
+                    $item->orderDetails()->create(['dish_id' => $dishId]);
+                }
+            }
+
+            DB::commit();
+
+            $item->load($this->getRelations());
+
+            return ApiResponse::success(new ($this->resourceClass())($item), 'Item created successfully.', ApiResponse::CREATED_STATUS);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Error creating order', ['exception' => $e->getMessage()]);
+
+            return ApiResponse::error('CREATE_FAILED', 'Error while creating item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
+        }
     }
 }

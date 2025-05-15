@@ -13,10 +13,7 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
-            $table->integer('month');
-            $table->string('week');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->date('day');
             $table->timestamps();
         });
     }

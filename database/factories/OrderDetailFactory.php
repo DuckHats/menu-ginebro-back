@@ -18,7 +18,6 @@ class OrderDetailFactory extends Factory
     {
         return [
             'order_id' => \App\Models\Order::factory(),
-            'dish_id' => \App\Models\Dish::factory(),
         ];
     }
 }

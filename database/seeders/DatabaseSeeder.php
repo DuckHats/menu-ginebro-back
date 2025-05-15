@@ -23,10 +23,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserTypeSeeder::class,
             UsersSeeder::class,
-            DaysSeeder::class,
             ImagesSeeder::class,
             MenusSeeder::class,
-            MenuDaysSeeder::class,
             OrderTypeSeeder::class,
             OrderStatusSeeder::class,
             OrdersSeeder::class,

@@ -10,7 +10,9 @@ class OrderDetailResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'option1' => $this->option1,
+            'option2' => $this->option2,
+            'option3' => $this->option3,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

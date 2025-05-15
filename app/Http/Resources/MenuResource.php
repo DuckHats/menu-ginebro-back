@@ -10,11 +10,8 @@ class MenuResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'month' => $this->month,
-            'week' => $this->week,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
-
+            'day' => $this->day,
+            'dishes' => DishResource::collection($this->whenLoaded('dishes')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
