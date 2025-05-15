@@ -147,17 +147,18 @@ return [
     'orders' => [
         'store' => [
             'user_id' => 'required|integer|exists:users,id',
-            'menu_id' => 'required|integer|exists:menus,id',
-            'dish_id' => 'required|integer|exists:dishes,id',
-            'dish_type_id' => 'required|integer|exists:dish_type,id',
-            'options' => 'nullable|string',
+            'order_date' => 'required|date',
+            'allergies' => 'nullable|string|max:255',
+            'order_type_id' => 'required|integer|exists:order_types,id',
+            'order_status_id' => 'required|integer|exists:order_status,id',
         ],
         'update' => [
             'user_id' => 'required|integer|exists:users,id',
-            'menu_id' => 'required|integer|exists:menus,id',
-            'dish_id' => 'required|integer|exists:dishes,id',
-            'dish_type_id' => 'required|integer|exists:dish_type,id',
-            'options' => 'nullable|string',
+            'order_date' => 'nullable|date',
+            'allergies' => 'nullable|string|max:255',
+            'order_type_id' => 'required|integer|exists:order_types,id',
+            'order_status_id' => 'required|integer|exists:order_status,id',
+
         ],
     ],
     'order_details' => [

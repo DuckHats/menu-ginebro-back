@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DishController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -83,6 +84,19 @@ Route::middleware('throttle:api')->group(function () {
             Route::put(RouteConstants::DISHES_UPDATE, 'update')->name('dishes.update')->middleware('auth:sanctum');
             Route::patch(RouteConstants::DISHES_PATCH, 'patch')->name('dishes.patch')->middleware('auth:sanctum');
             Route::delete(RouteConstants::DISHES_DESTROY, 'destroy')->name('dishes.destroy')->middleware('auth:sanctum');
+        });
+
+        // Order routes
+        Route::controller(OrderController::class)->group(function () {
+            Route::get(RouteConstants::ORDERS, 'index')->name('orders.index')->middleware('auth:sanctum');
+            Route::get(RouteConstants::ORDERS_EXPORT, 'export')->name('orders.export')->middleware('auth:sanctum');
+
+            Route::get(RouteConstants::ORDERS_DETAIL, 'show')->name('orders.show')->middleware('auth:sanctum');
+
+            Route::post(RouteConstants::ORDERS_CREATE, 'store')->name('orders.store')->middleware('auth:sanctum');
+            Route::put(RouteConstants::ORDERS_UPDATE, 'update')->name('orders.update')->middleware('auth:sanctum');
+            Route::patch(RouteConstants::ORDERS_PATCH, 'patch')->name('orders.patch')->middleware('auth:sanctum');
+            Route::delete(RouteConstants::ORDERS_DESTROY, 'destroy')->name('orders.destroy')->middleware('auth:sanctum');
         });
     });
 });

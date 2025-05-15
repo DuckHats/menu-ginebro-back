@@ -94,4 +94,19 @@ class RouteConstants
     const DISHES_DESTROY = '/dishes/{id}';
 
 
+    // Order Routes
+    const ORDERS = '/orders';
+
+    const ORDERS_EXPORT = '/orders/export';
+
+    const ORDERS_DETAIL = '/orders/{id}';
+
+    const ORDERS_CREATE = '/orders';
+
+    const ORDERS_UPDATE = '/orders/{id}';
+
+    const ORDERS_PATCH = '/orders/{id}';
+
+    const ORDERS_DESTROY = '/orders/{id}';
+
 }

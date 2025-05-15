@@ -17,7 +17,7 @@ class OrderResource extends JsonResource
             'order_status_id' => $this->order_status_id,
 
             'orderUser' => $this->whenLoaded('user', fn () => new UserResource($this->user)),
-            'orderDetails' => $this->whenLoaded('orderDetails', fn () => OrderDetailResource::collection($this->orderDetails ?? collect())),
+            // 'orderDetails' => $this->whenLoaded('orderDetails', fn () => OrderDetailResource::collection($this->orderDetails ?? collect())),
             'orderStatus' => $this->whenLoaded('orderStatus', fn () => OrderStatusResource::collection($this->orderStatus ?? collect())),
             'orderType' => $this->whenLoaded('orderType', fn () => OrderTypeResource::collection($this->orderType ?? collect())),
             

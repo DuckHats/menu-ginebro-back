@@ -29,11 +29,11 @@ class Order extends Model
 
     public function orderStatus()
     {
-        return $this->hasMany(OrderStatus::class);
+        return $this->belongsTo(OrderStatus::class);
     }
 
     public function orderType()
     {
-        return $this->hasMany(OrderType::class);
+        return $this->belongsTo(OrderType::class);
     }
 }

@@ -16,10 +16,7 @@ class OrderService extends BaseService
     protected function getRelations(): array
     {
         return [
-            'user',
-            'orderDetails',
-            'orderStatus',
-            'orderType'
+
         ];
     }
 
@@ -31,10 +28,7 @@ class OrderService extends BaseService
     protected function getSyncableRelations(): array
     {
         return [
-            'user',
-            'orderDetails',
-            'orderStatus',
-            'orderType'
+
         ];
     }
 }
