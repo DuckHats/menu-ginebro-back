@@ -12,7 +12,6 @@ use App\Models\OrderType;
 use App\Models\OrderStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
-use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Week;
 use Tests\TestCase;
 
 class OrderControllerTest extends TestCase
