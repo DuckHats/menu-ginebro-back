@@ -9,7 +9,13 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'order_date', 'allergies', 'type', 'status'];
+    protected $fillable = [
+        'user_id',
+        'order_date',
+        'allergies',
+        'order_type_id',
+        'order_status_id'
+    ];
 
     public function user()
     {
@@ -18,7 +24,23 @@ class Order extends Model
 
     public function orderDetails()
     {
-        return $this->hasMany(OrderDetail::class);
+        return $this->hasMany(orderDetail::class);
+    }
+
+
+    // public function dishes()
+    // {
+    //     return $this->belongsToMany(Dish::class, 'order_details')->withTimestamps();
+    // }
+
+
+    public function orderStatus()
+    {
+        return $this->belongsTo(OrderStatus::class);
+    }
+
+    public function orderType()
+    {
+        return $this->belongsTo(OrderType::class);
     }
 }
-

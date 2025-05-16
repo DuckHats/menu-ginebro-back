@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,11 +18,11 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => \App\Models\User::factory(),
+            'user_id' => $this->faker->numberBetween(1, 10),
             'order_date' => $this->faker->date,
             'allergies' => $this->faker->word,
-            'type' => $this->faker->randomElement(['Primer plat + Segon plat + Postres', 'Primer plat + Postres', 'Segon plat + Postres']),
-            'status' => $this->faker->randomElement(['pendent', 'preparat', 'entregat']),
+            'order_type_id' => $this->faker->numberBetween(1, 3),
+            'order_status_id' => $this->faker->numberBetween(1, 3),
         ];
     }
 }

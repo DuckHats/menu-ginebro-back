@@ -21,14 +21,18 @@ class DatabaseSeeder extends Seeder
 
         // Executar seeders en ordre
         $this->call([
-            DaysSeeder::class,
+            UserTypeSeeder::class,
+            UsersSeeder::class,
             ImagesSeeder::class,
             MenusSeeder::class,
-            MenuDaysSeeder::class,
-            UsersSeeder::class,
+            OrderTypeSeeder::class,
+            OrderStatusSeeder::class,
             OrdersSeeder::class,
+            DishTypeSeeder::class,
             DishesSeeder::class,
             OrderDetailsSeeder::class,
+            
+            
         ]);
     }
 }

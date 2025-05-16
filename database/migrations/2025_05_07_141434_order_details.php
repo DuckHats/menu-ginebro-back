@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('order_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
-            $table->foreignId('dish_id')->constrained('dishes')->onDelete('cascade');
+            $table->text('option1')->nullable();
+            $table->text('option2')->nullable();
+            $table->text('option3')->nullable();
             $table->timestamps();
         });
     }
