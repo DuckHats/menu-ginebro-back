@@ -82,4 +82,41 @@ class OrderService extends BaseService
             return ApiResponse::error('CREATE_FAILED', 'Error while creating item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
     }
+
+    public function updateOrderStatusBy_ID(Request $request, $id)
+    {
+        $item = $this->model->find($id);
+        if (! $item) {
+            return ApiResponse::error('NOT_FOUND', 'Item not found.', [], ApiResponse::NOT_FOUND_STATUS);
+        }
+
+        if (! $this->isAuthorized('updateStatus', $item)) {
+            return ApiResponse::error('UNAUTHORIZED', 'No tens permisos.', [], ApiResponse::FORBIDDEN_STATUS);
+        }
+
+        $validatedData = $this->validateRequest($request, 'updateStatus', ['id' => $id]);
+
+        if (! $validatedData['success']) {
+            return ApiResponse::error('VALIDATION_ERROR', 'Invalid parameters provided.', $validatedData['errors'], ApiResponse::INVALID_PARAMETERS_STATUS);
+        }
+
+        try {
+            $data = $validatedData['data'];
+
+            DB::beginTransaction();
+
+            $item->update([
+                'order_status_id' => $data['order_status_id'],
+            ]);
+
+            DB::commit();
+
+            return ApiResponse::success(new ($this->resourceClass())($item), 'Item updated successfully.', ApiResponse::OK_STATUS);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Error updating order status', ['exception' => $e->getMessage()]);
+
+            return ApiResponse::error('UPDATE_FAILED', 'Error while updating item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
+        }
+    }
 }

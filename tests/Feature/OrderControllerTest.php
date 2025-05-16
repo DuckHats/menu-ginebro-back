@@ -139,5 +139,17 @@ class OrderControllerTest extends TestCase
 
         $response->assertStatus(404);
     }
+    public function test_it_can_update_order_status()
+    {
+       OrderStatus::factory()->create(['id' => 2, 'name' => 'Preparant']);
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->postJson(route('orders.updateStatus', $this->order->id), [
+                'order_status_id' => 2,
+            ]);
+
+        $response->assertStatus(200);
+    }
+
+
 
 }

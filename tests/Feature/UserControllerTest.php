@@ -73,7 +73,8 @@ class UserControllerTest extends TestCase
     public function it_can_create_a_user()
     {
         $userData = [
-            'name' => 'John Doe',
+            'name' => 'John',
+            'last_name' => 'Doe',
             'email' => 'john@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',

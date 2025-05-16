@@ -60,6 +60,7 @@ class AuthControllerTest extends TestCase
     {
         $userData = [
             'name' => 'TestUser',
+            'last_name' => 'TestLastName',
             'email' => 'test_user@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
@@ -75,6 +76,7 @@ class AuthControllerTest extends TestCase
     {
         $userData = [
             'name' => 'TestAdminUser',
+            'last_name' => 'TestAdminLastName',
             'email' => 'test_admin_user@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
@@ -91,6 +93,7 @@ class AuthControllerTest extends TestCase
     {
         $userData = [
             'name' => 'TestCookUser',
+            'last_name' => 'TestCookLastName',
             'email' => 'test_cook_user@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',

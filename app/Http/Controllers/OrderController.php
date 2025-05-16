@@ -60,6 +60,17 @@ class OrderController extends Controller
     }
 
     /**
+     * Update the status of the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        return $this->orderService->updateOrderStatusBy_ID($request, $id);
+    }
+
+    /**
      * Partially update the specified resource in storage.
      *
      * @param  int  $id

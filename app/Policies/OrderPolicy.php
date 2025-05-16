@@ -17,6 +17,11 @@ class OrderPolicy
         return $user->isAdmin();
     }
 
+    public function updateStatus(User $user): bool
+    {
+        return $user->isAdmin() || $user->isCook();
+    }
+
     public function delete(User $user): bool
     {
         return $user->isAdmin();

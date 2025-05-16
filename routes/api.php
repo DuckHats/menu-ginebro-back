@@ -99,6 +99,9 @@ Route::middleware('throttle:api')->group(function () {
             Route::put(RouteConstants::ORDERS_UPDATE, 'update')->name('orders.update')->middleware('auth:sanctum');
             Route::patch(RouteConstants::ORDERS_PATCH, 'patch')->name('orders.patch')->middleware('auth:sanctum');
             Route::delete(RouteConstants::ORDERS_DESTROY, 'destroy')->name('orders.destroy')->middleware('auth:sanctum');
+
+            // Route to update order status
+            Route::post(RouteConstants::ORDERS_UPDATE_STATUS, 'updateStatus')->name('orders.updateStatus')->middleware('auth:sanctum');
         });
 
         // Menu days routes

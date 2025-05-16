@@ -13,6 +13,7 @@ return [
         ],
         'register' => [
             'name' => 'required|string|max:255|unique:users',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             // Modificar especificacions de password
             'password' => 'required|confirmed|min:8',
@@ -38,18 +39,21 @@ return [
     'users' => [
         'store' => [
             'name' => 'required|string|max:255|unique:users',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             // Modificar especificacions de password
             'password' => 'required|string|min:8',
         ],
         'update' => [
             'name' => 'required|string|max:255|unique:users,name,{id}',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,{id}',
             // Modificar especificacions de password
             'password' => 'nullable|string|min:8',
         ],
         'patch' => [
             'name' => 'nullable|string|max:255|unique:users,name,{id}',
+            'last_name' => 'nullable|string|max:255',
             'email' => 'nullable|string|email|max:255|unique:users,email,{id}',
             // Modificar especificacions de password
             'password' => 'nullable|string|min:8',
@@ -127,6 +131,10 @@ return [
             'order_type_id' => 'required|integer|exists:order_types,id',
             'order_status_id' => 'required|integer|exists:order_status,id',
 
+        ],
+
+        'updateStatus' => [
+            'order_status_id' => 'required|integer|exists:order_status,id',
         ],
     ],
     'order_details' => [

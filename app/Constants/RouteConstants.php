@@ -109,6 +109,8 @@ class RouteConstants
 
     const ORDERS_DESTROY = '/orders/{id}';
 
+    const ORDERS_UPDATE_STATUS = '/orders/updateStatus/{id}';
+
     
     // Menu Days Routes
     const MENU_DAYS = '/menu_days';
