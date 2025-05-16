@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +19,7 @@ class OrderFactory extends Factory
     {
         return [
             'user_id' => $this->faker->numberBetween(1, 10),
-            'order_date' => $this->faker->date,
+            'order_date' => Carbon::now()->addDays(7)->format('Y-m-d'),
             'allergies' => $this->faker->word,
             'order_type_id' => $this->faker->numberBetween(1, 3),
             'order_status_id' => $this->faker->numberBetween(1, 3),
