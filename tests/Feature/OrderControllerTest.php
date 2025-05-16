@@ -103,7 +103,6 @@ class OrderControllerTest extends TestCase
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->postJson(route('orders.store'), $orderData);
 
-        // dd($response->getContent()); // Descomenta si quieres debug
 
         $response->assertStatus(201)
                  ->assertJsonFragment(['order_date' => '2025-05-15']);
@@ -141,55 +140,4 @@ class OrderControllerTest extends TestCase
         $response->assertStatus(404);
     }
 
-    // Descomentar si quieres probar la actualización de una orden
-//     public function test_it_can_update_an_order()
-//     {
-//         $updatedData = [
-//             'user_id' => $this->user->id,
-//             'order_date' => '2025-05-16',
-//             'order_type_id' => $this->orderType->id,
-//             'order_status_id' => $this->orderStatus->id,
-//         ];
-
-//         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
-//             ->putJson(route('orders.update', $this->order->id), $updatedData);
-// dd($response->getContent()); // Descomenta si quieres debug
-//         $response->assertStatus(200);
-//         $this->assertDatabaseHas('orders', [
-//             'order_date' => '2025-05-16',
-//             'order_type_id' => $this->orderType->id,
-//         ]);
-//     }
-
-//     public function test_it_validates_required_fields_when_updating_order()
-//     {
-//         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
-//             ->putJson(route('orders.update', $this->order->id), []);
-
-//         $response->assertStatus(400)
-//             ->assertJsonPath('error.code', 'VALIDATION_ERROR')
-//             ->assertJsonPath('error.details.user_id.0', 'validation.required')
-//             ->assertJsonPath('error.details.order_type_id.0', 'validation.required')
-//             ->assertJsonPath('error.details.order_status_id.0', 'validation.required');
-//     }
-
-//     public function test_it_can_patch_an_order()
-//     {
-//         $updatedData = ['order_status_id' => $this->orderStatus->id];
-
-//         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
-//             ->patchJson(route('orders.patch', $this->order->id), $updatedData);
-
-//         $response->assertStatus(200);
-//         $this->assertDatabaseHas('orders', ['order_status_id' => $this->orderStatus->id]);
-//     }
-
-//     public function test_it_can_delete_an_order()
-//     {
-//         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
-//             ->deleteJson(route('orders.destroy', $this->order->id));
-
-//         $response->assertStatus(204);
-//         $this->assertDatabaseMissing('orders', ['id' => $this->order->id]);
-//     }
 }
