@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Menu;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,9 +18,8 @@ class DishFactory extends Factory
     public function definition(): array
     {
         return [
-            'menu_id' => \App\Models\Menu::factory(),
-            'dish_date' => $this->faker->date(),
-            'type' => $this->faker->randomElement(['Primer', 'Segon', 'Postre']),
+            'menu_id' => Menu::factory(),
+            'dish_type_id' => $this->faker->numberBetween(1, 3),
             'options' => json_encode([$this->faker->word(), $this->faker->word()]),
         ];
     }

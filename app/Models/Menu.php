@@ -9,12 +9,7 @@ class Menu extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['week', 'start_date', 'end_date'];
-
-    public function menuDays()
-    {
-        return $this->hasMany(MenuDay::class);
-    }
+    protected $fillable = ['day'];
 
     public function dishes()
     {
