@@ -102,7 +102,7 @@ class UserControllerTest extends TestCase
     {
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->adminToken)
             ->getJson(route('users.show', $this->user->id));
-dd($response->json());
+
         $response->assertStatus(200);
     }
 
