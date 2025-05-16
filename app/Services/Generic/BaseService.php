@@ -37,6 +37,13 @@ abstract class BaseService implements ServiceInterface
         }
     }
 
+    /**
+     * Get a menu by ID.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function getById(Request $request, $id)
     {
         try {
@@ -61,6 +68,42 @@ abstract class BaseService implements ServiceInterface
         }
     }
 
+    /**
+     * Get a menu by date.
+     *
+     * @param  string  $day
+     * @return \Illuminate\Http\Response
+     */
+    public function getByDate(Request $request, $day)
+    {
+        try {
+            $query = $this->model->where('day', $day);
+
+            $relations = $this->getRelations();
+            if (! empty($relations)) {
+                $query->with($relations);
+            }
+
+            $item = $query->first();
+
+            if (! $item) {
+                return ApiResponse::error('NOT_FOUND', 'Item not found.', [], ApiResponse::NOT_FOUND_STATUS);
+            }
+
+            return ApiResponse::success(new ($this->resourceClass())($item), 'Item retrieved successfully.', ApiResponse::OK_STATUS);
+        } catch (\Throwable $e) {
+            Log::error('Error retrieving item', ['exception' => $e->getMessage()]);
+
+            return ApiResponse::error('NOT_FOUND', 'Item not found.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
+        }
+    }
+
+    /**
+     * Create a new item.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function create(Request $request, string $imageFieldName = 'image_url')
     {
         if (! $this->isAuthorized('create')) {

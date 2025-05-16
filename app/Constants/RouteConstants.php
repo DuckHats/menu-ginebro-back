@@ -64,7 +64,7 @@ class RouteConstants
 
     const MENUS_EXPORT = '/menus/export';
 
-    const MENUS_DETAIL = '/menus/{id}';
+    const MENUS_DETAIL = '/menus/{day}';
 
     const MENUS_CREATE = '/menus';
 

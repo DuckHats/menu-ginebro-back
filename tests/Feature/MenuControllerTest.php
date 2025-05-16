@@ -73,7 +73,7 @@ class MenuControllerTest extends TestCase
     public function it_can_show_a_menu()
     {
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
-            ->getJson(route('menus.show', $this->menu->id));
+            ->getJson(route('menus.show', $this->menu->day));
 
         $response->assertStatus(200);
     }
