@@ -43,10 +43,7 @@ class OrderControllerTest extends TestCase
 
         // Creamos menus para usar en los platos
         $this->menu = Menu::factory(5)->create([
-            'month' => now()->month,
-            'week' => 'Setmana 1',
-            'start_date' => now(),
-            'end_date' => now()->addDays(7),
+            'day' => now(),
         ]);
 
         // Creamos tipos de platos
@@ -58,7 +55,6 @@ class OrderControllerTest extends TestCase
 
         $this->dishes = Dish::factory(5)->create([
             'menu_id' => $this->menu->first()->id,
-            'dish_date' => now(),
             'dish_type_id' => $this->dishType->first()->id,
             'options' => json_encode(['option1', 'option2']),
         ]);
@@ -123,7 +119,7 @@ class OrderControllerTest extends TestCase
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->postJson(route('orders.store'), []);
 
-        $response->assertStatus(422)
+        $response->assertStatus(400)
             // ->assertJsonPath('error.code', 'VALIDATION_ERROR')
             ;    
         }

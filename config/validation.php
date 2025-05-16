@@ -92,26 +92,6 @@ return [
         ],
     ],
 
-    'menu_days' => [
-        'store' => [
-            'menu_id' => 'required|integer|exists:menus,id',
-            'day_id' => 'required|integer|exists:days,id',
-        ],
-        'update' => [
-            'menu_id' => 'required|integer|exists:menus,id',
-            'day_id' => 'required|integer|exists:days,id',
-        ],
-    ],
-
-    'days' => [
-        'store' => [
-            'name' => 'required|string|max:255',
-        ],
-        'update' => [
-            'name' => 'required|string|max:255',
-        ],
-    ],
-
     'dishes' => [
         'store' => [
             'menu_id' => 'required|integer|exists:menus,id',

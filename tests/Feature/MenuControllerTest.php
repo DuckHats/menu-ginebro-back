@@ -50,17 +50,14 @@ class MenuControllerTest extends TestCase
     public function it_can_create_a_menu()
     {
         $menuData = [
-            'month' => 1,
-            'week' => 'Setmana 1',
-            'start_date' => '2023-01-01',
-            'end_date' => '2023-01-07',
+            'day' => '2025-01-01',
         ];
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->postJson(route('menus.store'), $menuData);
 
         $response->assertStatus(201);
-        $this->assertDatabaseHas('menus', ['month' => 1]);
+        $this->assertDatabaseHas('menus', ['day' => '2025-01-01']);
     }
 
     /** @test */
@@ -93,24 +90,24 @@ class MenuControllerTest extends TestCase
     /** @test */
     public function it_can_update_a_menu()
     {
-        $updatedData = ['month' => 2];
+        $updatedData = ['day' => '2025-01-02'];
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->putJson(route('menus.update', $this->menu->id), $updatedData);
             
         $response->assertStatus(200);
-        $this->assertDatabaseHas('menus', ['month' => 2]);
+        $this->assertDatabaseHas('menus', ['day' => '2025-01-02']);
     }
 
     /** @test */
     public function it_can_patch_a_menu()
     {
-        $updatedData = ['week' => 'Setmana 2',];
+        $updatedData = ['day' => '2025-01-02'];
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->patchJson(route('menus.patch', $this->menu->id), $updatedData);
 
         $response->assertStatus(200);
-        $this->assertDatabaseHas('menus', ['week' => 'Setmana 2',]);
+        $this->assertDatabaseHas('menus', ['day' => '2025-01-02']);
     }
 
     /** @test */

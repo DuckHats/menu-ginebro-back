@@ -62,11 +62,9 @@ class DishControllerTest extends TestCase
     {
         $dishData = [
             'menu_id' => $this->dish->menu_id,
-            'dish_date' => '2025-05-15',
             'dish_type_id' => $this->dishType->id,
             'options' => json_encode(['option1', 'option2']),
         ];
-
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->postJson(route('dishes.store'), $dishData);
@@ -74,7 +72,7 @@ class DishControllerTest extends TestCase
 
         $response->assertStatus(201);
         $this->assertDatabaseHas('dishes', [
-            'dish_date' => '2025-05-15',
+            'menu_id' => $this->dish->menu_id,
             'dish_type_id' => $this->dishType->id,
         ]);
     }
@@ -112,7 +110,6 @@ class DishControllerTest extends TestCase
     {
         $updatedData = [
             'menu_id' => $this->dish->menu_id,
-            'dish_date' => '2025-05-16',
             'dish_type_id' => $this->dishType->id,
         ];
 
@@ -121,7 +118,7 @@ class DishControllerTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('dishes', [
-            'dish_date' => '2025-05-16',
+            'menu_id' => $this->dish->menu_id,
             'dish_type_id' => $this->dishType->id,
         ]);
     }
