@@ -93,7 +93,7 @@ Route::middleware('throttle:api')->group(function () {
             Route::get(RouteConstants::ORDERS, 'index')->name('orders.index')->middleware('auth:sanctum');
             Route::get(RouteConstants::ORDERS_EXPORT, 'export')->name('orders.export')->middleware('auth:sanctum');
 
-            Route::get(RouteConstants::ORDERS_DETAIL, 'getByDate')->name('orders.getByDate')->middleware('auth:sanctum');
+            Route::get(RouteConstants::ORDERS_DETAIL, 'getByDate')->name('orders.getByDate')/*->middleware('auth:sanctum')*/;
 
             Route::post(RouteConstants::ORDERS_CREATE, 'store')->name('orders.store')->middleware('auth:sanctum');
             Route::put(RouteConstants::ORDERS_UPDATE, 'update')->name('orders.update')->middleware('auth:sanctum');
