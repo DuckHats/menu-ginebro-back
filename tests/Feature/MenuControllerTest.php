@@ -72,8 +72,10 @@ class MenuControllerTest extends TestCase
     /** @test */
     public function it_can_show_a_menu()
     {
+        $menuDate = $this->menu->day;
+
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
-            ->getJson(route('menus.show', $this->menu->day));
+            ->getJson(route('menus.show', $menuDate));
 
         $response->assertStatus(200);
     }
@@ -82,7 +84,7 @@ class MenuControllerTest extends TestCase
     public function it_returns_404_if_menu_not_found()
     {
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
-            ->getJson(route('menus.show', 9999));
+            ->getJson(route('menus.show', '0022-01-12'));
 
         $response->assertStatus(404);
     }
