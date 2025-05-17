@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\OrderStatus;
+use App\Models\OrderType;
 use App\Services\Generic\ExportService;
-use App\Services\Model\OrderStatusService;
+use App\Services\Model\OrderTypeService;
 use Illuminate\Http\Request;
 
-class OrderStatusController extends Controller
+class OrderTypeController extends Controller
 {
-    private $orderStatusService;
+    private $orderTypeService;
 
-    public function __construct(OrderStatusService $orderStatusService)
+    public function __construct(OrderTypeService $orderTypeService)
     {
-        $this->orderStatusService = $orderStatusService;
+        $this->orderTypeService = $orderTypeService;
     }
 
     /**
@@ -23,7 +23,7 @@ class OrderStatusController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->orderStatusService->getAll($request);
+        return $this->orderTypeService->getAll($request);
     }
 
     /**
@@ -33,7 +33,7 @@ class OrderStatusController extends Controller
      */
     public function store(Request $request)
     {
-        return $this->orderStatusService->create($request);
+        return $this->orderTypeService->create($request);
     }
 
     /**
@@ -44,7 +44,7 @@ class OrderStatusController extends Controller
      */
     public function show(Request $request, $id)
     {
-        return $this->orderStatusService->getById($request, $id);
+        return $this->orderTypeService->getById($request, $id);
     }
 
     /**
@@ -55,7 +55,7 @@ class OrderStatusController extends Controller
      */
     public function update(Request $request, $id)
     {
-        return $this->orderStatusService->update($request, $id);
+        return $this->orderTypeService->update($request, $id);
     }
 
     /**
@@ -66,7 +66,7 @@ class OrderStatusController extends Controller
      */
     public function patch(Request $request, $id)
     {
-        return $this->orderStatusService->patch($request, $id);
+        return $this->orderTypeService->patch($request, $id);
     }
 
     /**
@@ -77,7 +77,7 @@ class OrderStatusController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        return $this->orderStatusService->delete($request, $id);
+        return $this->orderTypeService->delete($request, $id);
     }
 
     /**
@@ -87,7 +87,7 @@ class OrderStatusController extends Controller
      */
     public function export(Request $request)
     {
-        $exportService = new ExportService(new OrderStatus);
+        $exportService = new ExportService(new OrderType);
 
         return $exportService->export($request);
     }

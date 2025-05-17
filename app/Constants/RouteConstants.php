@@ -113,6 +113,9 @@ class RouteConstants
     // Order Status
     const ORDER_STATUS = '/orders_status';
 
+    // Order Type
+    const ORDER_TYPE = '/orders_type';
+
     // Menu Days Routes
     const MENU_DAYS = '/menu_days';
 

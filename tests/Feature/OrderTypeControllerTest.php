@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Models\OrderStatus;
+use App\Models\OrderType;
 use App\Models\User;
 use App\Models\UserType;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
-class OrderStatusControllerTest extends TestCase
+class OrderTypeControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
@@ -17,7 +17,7 @@ class OrderStatusControllerTest extends TestCase
 
     protected $token;
 
-    protected $orderStatus;
+    protected $orderType;
 
     protected $order;
 
@@ -36,11 +36,11 @@ class OrderStatusControllerTest extends TestCase
         $this->token = $this->user->createToken('auth_token')->plainTextToken;
     }
 
-    public function test_it_can_list_order_status()
+    public function test_it_can_list_order_types()
     {
-        OrderStatus::factory(5)->create();
+        OrderType::factory(5)->create();
         $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
-            ->getJson(route('orderStatus.index'));
+            ->getJson(route('orderType.index'));
 
         $response->assertStatus(200);
     }

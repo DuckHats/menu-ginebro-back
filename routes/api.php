@@ -7,6 +7,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderDetailsController;
 use App\Http\Controllers\OrderStatusController;
+use App\Http\Controllers\OrderTypeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -108,7 +109,12 @@ Route::middleware('throttle:api')->group(function () {
             Route::get(RouteConstants::ORDER_STATUS, 'index')->name('orderStatus.index')->middleware('auth:sanctum');
         });
 
-        // 
+        // Order status routes
+        Route::controller(OrderTypeController::class)->group(function () {
+            Route::get(RouteConstants::ORDER_TYPE, 'index')->name('orderType.index')->middleware('auth:sanctum');
+        });
+
+        //
 
         // Order Details routes
         // Route::controller(OrderDetailsController::class)->group(function () {
