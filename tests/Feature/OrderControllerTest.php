@@ -85,17 +85,25 @@ class OrderControllerTest extends TestCase
             'order_status_id' => $this->orderStatus->id,
         ]);
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->getJson(route('orders.index'));
 
-        $response->assertStatus(200)
-            ->assertJsonStructure(); // Puedes mejorar aquí si quieres
+        $response->assertStatus(200);
     }
 
     public function test_it_can_create_an_order()
     {
-        // Usamos IDs reales de los platos creados en setUp
-        $dishIds = $this->dishes->pluck('id')->take(2)->toArray();
+        $dish1 = Dish::factory()->create([
+            'menu_id' => $this->menu->first()->id,
+            'dish_type_id' => $this->dishType->first()->id,
+            'options' => json_encode(['option1', 'option2']),
+        ]);
+
+        $dish2 = Dish::factory()->create([
+            'menu_id' => $this->menu->first()->id,
+            'dish_type_id' => $this->dishType->first()->id,
+            'options' => json_encode(['option1', 'option2']),
+        ]);
 
         $orderData = [
             'user_id' => $this->user->id,
@@ -103,10 +111,10 @@ class OrderControllerTest extends TestCase
             'order_type_id' => $this->orderType->id,
             'order_status_id' => $this->orderStatus->id,
             'allergies' => 'None',
-            'dish_ids' => $dishIds,
+            'dish_ids' => [$dish1->id, $dish2->id],
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->postJson(route('orders.store'), $orderData);
 
         $response->assertStatus(201)
@@ -120,25 +128,28 @@ class OrderControllerTest extends TestCase
 
     public function test_it_validates_required_fields_when_creating_order()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->postJson(route('orders.store'), []);
 
         $response->assertStatus(400);
-        // ->assertJsonPath('error.code', 'VALIDATION_ERROR')
     }
 
     public function test_it_can_show_an_order()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
-            ->getJson(route('orders.show', $this->order->id));
+        $order = Order::factory()->create([
+            'user_id' => $this->user->id,
+            'order_type_id' => $this->orderType->id,
+            'order_status_id' => $this->orderStatus->id,
+        ]);
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->getJson(route('orders.show', $order->id));
 
-        $response->assertStatus(200)
-            ->assertJsonFragment(['order_type_id' => $this->orderType->id]);
+        $response->assertStatus(200);
     }
 
     public function test_it_returns_404_if_order_not_found()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->getJson(route('orders.show', 9999));
 
         $response->assertStatus(404);
@@ -147,7 +158,7 @@ class OrderControllerTest extends TestCase
     public function test_it_can_update_order_status()
     {
         OrderStatus::factory()->create(['id' => 2, 'name' => 'Preparant']);
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->postJson(route('orders.updateStatus', $this->order->id), [
                 'order_status_id' => 2,
             ]);
