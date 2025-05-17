@@ -91,6 +91,36 @@ class OrderControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_it_can_list_orders_by_date()
+    {
+        $date = now()->format('Y-m-d');
+        Order::factory(3)->create([
+            'user_id' => $this->user->id,
+            'order_type_id' => $this->orderType->id,
+            'order_status_id' => $this->orderStatus->id,
+            'order_date' => now()->format('Y-m-d'),
+        ]);
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->getJson(route('orders.ordersbyDate', $date));
+
+        $response->assertStatus(200);
+    }
+
+    public function test_it_can_list_orders_by_user()
+    {
+        Order::factory(3)->create([
+            'user_id' => $this->user->id,
+            'order_type_id' => $this->orderType->id,
+            'order_status_id' => $this->orderStatus->id,
+        ]);
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->getJson(route('orders.ordersbyUser', $this->user->id));
+
+        $response->assertStatus(200);
+    }
+
     public function test_it_can_create_an_order()
     {
         $dish1 = Dish::factory()->create([
