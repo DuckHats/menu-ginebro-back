@@ -17,12 +17,6 @@ class OrderStatusControllerTest extends TestCase
 
     protected $token;
 
-    protected $orderStatus;
-
-    protected $order;
-
-    protected $dishType;
-
     protected function setUp(): void
     {
         parent::setUp();

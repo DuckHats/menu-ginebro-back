@@ -19,10 +19,6 @@ class OrderTypeControllerTest extends TestCase
 
     protected $orderType;
 
-    protected $order;
-
-    protected $dishType;
-
     protected function setUp(): void
     {
         parent::setUp();
