@@ -80,11 +80,9 @@ class DishController extends Controller
         return $this->dishService->delete($request, $id);
     }
 
-
     /**
      * Export the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function export(Request $request)

@@ -3,8 +3,6 @@
 // Path: config/validation.php
 // Validation rules for all the api endpoints
 
-use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Week;
-
 return [
     'auth' => [
         'login' => [
@@ -155,6 +153,5 @@ return [
             'name' => 'required|string|max:255',
         ],
     ],
-
 
 ];

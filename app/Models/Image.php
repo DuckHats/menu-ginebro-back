@@ -11,4 +11,3 @@ class Image extends Model
 
     protected $fillable = ['path', 'start_date', 'end_date', 'month', 'year'];
 }
-

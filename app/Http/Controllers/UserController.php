@@ -135,7 +135,7 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    //Uncomment this method if you want to enable bulk user creation
+    // Uncomment this method if you want to enable bulk user creation
     // public function bulkUsers(Request $request)
     // {
     //     return $this->userService->bulkUsers($request);

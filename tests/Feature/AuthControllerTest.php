@@ -14,15 +14,21 @@ class AuthControllerTest extends TestCase
     use DatabaseTransactions;
 
     protected $user;
+
     protected $cookUser;
+
     protected $adminUser;
 
     protected $token;
+
     protected $adminToken;
+
     protected $cookToken;
 
     protected $userType;
+
     protected $adminType;
+
     protected $cookType;
 
     protected function setUp(): void
@@ -31,7 +37,7 @@ class AuthControllerTest extends TestCase
 
         $this->adminType = UserType::factory()->create(['id' => 1, 'name' => 'administrador']);
         $this->userType = UserType::factory()->create(['id' => 2, 'name' => 'usuari']);
-        $this->cookType = UserType::factory()->create(['id' => 3,'name' => 'cuina']);
+        $this->cookType = UserType::factory()->create(['id' => 3, 'name' => 'cuina']);
 
         $this->user = User::factory()->create([
             'password' => Hash::make('password123'),
@@ -82,7 +88,6 @@ class AuthControllerTest extends TestCase
             'password_confirmation' => 'password123',
             'user_type_id' => $this->adminType->id,
         ];
-        
 
         $response = $this->postJson(route('auth.register'), $userData);
         $response->assertStatus(201);
@@ -159,7 +164,7 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_can_logout_a_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)->postJson(route('auth.logout'));
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)->postJson(route('auth.logout'));
 
         $response->assertStatus(200);
     }
@@ -210,7 +215,7 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_can_login_admin_user_with_token()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->adminToken)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
             ->postJson(route('auth.login'), [
                 'user' => $this->adminUser->email,
                 'password' => 'password123',
@@ -222,7 +227,7 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_can_login_cook_user_with_token()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->cookToken)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->cookToken)
             ->postJson(route('auth.login'), [
                 'user' => $this->cookUser->email,
                 'password' => 'password123',

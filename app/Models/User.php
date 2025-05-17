@@ -10,16 +10,18 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-
     const STATUS_INACTIVE = 0;
+
     const STATUS_ACTIVE = 1;
 
     const ROLE_ADMIN = 1;
+
     const ROLE_COOK = 2;
+
     const ROLE_USER = 3;
 
     // Per a l'usuari normal
-    //const ROLE_USER = 'usuari';
+    // const ROLE_USER = 'usuari';
 
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -62,12 +64,10 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-
     public function userType()
     {
         return $this->belongsTo(UserType::class);
     }
-
 
     public function isAdmin()
     {

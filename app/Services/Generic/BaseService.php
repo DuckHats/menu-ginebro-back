@@ -40,7 +40,6 @@ abstract class BaseService implements ServiceInterface
     /**
      * Get a menu by ID.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -101,7 +100,6 @@ abstract class BaseService implements ServiceInterface
     /**
      * Create a new item.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request, string $imageFieldName = 'image_url')
@@ -213,7 +211,6 @@ abstract class BaseService implements ServiceInterface
             return ApiResponse::error('DELETE_FAILED', 'Error while deleting item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
     }
-
 
     protected function isAuthorized(string $ability, $model = null)
     {

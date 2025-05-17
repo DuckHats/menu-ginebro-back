@@ -7,7 +7,6 @@ use App\Services\Generic\ExportService;
 use App\Services\Model\OrderService;
 use Illuminate\Http\Request;
 
-
 class OrderController extends Controller
 {
     private $orderService;
@@ -95,7 +94,6 @@ class OrderController extends Controller
     /**
      * Export the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function export(Request $request)

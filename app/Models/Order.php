@@ -14,7 +14,7 @@ class Order extends Model
         'order_date',
         'allergies',
         'order_type_id',
-        'order_status_id'
+        'order_status_id',
     ];
 
     public function user()
@@ -27,12 +27,10 @@ class Order extends Model
         return $this->hasMany(orderDetail::class);
     }
 
-
     // public function dishes()
     // {
     //     return $this->belongsToMany(Dish::class, 'order_details')->withTimestamps();
     // }
-
 
     public function orderStatus()
     {

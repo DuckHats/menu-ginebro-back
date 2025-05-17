@@ -17,7 +17,7 @@ class UserService
         try {
             $query = User::query();
             // Uncomment the following line if you want to apply relations
-            //$this->applyRelations($query, $request);
+            // $this->applyRelations($query, $request);
 
             $users = $query->get();
 
@@ -373,7 +373,6 @@ class UserService
             );
         }
     }
-
 
     // Uncomment this method if you want to implement relations
     // private function applyRelations($query, Request $request)

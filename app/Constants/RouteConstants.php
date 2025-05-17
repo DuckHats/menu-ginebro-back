@@ -93,7 +93,6 @@ class RouteConstants
 
     const DISHES_DESTROY = '/dishes/{id}';
 
-
     // Order Routes
     const ORDERS = '/orders';
 
@@ -111,7 +110,9 @@ class RouteConstants
 
     const ORDERS_UPDATE_STATUS = '/orders/updateStatus/{id}';
 
-    
+    // Order Status
+    const ORDER_STATUS = '/orders_status';
+
     // Menu Days Routes
     const MENU_DAYS = '/menu_days';
 
@@ -127,7 +128,6 @@ class RouteConstants
 
     const MENU_DAYS_DESTROY = '/menu_days/{id}';
 
-    
     // Order Details Routes
     const ORDER_DETAILS = '/order_details';
 
@@ -142,5 +142,4 @@ class RouteConstants
     const ORDER_DETAILS_PATCH = '/order_details/{id}';
 
     const ORDER_DETAILS_DESTROY = '/order_details/{id}';
-
 }

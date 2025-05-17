@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('order_type_id')->constrained('order_types')->onDelete('cascade');
             $table->foreignId('order_status_id')->default(1)->constrained('order_status')->onDelete('cascade');
             $table->timestamps();
-        }); 
+        });
     }
 
     /**
@@ -29,5 +29,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('orders');
     }
-    
 };

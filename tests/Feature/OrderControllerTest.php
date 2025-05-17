@@ -6,10 +6,10 @@ use App\Models\Dish;
 use App\Models\DishType;
 use App\Models\Menu;
 use App\Models\Order;
+use App\Models\OrderStatus;
+use App\Models\OrderType;
 use App\Models\User;
 use App\Models\UserType;
-use App\Models\OrderType;
-use App\Models\OrderStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -19,12 +19,19 @@ class OrderControllerTest extends TestCase
     use DatabaseTransactions;
 
     protected $user;
+
     protected $token;
+
     protected $orderType;
+
     protected $orderStatus;
+
     protected $order;
+
     protected $dishes;
+
     protected $menu;
+
     protected $dishType;
 
     protected function setUp(): void
@@ -52,7 +59,6 @@ class OrderControllerTest extends TestCase
             'name' => 'Primer plat',
         ]);
 
-
         $this->dishes = Dish::factory(5)->create([
             'menu_id' => $this->menu->first()->id,
             'dish_type_id' => $this->dishType->first()->id,
@@ -79,11 +85,11 @@ class OrderControllerTest extends TestCase
             'order_status_id' => $this->orderStatus->id,
         ]);
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('orders.index'));
 
         $response->assertStatus(200)
-                 ->assertJsonStructure(); // Puedes mejorar aquí si quieres
+            ->assertJsonStructure(); // Puedes mejorar aquí si quieres
     }
 
     public function test_it_can_create_an_order()
@@ -100,12 +106,11 @@ class OrderControllerTest extends TestCase
             'dish_ids' => $dishIds,
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('orders.store'), $orderData);
 
-
         $response->assertStatus(201)
-                 ->assertJsonFragment(['order_date' => '2025-05-15']);
+            ->assertJsonFragment(['order_date' => '2025-05-15']);
 
         $this->assertDatabaseHas('orders', [
             'order_date' => '2025-05-15',
@@ -115,17 +120,16 @@ class OrderControllerTest extends TestCase
 
     public function test_it_validates_required_fields_when_creating_order()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('orders.store'), []);
 
-        $response->assertStatus(400)
-            // ->assertJsonPath('error.code', 'VALIDATION_ERROR')
-            ;    
-        }
+        $response->assertStatus(400);
+        // ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+    }
 
     public function test_it_can_show_an_order()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('orders.show', $this->order->id));
 
         $response->assertStatus(200)
@@ -134,22 +138,20 @@ class OrderControllerTest extends TestCase
 
     public function test_it_returns_404_if_order_not_found()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('orders.show', 9999));
 
         $response->assertStatus(404);
     }
+
     public function test_it_can_update_order_status()
     {
-       OrderStatus::factory()->create(['id' => 2, 'name' => 'Preparant']);
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        OrderStatus::factory()->create(['id' => 2, 'name' => 'Preparant']);
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('orders.updateStatus', $this->order->id), [
                 'order_status_id' => 2,
             ]);
 
         $response->assertStatus(200);
     }
-
-
-
 }

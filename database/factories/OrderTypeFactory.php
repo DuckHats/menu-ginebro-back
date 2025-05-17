@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\OrderType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,8 +14,6 @@ class OrderTypeFactory extends Factory
      *
      * @return array<string, mixed>
      */
-
-
     public function definition(): array
     {
         return [

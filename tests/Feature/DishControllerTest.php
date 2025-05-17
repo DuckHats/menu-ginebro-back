@@ -3,10 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Dish;
+use App\Models\DishType;
 use App\Models\Menu;
 use App\Models\User;
 use App\Models\UserType;
-use App\Models\DishType;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -16,8 +16,11 @@ class DishControllerTest extends TestCase
     use DatabaseTransactions;
 
     protected $user;
+
     protected $token;
+
     protected $dish;
+
     protected $dishType;
 
     protected function setUp(): void
@@ -50,8 +53,8 @@ class DishControllerTest extends TestCase
             'menu_id' => $this->dish->menu_id,
             'dish_type_id' => $this->dishType->id,
         ]);
-        
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('dishes.index'));
 
         $response->assertStatus(200);
@@ -66,9 +69,8 @@ class DishControllerTest extends TestCase
             'options' => json_encode(['option1', 'option2']),
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('dishes.store'), $dishData);
-
 
         $response->assertStatus(201);
         $this->assertDatabaseHas('dishes', [
@@ -80,7 +82,7 @@ class DishControllerTest extends TestCase
     /** @test */
     public function it_validates_required_fields_when_creating_dish()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('dishes.store'), []);
 
         $response->assertStatus(400);
@@ -89,7 +91,7 @@ class DishControllerTest extends TestCase
     /** @test */
     public function it_can_show_a_dish_with_dish_type()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('dishes.show', $this->dish->id));
 
         $response->assertStatus(200)
@@ -99,7 +101,7 @@ class DishControllerTest extends TestCase
     /** @test */
     public function it_returns_404_if_dish_not_found()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('dishes.show', 9999));
 
         $response->assertStatus(404);
@@ -113,7 +115,7 @@ class DishControllerTest extends TestCase
             'dish_type_id' => $this->dishType->id,
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->putJson(route('dishes.update', $this->dish->id), $updatedData);
 
         $response->assertStatus(200);
@@ -128,7 +130,7 @@ class DishControllerTest extends TestCase
     {
         $updatedData = ['dish_type_id' => $this->dishType->id];
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->patchJson(route('dishes.patch', $this->dish->id), $updatedData);
 
         $response->assertStatus(200);
@@ -138,7 +140,7 @@ class DishControllerTest extends TestCase
     /** @test */
     public function it_can_delete_a_dish()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->deleteJson(route('dishes.destroy', $this->dish->id));
 
         $response->assertStatus(204);

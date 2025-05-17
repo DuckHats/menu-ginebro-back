@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
-
     public function __construct() {}
 
     public function register(Request $request)
