@@ -2,25 +2,25 @@
 
 namespace App\Services\Model;
 
-use App\Http\Resources\DishResource;
-use App\Models\Dish;
+use App\Http\Resources\OrderTypeResource;
+use App\Models\OrderType;
 use App\Services\Generic\BaseService;
 
-class DishService extends BaseService
+class OrderTypeService extends BaseService
 {
     public function __construct()
     {
-        $this->model = new Dish;
+        $this->model = new OrderType;
     }
 
     protected function getRelations(): array
     {
-        return ['dishType'];
+        return [];
     }
 
     protected function resourceClass()
     {
-        return DishResource::class;
+        return OrderTypeResource::class;
     }
 
     protected function getSyncableRelations(): array

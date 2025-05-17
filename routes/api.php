@@ -2,13 +2,13 @@
 
 use App\Constants\RouteConstants;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\DishController;
-use Illuminate\Http\Request;
 use App\Http\Controllers\MenuController;
-use App\Http\Controllers\MenuDaysController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderDetailsController;
+use App\Http\Controllers\OrderStatusController;
+use App\Http\Controllers\OrderTypeController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,7 +56,7 @@ Route::middleware('throttle:api')->group(function () {
 
             Route::post(RouteConstants::USERS_DISABLE, 'disableUser')->name('users.disable')->middleware('auth:sanctum');
             Route::post(RouteConstants::USERS_ENABLE, 'enableUser')->name('users.enable')->middleware('auth:sanctum');
-            
+
         });
 
         // Menu routes
@@ -104,18 +104,17 @@ Route::middleware('throttle:api')->group(function () {
             Route::post(RouteConstants::ORDERS_UPDATE_STATUS, 'updateStatus')->name('orders.updateStatus')->middleware('auth:sanctum');
         });
 
-        // Menu days routes
-        Route::controller(MenuDaysController::class)->group(function () {
-            Route::get(RouteConstants::MENU_DAYS, 'index')->name('menu_days.index')->middleware('auth:sanctum');
-            Route::get(RouteConstants::MENU_DAYS_EXPORT, 'export')->name('menu_days.export')->middleware('auth:sanctum');
-
-            Route::get(RouteConstants::MENU_DAYS_DETAIL, 'show')->name('menu_days.show')->middleware('auth:sanctum');
-
-            Route::post(RouteConstants::MENU_DAYS_CREATE, 'store')->name('menu_days.store')->middleware('auth:sanctum');
-            Route::put(RouteConstants::MENU_DAYS_UPDATE, 'update')->name('menu_days.update')->middleware('auth:sanctum');
-            Route::patch(RouteConstants::MENU_DAYS_PATCH, 'patch')->name('menu_days.patch')->middleware('auth:sanctum');
-            Route::delete(RouteConstants::MENU_DAYS_DESTROY, 'destroy')->name('menu_days.destroy')->middleware('auth:sanctum');
+        // Order status routes
+        Route::controller(OrderStatusController::class)->group(function () {
+            Route::get(RouteConstants::ORDER_STATUS, 'index')->name('orderStatus.index')->middleware('auth:sanctum');
         });
+
+        // Order status routes
+        Route::controller(OrderTypeController::class)->group(function () {
+            Route::get(RouteConstants::ORDER_TYPE, 'index')->name('orderType.index')->middleware('auth:sanctum');
+        });
+
+        //
 
         // Order Details routes
         // Route::controller(OrderDetailsController::class)->group(function () {

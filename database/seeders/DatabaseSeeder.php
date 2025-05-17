@@ -31,8 +31,7 @@ class DatabaseSeeder extends Seeder
             DishTypeSeeder::class,
             DishesSeeder::class,
             OrderDetailsSeeder::class,
-            
-            
+
         ]);
     }
 }

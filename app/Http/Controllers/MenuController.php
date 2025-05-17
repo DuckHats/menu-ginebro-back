@@ -7,7 +7,6 @@ use App\Services\Generic\ExportService;
 use App\Services\Model\MenuService;
 use Illuminate\Http\Request;
 
-
 class MenuController extends Controller
 {
     private $menuService;
@@ -105,11 +104,9 @@ class MenuController extends Controller
         return $this->menuService->getById($request, $authUserid);
     }
 
-
     /**
      * Export the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function export(Request $request)

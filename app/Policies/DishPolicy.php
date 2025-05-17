@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\User;
 
-
 class DishPolicy
 {
     public function create(User $user): bool

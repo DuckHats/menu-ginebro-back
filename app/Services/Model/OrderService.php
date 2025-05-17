@@ -2,14 +2,13 @@
 
 namespace App\Services\Model;
 
+use App\Helpers\ApiResponse;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Services\Generic\BaseService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Helpers\ApiResponse;
-use Illuminate\Http\Request;
-
 
 class OrderService extends BaseService
 {
@@ -27,7 +26,6 @@ class OrderService extends BaseService
             'orderStatus',
         ];
     }
-
 
     protected function resourceClass()
     {

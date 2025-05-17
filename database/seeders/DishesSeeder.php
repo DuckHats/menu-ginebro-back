@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Dish;
 use App\Models\Menu;
+use Illuminate\Database\Seeder;
 
 class DishesSeeder extends Seeder
 {

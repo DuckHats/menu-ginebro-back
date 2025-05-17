@@ -52,8 +52,6 @@ class UserControllerTest extends TestCase
             'user_type_id' => $cookType->id,
         ]);
 
-
-
         $this->token = $this->user->createToken('auth_token')->plainTextToken;
         $this->adminToken = $this->adminUser->createToken('auth_token')->plainTextToken;
         $this->cookToken = $this->cookUser->createToken('auth_token')->plainTextToken;
@@ -64,7 +62,7 @@ class UserControllerTest extends TestCase
     {
         User::factory(5)->create();
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->adminToken)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
             ->getJson(route('users.index'));
         $response->assertStatus(200);
     }
@@ -82,7 +80,7 @@ class UserControllerTest extends TestCase
             'status' => User::STATUS_ACTIVE,
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('users.store'), $userData);
 
         $response->assertStatus(201);
@@ -91,7 +89,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_validates_required_fields_when_creating_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('users.store'), []);
 
         $response->assertStatus(400);
@@ -100,7 +98,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_can_show_a_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->adminToken)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
             ->getJson(route('users.show', $this->user->id));
 
         $response->assertStatus(200);
@@ -109,7 +107,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_returns_404_if_user_not_found()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->adminToken)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
             ->getJson(route('users.show', 9999));
 
         $response->assertStatus(404);
@@ -118,7 +116,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_check_for_admin_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->adminToken)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
             ->getJson(route('users.adminCheck'));
 
         $response->assertStatus(200)
@@ -128,7 +126,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_check_for_admin_user_fails()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('users.adminCheck'));
 
         $response->assertStatus(200)
@@ -140,7 +138,7 @@ class UserControllerTest extends TestCase
     {
         $updatedData = ['name' => 'Updated Name'];
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->patchJson(route('users.patch', $this->user->id), $updatedData);
 
         $response->assertStatus(200);
@@ -150,7 +148,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_can_delete_a_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->deleteJson(route('users.destroy', $this->user->id));
 
         $response->assertStatus(204);
@@ -162,7 +160,7 @@ class UserControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->adminToken)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
             ->postJson(route('users.disable', $user->id));
 
         $response->assertStatus(200);
@@ -178,7 +176,7 @@ class UserControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->adminToken)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
             ->postJson(route('users.enable', $user->id));
 
         $response->assertStatus(200);
@@ -192,7 +190,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_should_fail_if_i_want_to_disable_other_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('users.disable', $this->cookUser->id));
 
         $response->assertStatus(500);

@@ -9,9 +9,9 @@ class OrderStatus extends Model
 {
     use HasFactory;
 
-    protected $table = 'order_status'; // Define la tabla asociada
+    protected $table = 'order_status';
 
-    protected $fillable = ['name']; // Define los campos que se pueden llenar de forma masiva
+    protected $fillable = ['name'];
 
     /**
      * Relación con Orders: Un tipo de pedido puede tener muchos pedidos.

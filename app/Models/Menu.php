@@ -16,4 +16,3 @@ class Menu extends Model
         return $this->hasMany(Dish::class);
     }
 }
-

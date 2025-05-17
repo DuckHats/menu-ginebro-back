@@ -13,7 +13,7 @@ class Dish extends Model
         'menu_id',
         'dish_date',
         'dish_type_id',
-        'options'
+        'options',
     ];
 
     protected $casts = ['options' => 'array'];
