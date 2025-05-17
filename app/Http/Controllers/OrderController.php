@@ -27,6 +27,17 @@ class OrderController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function indexByUser(Request $request, $userId)
+    {
+        return $this->orderService->getByUser($request, $userId);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @return \Illuminate\Http\Response
@@ -53,7 +64,7 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function getByDate(Request $request, $date)
+    public function indexBydate(Request $request, $date)
     {
         return $this->orderService->getByDate($request, $date);
     }

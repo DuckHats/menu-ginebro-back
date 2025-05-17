@@ -96,9 +96,13 @@ class RouteConstants
     // Order Routes
     const ORDERS = '/orders';
 
+    const ORDERS_BY_DATE = '/orders_by_date/{date}';
+
+    const ORDERS_BY_USER = '/orders_by_user/{userId}';
+
     const ORDERS_EXPORT = '/orders/export';
 
-    const ORDERS_DETAIL = '/orders/{date}';
+    const ORDERS_DETAIL = '/orders/{id}';
 
     const ORDERS_CREATE = '/orders';
 
