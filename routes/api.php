@@ -64,7 +64,7 @@ Route::middleware('throttle:api')->group(function () {
             Route::get(RouteConstants::MENUS, 'index')->name('menus.index')->middleware('auth:sanctum');
             Route::get(RouteConstants::MENUS_EXPORT, 'export')->name('menus.export')->middleware('auth:sanctum');
 
-            Route::get(RouteConstants::MENUS_DETAIL, 'show')->name('menus.show')/*->middleware('auth:sanctum')*/;
+            Route::get(RouteConstants::MENUS_DETAIL, 'show')->name('menus.show')->middleware('auth:sanctum');
 
             Route::post(RouteConstants::MENUS_CREATE, 'store')->name('menus.store')->middleware('auth:sanctum');
             Route::put(RouteConstants::MENUS_UPDATE, 'update')->name('menus.update')->middleware('auth:sanctum');
