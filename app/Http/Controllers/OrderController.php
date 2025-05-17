@@ -48,6 +48,17 @@ class OrderController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getByDate(Request $request, $date)
+    {
+        return $this->orderService->getByDate($request, $date);
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  int  $id

@@ -98,7 +98,7 @@ class RouteConstants
 
     const ORDERS_EXPORT = '/orders/export';
 
-    const ORDERS_DETAIL = '/orders/{id}';
+    const ORDERS_DETAIL = '/orders/{date}';
 
     const ORDERS_CREATE = '/orders';
 

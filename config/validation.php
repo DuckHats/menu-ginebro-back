@@ -90,7 +90,6 @@ return [
         ],
         'patch' => [
             'day' => 'nullable|date',
-
         ],
     ],
 
@@ -133,6 +132,9 @@ return [
 
         'updateStatus' => [
             'order_status_id' => 'required|integer|exists:order_status,id',
+        ],
+        'getByDate' => [
+            'date' => 'required|date',
         ],
     ],
     'order_details' => [

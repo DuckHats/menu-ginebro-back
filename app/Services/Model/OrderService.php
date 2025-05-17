@@ -117,4 +117,21 @@ class OrderService extends BaseService
             return ApiResponse::error('UPDATE_FAILED', 'Error while updating item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
     }
+
+    public function getByDate(Request $request, $date)
+    {
+        try {
+            $item = Order::where('order_date', $date)->with($this->getRelations())->first();
+
+            if ($item) {
+                return ApiResponse::success(new ($this->resourceClass())($item), 'Item retrieved successfully.', ApiResponse::OK_STATUS);
+            } else {
+                return ApiResponse::error('NOT_FOUND', 'Item not found.', [], ApiResponse::NOT_FOUND_STATUS);
+            }
+        } catch (\Throwable $e) {
+            Log::error('Error retrieving order by date', ['exception' => $e->getMessage()]);
+
+            return ApiResponse::error('RETRIEVE_FAILED', 'Error while retrieving item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
+        }
+    }
 }

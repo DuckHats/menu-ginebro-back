@@ -3,6 +3,7 @@
 namespace App\Services\Model;
 
 use App\Helpers\ApiResponse;
+use App\Helpers\ValidationHelper;
 use App\Http\Resources\MenuResource;
 use App\Models\Menu;
 use App\Services\Generic\BaseService;
@@ -40,7 +41,6 @@ class MenuService extends BaseService
     public function getByDate(Request $request, $day)
     {
 
-
         try {
 
             // Check if the user is authorized to show a menu by date
@@ -49,7 +49,6 @@ class MenuService extends BaseService
             // }
 
             $query = $this->model->where('day', $day);
-
 
             $relations = $this->getRelations();
             if (! empty($relations)) {
