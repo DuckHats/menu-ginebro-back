@@ -21,8 +21,8 @@ class MenuPolicy
         return $user->isAdmin();
     }
 
-    public function getByDate (User $user): bool
-    {
-        return $user->isAdmin() || $user->isCook() || $user->isUser();
-    }
+    // public function getByDate (User $user): bool
+    // {
+    //     return $user->isAdmin() || $user->isCook() || $user->isUser();
+    // }
 }

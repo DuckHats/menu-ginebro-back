@@ -44,9 +44,9 @@ class MenuService extends BaseService
         try {
 
             // Check if the user is authorized to show a menu by date
-            if (! $this->isAuthorized('getByDate')) {
-                return ApiResponse::error('UNAUTHORIZED', 'No tens permisos.', [], ApiResponse::FORBIDDEN_STATUS);
-            }
+            // if (! $this->isAuthorized('getByDate')) {
+            //     return ApiResponse::error('UNAUTHORIZED', 'No tens permisos.', [], ApiResponse::FORBIDDEN_STATUS);
+            // }
 
             $query = $this->model->where('day', $day);
 
