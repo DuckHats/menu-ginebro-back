@@ -4,7 +4,6 @@ use App\Constants\RouteConstants;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DishController;
 use App\Http\Controllers\MenuController;
-use App\Http\Controllers\MenuDaysController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderDetailsController;
 use App\Http\Controllers\OrderStatusController;
@@ -104,10 +103,12 @@ Route::middleware('throttle:api')->group(function () {
             Route::post(RouteConstants::ORDERS_UPDATE_STATUS, 'updateStatus')->name('orders.updateStatus')->middleware('auth:sanctum');
         });
 
-        // Order routes
+        // Order status routes
         Route::controller(OrderStatusController::class)->group(function () {
             Route::get(RouteConstants::ORDER_STATUS, 'index')->name('orderStatus.index')->middleware('auth:sanctum');
         });
+
+        // 
 
         // Order Details routes
         // Route::controller(OrderDetailsController::class)->group(function () {
