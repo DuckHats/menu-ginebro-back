@@ -45,6 +45,7 @@ Route::middleware('throttle:api')->group(function () {
             Route::get(RouteConstants::USERS, 'index')->name('users.index')->middleware('auth:sanctum');
             Route::get(RouteConstants::USERS_ME, 'me')->name('users.me')->middleware('auth:sanctum');
             Route::get(RouteConstants::USERS_EXPORT, 'export')->name('users.export')->middleware('auth:sanctum');
+            Route::post(RouteConstants::USERS_IMPORT, 'import')->name('users.import')->middleware('auth:sanctum');
 
             Route::get(RouteConstants::USERS_ADMIN_CHECK, 'is_admin')->name('users.adminCheck')->middleware('auth:sanctum');
             Route::get(RouteConstants::USERS_DETAIL, 'show')->name('users.show')->middleware('auth:sanctum');
@@ -63,6 +64,7 @@ Route::middleware('throttle:api')->group(function () {
         Route::controller(MenuController::class)->group(function () {
             Route::get(RouteConstants::MENUS, 'index')->name('menus.index')->middleware('auth:sanctum');
             Route::get(RouteConstants::MENUS_EXPORT, 'export')->name('menus.export')->middleware('auth:sanctum');
+            Route::post(RouteConstants::MENUS_IMPORT, 'import')->name('menus.import')->middleware('auth:sanctum');
 
             Route::get(RouteConstants::MENUS_DETAIL, 'show')->name('menus.show')/*->middleware('auth:sanctum')*/;
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use App\Services\Generic\ExportService;
+use App\Services\Generic\ImportService;
 use App\Services\Model\MenuService;
 use Illuminate\Http\Request;
 
@@ -114,5 +115,17 @@ class MenuController extends Controller
         $exportService = new ExportService(new Menu);
 
         return $exportService->export($request);
+    }
+
+    /**
+     * Import the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function import(Request $request)
+    {
+        $importService = new ImportService(new Menu);
+
+        return $importService->import($request);
     }
 }
