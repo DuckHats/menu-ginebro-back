@@ -195,4 +195,25 @@ class OrderControllerTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    public function test_it_can_export_orders_in_json()
+    {
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->getJson(route('orders.export', ['format' => 'json']));
+        $response->assertStatus(200);
+    }
+
+    public function test_it_can_export_orders_in_excel()
+    {
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->getJson(route('orders.export', ['format' => 'xlsx']));
+        $response->assertStatus(200);
+    }
+
+    public function test_it_can_export_orders_in_csv()
+    {
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->getJson(route('orders.export', ['format' => 'csv']));
+        $response->assertStatus(200);
+    }
 }

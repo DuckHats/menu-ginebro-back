@@ -20,7 +20,7 @@ class OrderService extends BaseService
     protected function getRelations(): array
     {
         return [
-            'orderDetails',
+            'orderDetail',
             'user',
             'orderType',
             'orderStatus',
@@ -34,7 +34,7 @@ class OrderService extends BaseService
 
     protected function getSyncableRelations(): array
     {
-        return ['orderDetails'];
+        return ['orderDetail'];
     }
 
     public function createOrder(Request $request, string $imageFieldName = 'image_url')
@@ -64,7 +64,7 @@ class OrderService extends BaseService
 
             if (isset($data['dish_ids']) && is_array($data['dish_ids'])) {
                 foreach ($data['dish_ids'] as $dishId) {
-                    $item->orderDetails()->create(['dish_id' => $dishId]);
+                    $item->orderDetail()->create(['dish_id' => $dishId]);
                 }
             }
 

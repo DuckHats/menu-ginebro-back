@@ -2,20 +2,20 @@
 
 namespace App\Services\Generic;
 
+use App\Contracts\Exportable;
 use App\Helpers\ApiResponse;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExportService
 {
-    protected Model $model;
+    protected Exportable $model;
 
-    public function __construct(Model $model)
+    public function __construct(Exportable $model)
     {
         $this->model = $model;
     }
@@ -23,10 +23,11 @@ class ExportService
     public function export(Request $request)
     {
         $format = $request->input('format', 'json');
-        $fileName = $this->model->getTable().'_export_'.now()->timestamp;
+        $fileName = class_basename($this->model) . '_export_' . now()->timestamp;
 
         try {
-            $data = $this->model->all();
+            $data = $this->model->getExportData();
+            $headings = $this->model->getExportHeadings();
 
             switch (strtolower($format)) {
                 case 'json':
@@ -38,27 +39,27 @@ class ExportService
 
                 case 'csv':
                 case 'xlsx':
-                    $export = new class($data) implements FromCollection, WithHeadings
+                    $export = new class($data, $headings) implements FromArray, WithHeadings
                     {
                         protected Collection $data;
+                        protected array $headings;
 
-                        public function __construct(Collection $data)
+                        public function __construct(Collection $data, array $headings)
                         {
                             $this->data = $data;
+                            $this->headings = $headings;
                         }
 
-                        public function collection()
+                        public function array(): array
                         {
-                            return $this->data->map(function ($item) {
-                                return collect($item)->values();
-                            });
+                            return $this->data->map(function ($row) {
+                                return is_array($row) ? $row : $row->toArray();
+                            })->toArray();
                         }
 
                         public function headings(): array
                         {
-                            return $this->data->first()
-                                ? array_keys($this->data->first()->toArray())
-                                : [];
+                            return $this->headings;
                         }
                     };
 

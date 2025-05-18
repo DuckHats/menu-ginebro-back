@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Contracts\Exportable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
-class Order extends Model
+class Order extends Model implements Exportable
 {
     use HasFactory;
 
@@ -22,15 +24,10 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function orderDetails()
+    public function orderDetail()
     {
-        return $this->hasMany(orderDetail::class);
+        return $this->hasOne(OrderDetail::class);
     }
-
-    // public function dishes()
-    // {
-    //     return $this->belongsToMany(Dish::class, 'order_details')->withTimestamps();
-    // }
 
     public function orderStatus()
     {
@@ -40,5 +37,40 @@ class Order extends Model
     public function orderType()
     {
         return $this->belongsTo(OrderType::class);
+    }
+    public function getExportData(): Collection
+    {
+        return $this->newQuery()
+            ->with(['user', 'orderDetail', 'orderStatus', 'orderType'])
+            ->get()
+            ->map(function ($order) {
+                return [
+                    'ID' => $order->id,
+                    'Usuari' => $order->user->name ?? 'N/A',
+                    'Tipus de comanda' => $order->orderType->name ?? 'N/A',
+                    'Estat' => $order->orderStatus->name ?? 'N/A',
+                    'Primer' => $order->orderDetail->option1 ?? 'N/A',
+                    'Segon' => $order->orderDetail->option2 ?? 'N/A',
+                    'Postres' => $order->orderDetail->option3 ?? 'N/A',
+                    'Data' => $order->order_date ?? 'N/A',
+                    'Alergies' => $order->allergies ?? 'N/A',
+                ];
+            });
+    }
+
+
+    public function getExportHeadings(): array
+    {
+        return [
+            'ID',
+            'Usuari',
+            'Tipus de comanda',
+            'Estat',
+            'Primer',
+            'Segon',
+            'Postres',
+            'Data',
+            'Alergies',
+        ];
     }
 }
