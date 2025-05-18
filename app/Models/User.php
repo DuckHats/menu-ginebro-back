@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Contracts\Exportable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Collection;
 
-class User extends Authenticatable
+class User extends Authenticatable implements Exportable
 {
     const STATUS_INACTIVE = 0;
 
@@ -92,5 +93,34 @@ class User extends Authenticatable
     public function isInactive()
     {
         return $this->status == self::STATUS_INACTIVE;
+    }
+
+    public function getExportData(): Collection
+    {
+        return $this->newQuery()
+            ->with('userType')
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'ID' => $user->id,
+                    'Nom' => $user->name,
+                    'Cognom' => $user->last_name,
+                    'Email' => $user->email,
+                    'Tipus' => $user->userType->name ?? 'N/A',
+                    'Status' => $user->status == self::STATUS_ACTIVE ? 'Active' : 'Inactive',
+                ];
+            });
+    }
+
+    public function getExportHeadings(): array
+    {
+        return [
+            'ID',
+            'Nom',
+            'Cognom',
+            'Email',
+            'Tipus',
+            'Status',
+        ];
     }
 }

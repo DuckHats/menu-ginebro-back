@@ -149,7 +149,7 @@ class UserController extends Controller
     public function export(Request $request)
     {
         $exportService = new ExportService(new User);
-
+        
         return $exportService->export($request);
     }
 }
