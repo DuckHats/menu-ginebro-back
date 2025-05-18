@@ -195,4 +195,28 @@ class UserControllerTest extends TestCase
 
         $response->assertStatus(500);
     }
+
+    /** @test */
+    public function it_can_export_users_in_json()
+    {
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
+            ->getJson(route('users.export', ['format' => 'json']));
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function it_can_export_users_in_csv()
+    {
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
+            ->getJson(route('users.export', ['format' => 'csv']));
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function it_can_export_users_in_xlsx()
+    {
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
+            ->getJson(route('users.export', ['format' => 'xlsx']));
+        $response->assertStatus(200);
+    }
 }
