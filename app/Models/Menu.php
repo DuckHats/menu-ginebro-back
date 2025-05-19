@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Contracts\Exportable;
+use App\Contracts\Importable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
-class Menu extends Model
+class Menu extends Model implements Exportable, Importable
 {
     use HasFactory;
 
@@ -14,5 +17,48 @@ class Menu extends Model
     public function dishes()
     {
         return $this->hasMany(Dish::class);
+    }
+
+    public function getExportData(): Collection
+    {
+        return $this->newQuery()
+            ->with('dishes')
+            ->get()
+            ->map(function ($menu) {
+                return [
+                    'ID' => $menu->id,
+                    'Dia' => $menu->day ?? 'N/A',
+                    'Plats' => $menu->dishes->pluck('name')->implode(', ') ?: 'N/A',
+                ];
+            });
+    }
+
+    public function getExportHeadings(): array
+    {
+        return ['ID', 'Dia', 'Plats'];
+    }
+
+    public function importRow(array $data): void
+    {
+        $menu = self::create([
+            'day' => $data['day'],
+        ]);
+
+        foreach ($data['dishes'] as $dish) {
+            $menu->dishes()->create([
+                'dish_type_id' => $dish['dish_type_id'],
+                'options' => $dish['options'],
+            ]);
+        }
+    }
+
+    public function getImportValidationRules(): array
+    {
+        return [
+            'day' => 'required|date',
+            'dishes' => 'required|array|min:1',
+            'dishes.*.dish_type_id' => 'required|exists:dish_type,id',
+            'dishes.*.options' => 'required|array|min:1',
+        ];
     }
 }

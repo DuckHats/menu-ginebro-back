@@ -20,7 +20,7 @@ class OrderResource extends JsonResource
             'order_status_id' => $this->order_status_id,
             'orderStatus' => $this->whenLoaded('orderStatus', fn () => new OrderStatusResource($this->orderStatus)),
 
-            'orderDetails' => $this->whenLoaded('orderDetails', fn () => OrderDetailResource::collection($this->orderDetails)),
+            'orderDetail' => $this->whenLoaded('orderDetail', fn () => new OrderDetailResource($this->orderDetail)),
 
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

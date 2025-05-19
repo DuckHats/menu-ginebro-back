@@ -26,6 +26,8 @@ class RouteConstants
 
     const USERS_EXPORT = '/users/export';
 
+    const USERS_IMPORT = '/users/import';
+
     const USERS_ME = '/users/me';
 
     const USERS_DETAIL = '/users/{id}';
@@ -63,6 +65,8 @@ class RouteConstants
     const MENUS = '/menus';
 
     const MENUS_EXPORT = '/menus/export';
+
+    const MENUS_IMPORT = '/menus/import';
 
     const MENUS_DETAIL = '/menus/{day}';
 

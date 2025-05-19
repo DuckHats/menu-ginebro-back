@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Services\Generic\ExportService;
+use App\Services\Generic\ImportService;
 use App\Services\Model\UserService;
 use Illuminate\Http\Request;
 
@@ -149,7 +150,14 @@ class UserController extends Controller
     public function export(Request $request)
     {
         $exportService = new ExportService(new User);
-
+        
         return $exportService->export($request);
+    }
+
+    public function import(Request $request)
+    {
+        $importService = new ImportService(new User);
+        
+        return $importService->import($request);
     }
 }
