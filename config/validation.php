@@ -118,6 +118,7 @@ return [
             'user_id' => 'required|integer|exists:users,id',
             'order_date' => 'required|date',
             'allergies' => 'nullable|string|max:255',
+            'has_tupper' => 'required|boolean',
             'order_type_id' => 'required|integer|exists:order_types,id',
             'order_status_id' => 'required|integer|exists:order_status,id',
         ],
@@ -125,6 +126,7 @@ return [
             'user_id' => 'required|integer|exists:users,id',
             'order_date' => 'nullable|date',
             'allergies' => 'nullable|string|max:255',
+            'has_tupper' => 'nullable|boolean',
             'order_type_id' => 'required|integer|exists:order_types,id',
             'order_status_id' => 'required|integer|exists:order_status,id',
 

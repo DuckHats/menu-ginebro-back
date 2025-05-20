@@ -141,6 +141,7 @@ class OrderControllerTest extends TestCase
             'order_type_id' => $this->orderType->id,
             'order_status_id' => $this->orderStatus->id,
             'allergies' => 'None',
+            'has_tupper' => false,
             'dish_ids' => [$dish1->id, $dish2->id],
         ];
 

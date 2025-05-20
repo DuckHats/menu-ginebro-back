@@ -21,6 +21,7 @@ class OrderFactory extends Factory
             'user_id' => $this->faker->numberBetween(1, 10),
             'order_date' => Carbon::now()->addDays(7)->format('Y-m-d'),
             'allergies' => $this->faker->word,
+            'has_tupper' => $this->faker->boolean,
             'order_type_id' => $this->faker->numberBetween(1, 3),
             'order_status_id' => $this->faker->numberBetween(1, 3),
         ];

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->date('order_date');
             $table->string('allergies')->nullable();
+            $table->boolean('has_tupper')->default(false);
             $table->foreignId('order_type_id')->constrained('order_types')->onDelete('cascade');
             $table->foreignId('order_status_id')->default(1)->constrained('order_status')->onDelete('cascade');
             $table->timestamps();

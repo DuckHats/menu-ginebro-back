@@ -15,6 +15,7 @@ class OrderResource extends JsonResource
 
             'order_date' => $this->order_date,
             'allergies' => $this->allergies,
+            'has_tupper' => $this->has_tupper,
             'order_type_id' => $this->order_type_id,
             'orderType' => $this->whenLoaded('orderType', fn () => new OrderTypeResource($this->orderType)),
             'order_status_id' => $this->order_status_id,

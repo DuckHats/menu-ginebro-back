@@ -15,6 +15,7 @@ class Order extends Model implements Exportable
         'user_id',
         'order_date',
         'allergies',
+        'has_tupper',
         'order_type_id',
         'order_status_id',
     ];
@@ -54,6 +55,7 @@ class Order extends Model implements Exportable
                     'Postres' => $order->orderDetail->option3 ?? 'N/A',
                     'Data' => $order->order_date ?? 'N/A',
                     'Alergies' => $order->allergies ?? 'N/A',
+                    'Tupper' => $order->has_tupper ? 'Sí' : 'No',
                 ];
             });
     }
@@ -71,6 +73,7 @@ class Order extends Model implements Exportable
             'Postres',
             'Data',
             'Alergies',
+            'Tupper',
         ];
     }
 }
