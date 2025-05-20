@@ -13,7 +13,7 @@ class UserPolicy
 
     public function view(User $user, User $requestUser): bool
     {
-        return $user->id == $requestUser->id || $user->isAdmin();
+        return $user->id == $requestUser->id || $user->isAdmin() || $user->isCook();
     }
 
     public function create(User $user, User $requestUser): bool
