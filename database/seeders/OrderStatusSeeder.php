@@ -15,5 +15,6 @@ class OrderStatusSeeder extends Seeder
         OrderStatus::create(['name' => 'Pendent']);
         OrderStatus::create(['name' => 'En preparació']);
         OrderStatus::create(['name' => 'Entregat']);
+        OrderStatus::create(['name' => 'No recollit']);
     }
 }
