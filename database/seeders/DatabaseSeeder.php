@@ -24,14 +24,10 @@ class DatabaseSeeder extends Seeder
             UserTypeSeeder::class,
             UsersSeeder::class,
             ImagesSeeder::class,
-            MenusSeeder::class,
             OrderTypeSeeder::class,
             OrderStatusSeeder::class,
             OrdersSeeder::class,
-            DishTypeSeeder::class,
-            DishesSeeder::class,
-            OrderDetailsSeeder::class,
-
+            MenusAndDishesSeeder::class,
         ]);
     }
 }
