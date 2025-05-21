@@ -34,17 +34,17 @@ class MenusAndDishesSeeder extends Seeder
             Dish::create([
                 'menu_id' => $menu->id,
                 'dish_type_id' => $primerId,
-                'options' => json_encode([fake()->randomElement($platos_primero)]),
+                'options' => json_encode([fake()->randomElement($platos_primero), fake()->randomElement($platos_primero)]),
             ]);
             Dish::create([
                 'menu_id' => $menu->id,
                 'dish_type_id' => $segonId,
-                'options' => json_encode([fake()->randomElement($platos_segundo)]),
+                'options' => json_encode([fake()->randomElement($platos_segundo), fake()->randomElement($platos_segundo)]),
             ]);
             Dish::create([
                 'menu_id' => $menu->id,
                 'dish_type_id' => $postreId,
-                'options' => json_encode([fake()->randomElement($platos_postre)]),
+                'options' => json_encode([fake()->randomElement($platos_postre), fake()->randomElement($platos_postre)]),
             ]);
         }
     }
