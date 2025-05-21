@@ -22,7 +22,7 @@
 
         .container {
             text-align: center;
-            background-color: #d1e8b2;
+            background-color: #4d857b;
             padding: 40px 30px;
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -33,20 +33,20 @@
             font-size: 2rem;
             margin-bottom: 15px;
             font-weight: 700;
-            color: #2d572c;
+            color: #ffffff;
         }
 
         p {
             font-size: 1.1rem;
             line-height: 1.5;
             margin-bottom: 20px;
-            color: #3a3a3a;
+            color: #ffffff;
         }
 
         a.btn {
             display: inline-block;
             padding: 12px 20px;
-            background-color: #4a7c59;
+            background-color: #ffffff;
             color: #fff;
             font-size: 1rem;
             font-weight: bold;
@@ -59,17 +59,10 @@
             background-color: #3d6b48;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-
-        .logo {
-            width: 200px;
-            height: auto;
-            margin-bottom: 15px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <img src="./images/ginebro-logo.png" alt="Logo" class="logo">
         <h1>API en Funcionament</h1>
         <p>Tot està llest per començar a fer crides a l'API.</p>
         <a href="https://github.com/DuckHats" target="_blank" class="btn">Visita la Documentació</a>

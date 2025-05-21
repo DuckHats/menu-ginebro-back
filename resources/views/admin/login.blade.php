@@ -22,7 +22,7 @@
 
         .container {
             text-align: center;
-            background-color: #d1e8b2;
+            background-color: #4d857b;
             padding: 40px 30px;
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -33,7 +33,7 @@
             font-size: 2rem;
             margin-bottom: 15px;
             font-weight: 700;
-            color: #2d572c;
+            color: #ffffff;
         }
 
         .error {
@@ -64,8 +64,8 @@
         button {
             margin-top: 15px;
             padding: 12px 20px;
-            background-color: #4a7c59;
-            color: #fff;
+            background-color: #ffffff;
+            color: #4d857b;
             font-size: 1rem;
             font-weight: bold;
             border: none;
@@ -75,14 +75,13 @@
         }
 
         button:hover {
-            background-color: #3d6b48;
+            background-color: #3d645d;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <img src="../images/ginebro-logo.png" alt="Logo" class="logo">
         <h2>Accés administrador</h2>
 
         @if($errors->any())
