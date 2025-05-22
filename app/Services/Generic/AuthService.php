@@ -183,7 +183,6 @@ class AuthService
         }
 
         $email = $request->email;
-        $name = $request->name;
 
         if (User::where('email', $email)->exists()) {
             throw new \Exception('This email is already registered.');
@@ -210,12 +209,12 @@ class AuthService
         $email = $request->email;
         $code = $request->verification_code;
         $password = $request->password;
-
+        
         $entry = EmailVerification::where('email', $email)
-            ->where('verification_code', $code)
-            ->where('expires_at', '>', now())
-            ->first();
-
+        ->where('verification_code', $code)
+        ->where('expires_at', '>', now())
+        ->first();
+        
         if (! $entry) {
             throw new \Exception('Invalid or expired verification code.');
         }
@@ -226,9 +225,12 @@ class AuthService
 
         $user = User::create([
             'name' => $request->name,
-            'email' => $email,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
             'password' => Hash::make($password),
             'email_verified_at' => now(),
+            'user_type_id' => 2,
+            'status' => User::STATUS_ACTIVE,
         ]);
 
         Auth::login($user);

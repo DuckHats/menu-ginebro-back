@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\EmailVerification;
 use App\Models\PasswordReset;
 use App\Models\User;
 use App\Models\UserType;
@@ -113,10 +114,7 @@ class AuthControllerTest extends TestCase
     public function it_sends_verification_code_for_register()
     {
         $data = [
-            'name' => 'New',
-            'last_name' => 'User',
             'email' => 'newuser@example.com',
-            'user_type_id' => $this->userType->id,
         ];
 
         $response = $this->postJson(route('auth.sendRegisterCode'), $data);
@@ -127,21 +125,21 @@ class AuthControllerTest extends TestCase
     public function it_can_complete_register_with_valid_code()
     {
         $email = 'newuser@example.com';
+        $sendRegisterCodeData = [
+            'email' => 'newuser@example.com',
+        ];
+        $response = $this->postJson(route('auth.sendRegisterCode'), $sendRegisterCodeData);
+        $response->assertStatus(200);
+        $code = EmailVerification::where('email', $email)->first()->verification_code;
 
-        $this->postJson(route('auth.sendRegisterCode'), [
+        $response = $this->postJson(route('auth.completeRegister'), [
             'name' => 'New',
             'last_name' => 'User',
             'email' => $email,
-            'user_type_id' => $this->userType->id,
-        ]);
-
-        $code = \App\Models\EmailVerification::where('email', $email)->first()->verification_code;
-
-        $response = $this->postJson(route('auth.completeRegister'), [
-            'email' => $email,
-            'verification_code' => $code,
             'password' => 'password123',
             'password_confirmation' => 'password123',
+            'verification_code' => $code,
+            'user_type_id' => $this->userType->id,
         ]);
 
         $response->assertStatus(201);
