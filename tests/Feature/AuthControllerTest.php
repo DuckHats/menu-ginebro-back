@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\EmailVerification;
 use App\Models\PasswordReset;
 use App\Models\User;
 use App\Models\UserType;
@@ -110,6 +111,43 @@ class AuthControllerTest extends TestCase
     }
 
     /** @test */
+    public function it_sends_verification_code_for_register()
+    {
+        $data = [
+            'email' => 'newuser@example.com',
+        ];
+
+        $response = $this->postJson(route('auth.sendRegisterCode'), $data);
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function it_can_complete_register_with_valid_code()
+    {
+        $email = 'newuser@example.com';
+        $sendRegisterCodeData = [
+            'email' => 'newuser@example.com',
+        ];
+        $response = $this->postJson(route('auth.sendRegisterCode'), $sendRegisterCodeData);
+        $response->assertStatus(200);
+        $code = EmailVerification::where('email', $email)->first()->verification_code;
+
+        $response = $this->postJson(route('auth.completeRegister'), [
+            'name' => 'New',
+            'last_name' => 'User',
+            'email' => $email,
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'verification_code' => $code,
+            'user_type_id' => $this->userType->id,
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('users', ['email' => $email]);
+    }
+
+
+    /** @test */
     public function it_can_login_a_user()
     {
         $loginData = [
@@ -164,7 +202,7 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_can_logout_a_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)->postJson(route('auth.logout'));
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)->postJson(route('auth.logout'));
 
         $response->assertStatus(200);
     }
@@ -215,7 +253,7 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_can_login_admin_user_with_token()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->adminToken)
             ->postJson(route('auth.login'), [
                 'user' => $this->adminUser->email,
                 'password' => 'password123',
@@ -227,7 +265,7 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_can_login_cook_user_with_token()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->cookToken)
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->cookToken)
             ->postJson(route('auth.login'), [
                 'user' => $this->cookUser->email,
                 'password' => 'password123',

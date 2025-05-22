@@ -33,6 +33,18 @@ return [
             'email' => 'required|email|exists:users,email',
             'verification_code' => 'required|integer',
         ],
+        'send_register_code' => [
+            'email' => 'required|email|unique:users',
+        ],
+        'complete_register' => [
+            'email' => 'required|email|unique:users',
+            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'verification_code' => 'required|integer',
+            'password' => 'required|confirmed|min:8',
+            'password_confirmation' => 'required',
+        ],
+
     ],
     'users' => [
         'store' => [

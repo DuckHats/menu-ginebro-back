@@ -174,4 +174,74 @@ class AuthService
 
         EmailVerification::where('email', $request->email)->delete();
     }
+
+    public function sendRegisterCode(Request $request)
+    {
+        $validated = ValidationHelper::validateRequest($request, 'auth', 'send_register_code');
+        if (! $validated['success']) {
+            throw new \Exception('Invalid parameters provided.');
+        }
+
+        $email = $request->email;
+
+        if (User::where('email', $email)->exists()) {
+            throw new \Exception('This email is already registered.');
+        }
+
+        $code = rand(100000, 999999);
+        $expiresAt = now()->addMinutes(15);
+
+        EmailVerification::updateOrCreate(
+            ['email' => $email],
+            ['verification_code' => $code, 'expires_at' => $expiresAt, 'updated_at' => now()]
+        );
+
+        EmailHelper::sendEmail($email, EmailVerificationMail::class, [$code]);
+    }
+
+    public function completeRegister(Request $request)
+    {
+        $validated = ValidationHelper::validateRequest($request, 'auth', 'complete_register');
+        if (! $validated['success']) {
+            throw new \Exception('Invalid parameters provided.');
+        }
+
+        $email = $request->email;
+        $code = $request->verification_code;
+        $password = $request->password;
+        
+        $entry = EmailVerification::where('email', $email)
+        ->where('verification_code', $code)
+        ->where('expires_at', '>', now())
+        ->first();
+        
+        if (! $entry) {
+            throw new \Exception('Invalid or expired verification code.');
+        }
+
+        if (User::where('email', $email)->exists()) {
+            throw new \Exception('User already exists.');
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'password' => Hash::make($password),
+            'email_verified_at' => now(),
+            'user_type_id' => 2,
+            'status' => User::STATUS_ACTIVE,
+        ]);
+
+        Auth::login($user);
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        EmailHelper::sendEmail($user->email, WelcomeMail::class, [$user]);
+        EmailVerification::where('email', $email)->delete();
+
+        return [
+            'user' => $user,
+            'token' => $token,
+        ];
+    }
 }

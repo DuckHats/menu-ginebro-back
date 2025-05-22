@@ -126,4 +126,24 @@ class AuthController extends Controller
             );
         }
     }
+
+    public function sendRegisterCode(Request $request)
+    {
+        try {
+            $this->authService->sendRegisterCode($request);
+            return ApiResponse::success([], 'Verification code sent.');
+        } catch (\Throwable $e) {
+            return ApiResponse::error('SEND_REGISTER_CODE_FAILED', 'Error sending verification code.', ['exception' => $e->getMessage()]);
+        }
+    }
+
+    public function completeRegister(Request $request)
+    {
+        try {
+            $data = $this->authService->completeRegister($request);
+            return ApiResponse::success($data, 'Registered successfully.', ApiResponse::CREATED_STATUS);
+        } catch (\Throwable $e) {
+            return ApiResponse::error('COMPLETE_REGISTER_FAILED', 'Error during registration.', ['exception' => $e->getMessage()]);
+        }
+    }
 }
