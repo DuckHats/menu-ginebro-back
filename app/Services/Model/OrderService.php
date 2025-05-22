@@ -7,6 +7,7 @@ use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Services\Generic\BaseService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -55,18 +56,19 @@ class OrderService extends BaseService
             DB::beginTransaction();
 
             $item = Order::create([
-                'user_id' => $data['user_id'],
+                'user_id' => Auth()->user()->id,
                 'order_date' => $data['order_date'],
                 'order_type_id' => $data['order_type_id'],
                 'order_status_id' => $data['order_status_id'],
                 'allergies' => $data['allergies'] ?? null,
+                'has_tupper' => $data['has_tupper'] ?? false,
             ]);
 
-            if (isset($data['dish_ids']) && is_array($data['dish_ids'])) {
-                foreach ($data['dish_ids'] as $dishId) {
-                    $item->orderDetail()->create(['dish_id' => $dishId]);
-                }
-            }
+            $item->orderDetail()->create([
+                'option1' => $data['option1'] ?? null,
+                'option2' => $data['option2'] ?? null,
+                'option3' => $data['option3'] ?? null,
+            ]);
 
             DB::commit();
 

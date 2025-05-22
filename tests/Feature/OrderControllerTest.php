@@ -123,18 +123,6 @@ class OrderControllerTest extends TestCase
 
     public function test_it_can_create_an_order()
     {
-        $dish1 = Dish::factory()->create([
-            'menu_id' => $this->menu->first()->id,
-            'dish_type_id' => $this->dishType->first()->id,
-            'options' => json_encode(['option1', 'option2']),
-        ]);
-
-        $dish2 = Dish::factory()->create([
-            'menu_id' => $this->menu->first()->id,
-            'dish_type_id' => $this->dishType->first()->id,
-            'options' => json_encode(['option1', 'option2']),
-        ]);
-
         $orderData = [
             'user_id' => $this->user->id,
             'order_date' => '2025-05-15',
@@ -142,7 +130,9 @@ class OrderControllerTest extends TestCase
             'order_status_id' => $this->orderStatus->id,
             'allergies' => 'None',
             'has_tupper' => false,
-            'dish_ids' => [$dish1->id, $dish2->id],
+            'option1' => 'Option 1',
+            'option2' => 'Option 2',
+            'option3' => 'Option 3',
         ];
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)

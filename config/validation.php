@@ -115,20 +115,24 @@ return [
     ],
     'orders' => [
         'store' => [
-            'user_id' => 'required|integer|exists:users,id',
             'order_date' => 'required|date',
+            'order_type_id' => 'required|integer|exists:order_types,id',
+            'order_status_id' => 'required|integer|exists:order_status,id',
             'allergies' => 'nullable|string|max:255',
             'has_tupper' => 'required|boolean',
-            'order_type_id' => 'required|integer|exists:order_types,id',
-            'order_status_id' => 'required|integer|exists:order_status,id',
+            'option1' => 'nullable|string|max:255',
+            'option2' => 'nullable|string|max:255',
+            'option3' => 'nullable|string|max:255',
         ],
         'update' => [
-            'user_id' => 'required|integer|exists:users,id',
             'order_date' => 'nullable|date',
+            'order_type_id' => 'nullable|integer|exists:order_types,id',
+            'order_status_id' => 'nullable|integer|exists:order_status,id',
             'allergies' => 'nullable|string|max:255',
             'has_tupper' => 'nullable|boolean',
-            'order_type_id' => 'required|integer|exists:order_types,id',
-            'order_status_id' => 'required|integer|exists:order_status,id',
+            'option1' => 'nullable|string|max:255',
+            'option2' => 'nullable|string|max:255',
+            'option3' => 'nullable|string|max:255',
 
         ],
 
