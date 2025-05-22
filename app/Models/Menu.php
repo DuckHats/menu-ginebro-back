@@ -20,18 +20,27 @@ class Menu extends Model implements Exportable, Importable
     }
 
     public function getExportData(): Collection
-    {
-        return $this->newQuery()
-            ->with('dishes')
-            ->get()
-            ->map(function ($menu) {
-                return [
-                    'ID' => $menu->id,
-                    'Dia' => $menu->day ?? 'N/A',
-                    'Plats' => $menu->dishes->pluck('name')->implode(', ') ?: 'N/A',
-                ];
-            });
-    }
+{
+    return $this->newQuery()
+        ->with('dishes.dishType')
+        ->get()
+        ->map(function ($menu) {
+            $platos = $menu->dishes->map(function ($dish) {
+                $type = $dish->dishType->name ?? 'Plato';
+                $options = is_array($dish->options)
+                    ? $dish->options
+                    : (json_decode($dish->options, true) ?: [$dish->options]);
+                $optionsText = implode(', ', $options);
+                return "{$type}: {$optionsText}";
+            })->implode(' | ');
+
+            return [
+                'ID' => $menu->id,
+                'Dia' => $menu->day ?? 'N/A',
+                'Plats' => $platos ?: 'N/A',
+            ];
+        });
+}
 
     public function getExportHeadings(): array
     {

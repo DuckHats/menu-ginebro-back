@@ -5,6 +5,10 @@ namespace App\Constants;
 class RouteConstants
 {
     // Auth Routes
+    const SEND_REGISTER_CODE = '/register/send-code';
+
+    const COMPLETE_REGISTER = '/register/complete';
+
     const REGISTER = '/register';
 
     const LOGIN = '/login';
