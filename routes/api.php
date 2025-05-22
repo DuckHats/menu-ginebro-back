@@ -27,6 +27,8 @@ Route::middleware('throttle:api')->group(function () {
     // Public routes
     Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers'], function () {
         Route::controller(AuthController::class)->group(function () {
+            Route::post('/register/send-code', 'sendRegisterCode')->name('auth.sendRegisterCode');
+            Route::post('/register/complete',  'completeRegister')->name('auth.completeRegister');
             Route::post(RouteConstants::REGISTER, 'register')->name('auth.register');
             Route::post(RouteConstants::LOGIN, 'login')->name('auth.login');
 
