@@ -358,7 +358,7 @@ class UserService
                 );
             }
 
-            if ($user->isAdmin()) {
+            if ($user->isAdmin() || $user->isCook()) {
                 return ApiResponse::success(['admin' => true], 'User is admin.', ApiResponse::OK_STATUS);
             } else {
                 return ApiResponse::success(['admin' => false], 'User is not admin.', ApiResponse::OK_STATUS);

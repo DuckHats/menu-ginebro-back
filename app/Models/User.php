@@ -18,9 +18,9 @@ class User extends Authenticatable implements Exportable, Importable
 
     const ROLE_ADMIN = 1;
 
-    const ROLE_COOK = 2;
+    const ROLE_COOK = 3;
 
-    const ROLE_USER = 3;
+    const ROLE_USER = 2;
 
     // Per a l'usuari normal
     // const ROLE_USER = 'usuari';
