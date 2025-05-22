@@ -1,57 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="ca">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificació de correu electrònic</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #F1F8E9;
-            color: #2E7D32;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            text-align: center;
-            background-color: #81C784;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
-            color: white;
-        }
-        .content {
-            padding: 20px;
-        }
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #555;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verificació de correu electrònic</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6;
+      margin: 0;
+      padding: 0;
+      color: #111827;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background-color: #009ca6;
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .header h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .content {
+      padding: 24px;
+    }
+
+    .content p {
+      font-size: 16px;
+      line-height: 1.5;
+      margin: 16px 0;
+    }
+
+    .content h3 {
+      background-color: #e0f7fa;
+      padding: 10px 20px;
+      text-align: center;
+      color: #065e63;
+      font-weight: bold;
+      border-radius: 8px;
+      margin: 24px 0;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 13px;
+      color: #6b7280;
+      padding: 16px;
+      background-color: #f9fafb;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>Confirmació del teu correu electrònic</h2>
-        </div>
-        <div class="content">
-            <p>Hola,</p>
-            <p>Benvingut al nostre casal d'estiu! Per començar a utilitzar la nostra plataforma i accedir a la informació dels teus fills, verifica el teu correu electrònic amb aquest codi:</p>
-            <h3>{{ $verificationCode }}</h3>
-            <p>Si no has sol·licitat aquest registre, pots ignorar aquest missatge.</p>
-        </div>
-        <div class="footer">
-            <p>&copy; 2025 Casal d'Estiu. Tots els drets reservats.</p>
-        </div>
+  <div class="container">
+    <div class="header">
+      <h2>Confirmació del teu correu electrònic</h2>
     </div>
+    <div class="content">
+      <p>Hola,</p>
+      <p>Benvingut al nostre menjador! Per començar a utilitzar la nostra plataforma i accedir a la informació dels teus fills, verifica el teu correu electrònic amb aquest codi:</p>
+      <h3>{{ $verificationCode }}</h3>
+      <p>Si no has sol·licitat aquest registre, pots ignorar aquest missatge.</p>
+    </div>
+    <div class="footer">
+      &copy; 2025 Menjador Ginebró. Tots els drets reservats.
+    </div>
+  </div>
 </body>
 </html>
