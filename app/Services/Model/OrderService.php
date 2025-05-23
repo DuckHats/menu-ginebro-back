@@ -153,4 +153,28 @@ class OrderService extends BaseService
             return ApiResponse::error('RETRIEVE_FAILED', 'Error while retrieving item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
     }
+
+    public function checkDate(Request $request, $date)
+    {
+        try {
+            $userId = Auth()->user()->id;
+            $exists = Order::where('order_date', $date)
+                ->where('user_id', $userId)
+                ->exists();
+
+            $data = [
+                'available' => !$exists,
+            ];
+
+            return ApiResponse::success(
+                $data,
+                'Check completed successfully.',
+                ApiResponse::OK_STATUS
+            );
+        } catch (\Throwable $e) {
+            Log::error('Error checking order date', ['exception' => $e->getMessage()]);
+
+            return ApiResponse::error('RETRIEVE_FAILED', 'Error while retrieving item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
+        }
+    }
 }

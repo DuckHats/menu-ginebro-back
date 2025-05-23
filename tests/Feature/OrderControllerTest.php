@@ -10,6 +10,7 @@ use App\Models\OrderStatus;
 use App\Models\OrderType;
 use App\Models\User;
 use App\Models\UserType;
+use App\Policies\OrderPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -206,5 +207,22 @@ class OrderControllerTest extends TestCase
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->getJson(route('orders.export', ['format' => 'csv']));
         $response->assertStatus(200);
+    }
+
+    public function test_check_date()
+    {
+        $date = now()->format('Y-m-d');
+        Order::factory(3)->create([
+            'user_id' => $this->user->id,
+            'order_type_id' => $this->orderType->id,
+            'order_status_id' => $this->orderStatus->id,
+            'order_date' => $date,
+        ]);
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        ->getJson(route('orders.checkDate', $date));
+
+        $response->assertStatus(200)
+            ->assertJsonFragment(['available' => false]);
     }
 }

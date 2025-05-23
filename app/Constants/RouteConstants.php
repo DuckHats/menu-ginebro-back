@@ -108,6 +108,8 @@ class RouteConstants
 
     const ORDERS_BY_USER = '/orders_by_user/{userId}';
 
+    const ORDERS_CHECK_DATE = '/orders/checkDate/{date}';
+
     const ORDERS_EXPORT = '/orders/export';
 
     const ORDERS_DETAIL = '/orders/{id}';
