@@ -98,6 +98,7 @@ Route::middleware('throttle:api')->group(function () {
             Route::get(RouteConstants::ORDERS_BY_DATE, 'indexBydate')->name('orders.ordersbyDate')/*->middleware('auth:sanctum')*/;
             Route::get(RouteConstants::ORDERS_BY_USER, 'indexByUser')->name('orders.ordersbyUser')/*->middleware('auth:sanctum')*/;
             Route::get(RouteConstants::ORDERS_EXPORT, 'export')->name('orders.export')->middleware('auth:sanctum');
+            Route::get(RouteConstants::ORDERS_CHECK_DATE, 'checkDate')->name('orders.checkDate')->middleware('auth:sanctum');
 
             Route::get(RouteConstants::ORDERS_DETAIL, 'show')->name('orders.show')->middleware('auth:sanctum');
 
