@@ -1,0 +1,29 @@
+services:
+  menu_ginebro_back:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+      args:
+        AUTORUN_ENABLED: "false"
+        APP_ENV: ${APP_ENV}
+    container_name: ${APP_HOSTNAME}
+    hostname: ${APP_HOSTNAME}
+    environment:
+      PUID: 1000
+      SSL_MODE: 'mixed'
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - '8001:80'
+      - '8101:443'
+    networks:
+      - menuGinebro
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --no-verbose --ºtries=1 --spider http://localhost || exit 1" ]
+      interval: 5m
+      timeout: 3s
+      retries: 3
+
+networks:
+  menuGinebro:
+    external: true
