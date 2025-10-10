@@ -7,7 +7,6 @@ use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Services\Generic\BaseService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -163,7 +162,7 @@ class OrderService extends BaseService
                 ->exists();
 
             $data = [
-                'available' => !$exists,
+                'available' => ! $exists,
             ];
 
             return ApiResponse::success(

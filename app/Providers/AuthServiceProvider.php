@@ -8,10 +8,10 @@ use App\Models\Dish;
 use App\Models\Menu;
 use App\Models\Order;
 use App\Models\User;
-use App\Policies\UserPolicy;
+use App\Policies\DishPolicy;
 use App\Policies\MenuPolicy;
 use App\Policies\OrderPolicy;
-use App\Policies\DishPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider

@@ -146,7 +146,6 @@ class AuthControllerTest extends TestCase
         $this->assertDatabaseHas('users', ['email' => $email]);
     }
 
-
     /** @test */
     public function it_can_login_a_user()
     {
@@ -202,7 +201,7 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_can_logout_a_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)->postJson(route('auth.logout'));
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)->postJson(route('auth.logout'));
 
         $response->assertStatus(200);
     }
@@ -253,7 +252,7 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_can_login_admin_user_with_token()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->adminToken)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
             ->postJson(route('auth.login'), [
                 'user' => $this->adminUser->email,
                 'password' => 'password123',
@@ -265,7 +264,7 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_can_login_cook_user_with_token()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->cookToken)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->cookToken)
             ->postJson(route('auth.login'), [
                 'user' => $this->cookUser->email,
                 'password' => 'password123',

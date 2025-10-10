@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Menu;
 use App\Models\Dish;
 use App\Models\DishType;
-use Illuminate\Database\Seeder;
+use App\Models\Menu;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class MenusAndDishesSeeder extends Seeder
 {

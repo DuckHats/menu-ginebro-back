@@ -28,7 +28,7 @@ Route::middleware('throttle:api')->group(function () {
     Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers'], function () {
         Route::controller(AuthController::class)->group(function () {
             Route::post(RouteConstants::SEND_REGISTER_CODE, 'sendRegisterCode')->name('auth.sendRegisterCode');
-            Route::post(RouteConstants::COMPLETE_REGISTER,  'completeRegister')->name('auth.completeRegister');
+            Route::post(RouteConstants::COMPLETE_REGISTER, 'completeRegister')->name('auth.completeRegister');
             Route::post(RouteConstants::REGISTER, 'register')->name('auth.register');
             Route::post(RouteConstants::LOGIN, 'login')->name('auth.login');
 
@@ -68,7 +68,7 @@ Route::middleware('throttle:api')->group(function () {
             Route::get(RouteConstants::MENUS_EXPORT, 'export')->name('menus.export')->middleware('auth:sanctum');
             Route::post(RouteConstants::MENUS_IMPORT, 'import')->name('menus.import')->middleware('auth:sanctum');
 
-            Route::get(RouteConstants::MENUS_DETAIL, 'show')->name('menus.show')/*->middleware('auth:sanctum')*/;
+            Route::get(RouteConstants::MENUS_DETAIL, 'show')->name('menus.show')/* ->middleware('auth:sanctum') */;
 
             Route::post(RouteConstants::MENUS_CREATE, 'store')->name('menus.store')->middleware('auth:sanctum');
             Route::put(RouteConstants::MENUS_UPDATE, 'update')->name('menus.update')->middleware('auth:sanctum');
@@ -95,8 +95,8 @@ Route::middleware('throttle:api')->group(function () {
         // Order routes
         Route::controller(OrderController::class)->group(function () {
             Route::get(RouteConstants::ORDERS, 'index')->name('orders.index')->middleware('auth:sanctum');
-            Route::get(RouteConstants::ORDERS_BY_DATE, 'indexBydate')->name('orders.ordersbyDate')/*->middleware('auth:sanctum')*/;
-            Route::get(RouteConstants::ORDERS_BY_USER, 'indexByUser')->name('orders.ordersbyUser')/*->middleware('auth:sanctum')*/;
+            Route::get(RouteConstants::ORDERS_BY_DATE, 'indexBydate')->name('orders.ordersbyDate')/* ->middleware('auth:sanctum') */;
+            Route::get(RouteConstants::ORDERS_BY_USER, 'indexByUser')->name('orders.ordersbyUser')/* ->middleware('auth:sanctum') */;
             Route::get(RouteConstants::ORDERS_EXPORT, 'export')->name('orders.export')->middleware('auth:sanctum');
             Route::get(RouteConstants::ORDERS_CHECK_DATE, 'checkDate')->name('orders.checkDate')->middleware('auth:sanctum');
 

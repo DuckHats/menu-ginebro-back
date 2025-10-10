@@ -39,6 +39,7 @@ class Order extends Model implements Exportable
     {
         return $this->belongsTo(OrderType::class);
     }
+
     public function getExportData(): Collection
     {
         return $this->newQuery()
@@ -59,7 +60,6 @@ class Order extends Model implements Exportable
                 ];
             });
     }
-
 
     public function getExportHeadings(): array
     {
