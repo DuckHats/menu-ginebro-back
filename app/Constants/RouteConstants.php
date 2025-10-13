@@ -52,19 +52,6 @@ class RouteConstants
 
     const USERS_ADMIN_CHECK = '/users/is_admin';
 
-    // Error Routes
-    const ERRORS = '/errors';
-
-    const ERROR_DETAIL = '/errors/{id}';
-
-    const ERROR_CREATE = '/errors';
-
-    const ERROR_UPDATE = '/errors/{id}';
-
-    const ERROR_PATCH = '/errors/{id}';
-
-    const ERROR_DELETE = '/errors/{id}';
-
     // Menu Routes
     const MENUS = '/menus';
 
