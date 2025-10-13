@@ -31,7 +31,6 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
     public function indexByUser(Request $request, $userId)
     {
         return $this->orderService->getByUser($request, $userId);
@@ -131,6 +130,7 @@ class OrderController extends Controller
     public function export(Request $request)
     {
         $exportService = new ExportService(new Order);
+
         return $exportService->export($request);
     }
 }

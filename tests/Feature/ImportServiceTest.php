@@ -15,6 +15,7 @@ class ImportServiceTest extends TestCase
     use DatabaseTransactions;
 
     protected $adminUser;
+
     protected $token;
 
     protected function setUp(): void
@@ -52,7 +53,7 @@ class ImportServiceTest extends TestCase
             ],
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('users.import'), $payload);
 
         $response->assertStatus(200);
@@ -80,7 +81,7 @@ class ImportServiceTest extends TestCase
             ],
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('users.import'), $payload);
 
         $response->assertStatus(400);
@@ -107,7 +108,7 @@ class ImportServiceTest extends TestCase
             ],
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('menus.import'), $payload);
 
         $response->assertStatus(200);
@@ -134,7 +135,7 @@ class ImportServiceTest extends TestCase
             ],
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('menus.import'), $payload);
 
         $response->assertStatus(400);

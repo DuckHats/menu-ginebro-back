@@ -6,9 +6,8 @@ use App\Contracts\Importable;
 use App\Helpers\ApiResponse;
 use App\Jobs\ImportModelJob;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ImportService
 {
@@ -24,11 +23,11 @@ class ImportService
         $format = $request->input('format', 'json');
         $data = $request->input('data', []);
 
-        if (!in_array($format, ['json', 'csv', 'xlsx'])) {
+        if (! in_array($format, ['json', 'csv', 'xlsx'])) {
             return ApiResponse::error('INVALID_FORMAT', 'Format not supported.');
         }
 
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             return ApiResponse::error('INVALID_DATA', 'Data need to be an array.');
         }
 
@@ -42,7 +41,7 @@ class ImportService
             }
         }
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             return ApiResponse::error('VALIDATION_FAILED', 'Error during validation.', $errors);
         }
 

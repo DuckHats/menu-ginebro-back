@@ -150,14 +150,14 @@ class UserController extends Controller
     public function export(Request $request)
     {
         $exportService = new ExportService(new User);
-        
+
         return $exportService->export($request);
     }
 
     public function import(Request $request)
     {
         $importService = new ImportService(new User);
-        
+
         return $importService->import($request);
     }
 }

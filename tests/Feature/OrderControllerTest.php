@@ -10,7 +10,6 @@ use App\Models\OrderStatus;
 use App\Models\OrderType;
 use App\Models\User;
 use App\Models\UserType;
-use App\Policies\OrderPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -86,7 +85,7 @@ class OrderControllerTest extends TestCase
             'order_status_id' => $this->orderStatus->id,
         ]);
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('orders.index'));
 
         $response->assertStatus(200);
@@ -102,7 +101,7 @@ class OrderControllerTest extends TestCase
             'order_date' => now()->format('Y-m-d'),
         ]);
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('orders.ordersbyDate', $date));
 
         $response->assertStatus(200);
@@ -116,7 +115,7 @@ class OrderControllerTest extends TestCase
             'order_status_id' => $this->orderStatus->id,
         ]);
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('orders.ordersbyUser', $this->user->id));
 
         $response->assertStatus(200);
@@ -136,7 +135,7 @@ class OrderControllerTest extends TestCase
             'option3' => 'Option 3',
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('orders.store'), $orderData);
 
         $response->assertStatus(201)
@@ -150,7 +149,7 @@ class OrderControllerTest extends TestCase
 
     public function test_it_validates_required_fields_when_creating_order()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('orders.store'), []);
 
         $response->assertStatus(400);
@@ -163,7 +162,7 @@ class OrderControllerTest extends TestCase
             'order_type_id' => $this->orderType->id,
             'order_status_id' => $this->orderStatus->id,
         ]);
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('orders.show', $order->id));
 
         $response->assertStatus(200);
@@ -171,7 +170,7 @@ class OrderControllerTest extends TestCase
 
     public function test_it_returns_404_if_order_not_found()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('orders.show', 9999));
 
         $response->assertStatus(404);
@@ -180,7 +179,7 @@ class OrderControllerTest extends TestCase
     public function test_it_can_update_order_status()
     {
         OrderStatus::factory()->create(['id' => 2, 'name' => 'Preparant']);
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->postJson(route('orders.updateStatus', $this->order->id), [
                 'order_status_id' => 2,
             ]);
@@ -190,21 +189,21 @@ class OrderControllerTest extends TestCase
 
     public function test_it_can_export_orders_in_json()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('orders.export', ['format' => 'json']));
         $response->assertStatus(200);
     }
 
     public function test_it_can_export_orders_in_excel()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('orders.export', ['format' => 'xlsx']));
         $response->assertStatus(200);
     }
 
     public function test_it_can_export_orders_in_csv()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
             ->getJson(route('orders.export', ['format' => 'csv']));
         $response->assertStatus(200);
     }
@@ -219,8 +218,8 @@ class OrderControllerTest extends TestCase
             'order_date' => $date,
         ]);
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
-        ->getJson(route('orders.checkDate', $date));
+        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+            ->getJson(route('orders.checkDate', $date));
 
         $response->assertStatus(200)
             ->assertJsonFragment(['available' => false]);

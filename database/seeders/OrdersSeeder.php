@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\User;
-use Illuminate\Database\Seeder;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class OrdersSeeder extends Seeder
 {
