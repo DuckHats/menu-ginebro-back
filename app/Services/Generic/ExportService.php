@@ -35,7 +35,7 @@ class ExportService
                         'status' => 'success',
                         'message' => 'Exported successfully.',
                         'data' => $data,
-                    ]);
+                    ], 200, [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); // Protect default scapper formatting for JSON
 
                 case 'csv':
                 case 'xlsx':
