@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Contracts\Importable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -13,6 +12,7 @@ class ImportModelJob implements ShouldQueue
     use InteractsWithQueue, Queueable, SerializesModels;
 
     protected string $modelClass;
+
     protected array $data;
 
     public function __construct(string $modelClass, array $data)
@@ -20,7 +20,6 @@ class ImportModelJob implements ShouldQueue
         $this->modelClass = $modelClass;
         $this->data = $data;
     }
-
 
     public function handle(): void
     {

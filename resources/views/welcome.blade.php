@@ -1,71 +1,51 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Api summer_camp</title>
-    <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon">
-
+    <title>{{ $appName }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Estils generals */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #eaf4e2;
-            margin: 0;
-            padding: 0;
-            color: #2c3e50;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .container {
-            text-align: center;
-            background-color: #4d857b;
-            padding: 40px 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            max-width: 400px;
-        }
-
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        p {
-            font-size: 1.1rem;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            color: #ffffff;
-        }
-
-        a.btn {
-            display: inline-block;
-            padding: 12px 20px;
-            background-color: #ffffff;
-            color: #fff;
-            font-size: 1rem;
-            font-weight: bold;
-            text-decoration: none;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-        }
-
-        a.btn:hover {
-            background-color: #3d6b48;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        :root {
+            --primary: {{ $primaryColor }};
+            --accent: {{ $accentColor }};
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>API en Funcionament</h1>
-        <p>Tot està llest per començar a fer crides a l'API.</p>
-        <a href="https://github.com/DuckHats" target="_blank" class="btn">Visita la Documentació</a>
-    </div>
+<body class="bg-gradient-to-br from-gray-50 to-white min-h-screen flex flex-col">
+
+    <header class="p-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-[color:var(--primary)]">{{ $appName }}</h1>
+            <a href="{{ $focusUrl }}" class="text-sm font-medium text-white bg-[color:var(--accent)] px-4 py-2 rounded-full shadow hover:opacity-90 transition">
+                Accedir
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center">
+        <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
+            <div>
+                <h2 class="text-4xl font-extrabold mb-4 text-gray-900 leading-tight">
+                   <span class="text-[color:var(--primary)]">{{ $appName }}</span>
+                </h2>
+                <p class="text-lg text-gray-600 mb-6">{{ $description }}</p>
+                @if($documentation_url)
+                    <a href="{{ $documentation_url }}"
+                    class="inline-block px-6 py-3 bg-[color:var(--accent)] text-white text-base font-semibold rounded-lg shadow-md hover:shadow-lg transition">
+                        Docs
+                    </a>
+                @endif
+            </div>
+            <div>
+                <img src="img/ginebro-logo.png" alt="Ilustración" class="w-full max-w-md mx-auto">
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t mt-10 text-center p-4 text-sm text-gray-500">
+        {{ $footerText }}
+    </footer>
+
 </body>
 </html>

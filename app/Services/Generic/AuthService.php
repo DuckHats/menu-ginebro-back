@@ -209,12 +209,12 @@ class AuthService
         $email = $request->email;
         $code = $request->verification_code;
         $password = $request->password;
-        
+
         $entry = EmailVerification::where('email', $email)
-        ->where('verification_code', $code)
-        ->where('expires_at', '>', now())
-        ->first();
-        
+            ->where('verification_code', $code)
+            ->where('expires_at', '>', now())
+            ->first();
+
         if (! $entry) {
             throw new \Exception('Invalid or expired verification code.');
         }

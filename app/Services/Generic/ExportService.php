@@ -23,7 +23,7 @@ class ExportService
     public function export(Request $request)
     {
         $format = $request->input('format', 'json');
-        $fileName = class_basename($this->model) . '_export_' . now()->timestamp;
+        $fileName = class_basename($this->model).'_export_'.now()->timestamp;
 
         try {
             $data = $this->model->getExportData();
@@ -35,13 +35,14 @@ class ExportService
                         'status' => 'success',
                         'message' => 'Exported successfully.',
                         'data' => $data,
-                    ]);
+                    ], 200, [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); // Protect default scapper formatting for JSON
 
                 case 'csv':
                 case 'xlsx':
                     $export = new class($data, $headings) implements FromArray, WithHeadings
                     {
                         protected Collection $data;
+
                         protected array $headings;
 
                         public function __construct(Collection $data, array $headings)
