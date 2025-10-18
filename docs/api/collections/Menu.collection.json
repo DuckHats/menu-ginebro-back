@@ -1,0 +1,257 @@
+{
+	"info": {
+		"_postman_id": "2a293c6b-2edd-4801-923e-5c390315665f",
+		"name": "Menu",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41222371",
+		"_collection_link": "https://duckhats-3040.postman.co/workspace/menu_ginebro~4adfd1e6-1ce0-4cbe-8439-71eef73275c7/collection/41222371-2a293c6b-2edd-4801-923e-5c390315665f?action=share&source=collection_link&creator=41222371"
+	},
+	"item": [
+		{
+			"name": "Get menus",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"\"\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/menus",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"menus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get menu",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"\"\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/menus/{{menuDay}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"menus",
+						"{{menuDay}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create menu",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"day\": \"2023-12-12\"\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/menus",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"menus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update menu",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"day\": \"2024-12-12\"\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/menus/{{menuid}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"menus",
+						"{{menuid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"format\": \"json\",\r\n  \"data\": [\r\n    {\r\n      \"day\": \"2025-06-01\",\r\n      \"dishes\": [\r\n        {\r\n          \"dish_date\": \"2025-06-01\",\r\n          \"dish_type_id\": 1,\r\n          \"options\": [\"Macarrons\", \"Amanida\"]\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/menus/import",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"menus",
+						"import"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Export",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/menus/export?format=csv",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"menus",
+						"export"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "csv"
+						},
+						{
+							"key": "format",
+							"value": "xlsx",
+							"disabled": true
+						},
+						{
+							"key": "format",
+							"value": "json",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
