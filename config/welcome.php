@@ -7,5 +7,12 @@ return [
     'documentation_url' => '', // Optional URL to documentation
     'primary_color' => '#009ca6',
     'accent_color' => '#2b8561ff',
-    'footer_text' => '© '.date('Y').' Duckhats. All rights reserved.',
+    'footer_text' => '© ' . date('Y') . ' Duckhats. All rights reserved.',
+    'AdminUser' => [
+        'name' => 'Admin',
+        'last_name' => 'Ginebro',
+        'email' => 'admin@ginebro.cat',
+        'password' => 'Password123',
+        'user_type_id' => 1,
+    ],
 ];

@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         // Executar seeders en ordre
         $this->call([
             UserTypeSeeder::class,
+            AdminUserSeeder::class,
             UsersSeeder::class,
             ImagesSeeder::class,
             OrderTypeSeeder::class,
