@@ -23,7 +23,7 @@ class AuthService
     {
         $fields = ValidationHelper::validateRequest($request, 'auth', 'register');
         if (! $fields['success']) {
-            throw new \Exception('Invalid parameters provided.');
+            throw new \Exception(config('messages.generic.invalid_parameters'));
         }
 
         $fields = $fields['data'];
@@ -45,14 +45,14 @@ class AuthService
     {
         $validationResult = ValidationHelper::validateRequest($request, 'auth', 'login');
         if (! $validationResult['success']) {
-            throw new \Exception('Invalid parameters provided.');
+            throw new \Exception(config('messages.generic.invalid_parameters'));
         }
 
         $validatedData = $validationResult['data'];
 
         if (! Auth::attempt(['email' => $validatedData['user'], 'password' => $validatedData['password']])) {
             if (! Auth::attempt(['username' => $validatedData['user'], 'password' => $validatedData['password']])) {
-                throw new \Exception('The provided credentials are incorrect.');
+                throw new \Exception(config('messages.auth.invalid_credentials'));
             }
         }
 
@@ -60,7 +60,7 @@ class AuthService
 
         if ($user->status != User::STATUS_ACTIVE) {
             Auth::logout();
-            throw new \Exception('Your account is banned or inactive.');
+            throw new \Exception(config('messages.auth.account_inactive'));
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -80,12 +80,12 @@ class AuthService
     {
         $validatedData = ValidationHelper::validateRequest($request, 'auth', 'send_reset_code');
         if (! $validatedData['success']) {
-            throw new \Exception('Invalid parameters provided.');
+            throw new \Exception(config('messages.generic.invalid_parameters'));
         }
 
         $user = User::where('email', $request->email)->first();
         if (! $user) {
-            throw new \Exception('User not found.');
+            throw new \Exception(config('messages.errors.user_not_found'));
         }
 
         $resetCode = rand(100000, 999999);
@@ -102,7 +102,7 @@ class AuthService
     {
         $validatedData = ValidationHelper::validateRequest($request, 'auth', 'reset_password');
         if (! $validatedData['success']) {
-            throw new \Exception('Invalid parameters provided.');
+            throw new \Exception(config('messages.generic.invalid_parameters'));
         }
 
         $resetEntry = DB::table('password_resets')
@@ -111,11 +111,11 @@ class AuthService
             ->first();
 
         if (! $resetEntry) {
-            throw new \Exception('Invalid or expired code.');
+            throw new \Exception(config('messages.auth.invalid_or_expired_code'));
         }
 
         if (now()->greaterThan($resetEntry->expires_at)) {
-            throw new \Exception('The code has expired.');
+            throw new \Exception(config('messages.auth.code_expired'));
         }
 
         $user = User::where('email', $request->email)->first();
@@ -130,12 +130,12 @@ class AuthService
     {
         $validatedData = ValidationHelper::validateRequest($request, 'auth', 'send_email_verification_code');
         if (! $validatedData['success']) {
-            throw new \Exception('Invalid parameters provided.');
+            throw new \Exception(config('messages.generic.invalid_parameters'));
         }
 
         $user = User::where('email', $request->email)->first();
         if (! $user) {
-            throw new \Exception('User not found.');
+            throw new \Exception(config('messages.errors.user_not_found'));
         }
 
         $verificationCode = rand(10000000, 99999999);
@@ -153,7 +153,7 @@ class AuthService
     {
         $validatedData = ValidationHelper::validateRequest($request, 'auth', 'verify_email');
         if (! $validatedData['success']) {
-            throw new \Exception('Invalid parameters provided.');
+            throw new \Exception(config('messages.generic.invalid_parameters'));
         }
 
         $email = $validatedData['data']['email'];
@@ -165,7 +165,7 @@ class AuthService
             ->first();
 
         if (! $verificationEntry) {
-            throw new \Exception('Invalid or expired code.');
+            throw new \Exception(config('messages.auth.invalid_or_expired_code'));
         }
 
         $user = User::where('email', $email)->first();
@@ -179,13 +179,13 @@ class AuthService
     {
         $validated = ValidationHelper::validateRequest($request, 'auth', 'send_register_code');
         if (! $validated['success']) {
-            throw new \Exception('Invalid parameters provided.');
+            throw new \Exception(config('messages.generic.invalid_parameters'));
         }
 
         $email = $request->email;
 
         if (User::where('email', $email)->exists()) {
-            throw new \Exception('This email is already registered.');
+            throw new \Exception(config('messages.auth.email_already_registered'));
         }
 
         $code = rand(100000, 999999);
@@ -203,7 +203,7 @@ class AuthService
     {
         $validated = ValidationHelper::validateRequest($request, 'auth', 'complete_register');
         if (! $validated['success']) {
-            throw new \Exception('Invalid parameters provided.');
+            throw new \Exception(config('messages.generic.invalid_parameters'));
         }
 
         $email = $request->email;
@@ -216,11 +216,11 @@ class AuthService
             ->first();
 
         if (! $entry) {
-            throw new \Exception('Invalid or expired verification code.');
+            throw new \Exception(config('messages.auth.invalid_verification_code'));
         }
 
         if (User::where('email', $email)->exists()) {
-            throw new \Exception('User already exists.');
+            throw new \Exception(config('messages.auth.user_already_exists'));
         }
 
         $user = User::create([

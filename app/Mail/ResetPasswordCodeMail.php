@@ -19,7 +19,7 @@ class ResetPasswordCodeMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Código de restablecimiento de contraseña')
+        return $this->subject(config('email_subjects.reset_password_code'))
             ->view('emails.reset_password_code')
             ->with([
                 'code' => $this->code,

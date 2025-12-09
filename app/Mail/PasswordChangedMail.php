@@ -14,7 +14,7 @@ class PasswordChangedMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Contraseña Modificada')
+        return $this->subject(config('email_subjects.password_changed'))
             ->view('emails.password_changed');
     }
 }

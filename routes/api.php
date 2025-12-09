@@ -122,8 +122,8 @@ Route::middleware('throttle:api')->group(function () {
 
         // Allergy routes
         Route::controller(AllergyController::class)->group(function () {
-            Route::get('/allergies', 'index')->name('allergies.index')->middleware('auth:sanctum');
-            Route::post('/allergies', 'updateUserAllergies')->name('allergies.update')->middleware('auth:sanctum');
+            Route::get(RouteConstants::ALLERGIES, 'index')->name('allergies.index')->middleware('auth:sanctum');
+            Route::post(RouteConstants::ALLERGIES, 'updateUserAllergies')->name('allergies.update')->middleware('auth:sanctum');
         });
 
         //
