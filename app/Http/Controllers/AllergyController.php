@@ -11,4 +11,20 @@ class AllergyController extends Controller
     {
         return response()->json(Allergy::all());
     }
+
+    public function updateUserAllergies(Request $request)
+    {
+        $request->validate([
+            'allergies' => 'array',
+            'allergies.*' => 'exists:allergies,id',
+            'custom_allergies' => 'nullable|string',
+        ]);
+
+        $user = auth()->user();
+        $user->allergies()->sync($request->allergies);
+        $user->custom_allergies = $request->custom_allergies;
+        $user->save();
+
+        return response()->json(['message' => 'Allergies updated successfully', 'user' => $user->load('allergies')]);
+    }
 }

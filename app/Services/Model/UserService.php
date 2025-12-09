@@ -70,10 +70,9 @@ class UserService
     {
         try {
             Gate::authorize('view', $request->user());
-            $user = User::where('id', $id);
+            $user = User::where('id', $id)->with('allergies');
             // Uncomment the following line if you want to apply relations
             // $this->applyRelations($user, $request);
-            $user->with('allergies');
 
             $user = $user->first();
             if (! $user) {
