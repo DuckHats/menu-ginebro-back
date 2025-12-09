@@ -53,6 +53,9 @@ return [
             'email' => 'required|string|email|max:255|unique:users',
             // Modificar especificacions de password
             'password' => 'required|string|min:8',
+            'custom_allergies' => 'nullable|string',
+            'allergies' => 'nullable|array',
+            'allergies.*' => 'exists:allergies,id',
         ],
         'update' => [
             'name' => 'required|string|max:255|unique:users,name,{id}',
@@ -60,6 +63,9 @@ return [
             'email' => 'required|string|email|max:255|unique:users,email,{id}',
             // Modificar especificacions de password
             'password' => 'nullable|string|min:8',
+            'custom_allergies' => 'nullable|string',
+            'allergies' => 'nullable|array',
+            'allergies.*' => 'exists:allergies,id',
         ],
         'patch' => [
             'name' => 'nullable|string|max:255|unique:users,name,{id}',

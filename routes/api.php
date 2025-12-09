@@ -1,6 +1,7 @@
 <?php
 
 use App\Constants\RouteConstants;
+use App\Http\Controllers\AllergyController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DishController;
 use App\Http\Controllers\MenuController;
@@ -39,7 +40,6 @@ Route::middleware('throttle:api')->group(function () {
 
             Route::post(RouteConstants::VERIFY_EMAIL, 'sendEmailVerificationCode')->name('auth.sendEmailVerificationCode')->middleware('auth:sanctum');
             Route::post(RouteConstants::VERIFY_EMAIL_CONFIRM, 'verifyEmail')->name('auth.verifyEmail')->middleware('auth:sanctum');
-
         });
 
         // User routes
@@ -59,7 +59,6 @@ Route::middleware('throttle:api')->group(function () {
 
             Route::post(RouteConstants::USERS_DISABLE, 'disableUser')->name('users.disable')->middleware('auth:sanctum');
             Route::post(RouteConstants::USERS_ENABLE, 'enableUser')->name('users.enable')->middleware('auth:sanctum');
-
         });
 
         // Menu routes
@@ -119,6 +118,11 @@ Route::middleware('throttle:api')->group(function () {
         // Order type routes
         Route::controller(OrderTypeController::class)->group(function () {
             Route::get(RouteConstants::ORDER_TYPE, 'index')->name('orderType.index')->middleware('auth:sanctum');
+        });
+
+        // Allergy routes
+        Route::controller(AllergyController::class)->group(function () {
+            Route::get('/allergies', 'index')->name('allergies.index')->middleware('auth:sanctum');
         });
 
         //

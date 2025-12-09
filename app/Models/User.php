@@ -39,6 +39,7 @@ class User extends Authenticatable implements Exportable, Importable
         'password',
         'user_type_id',
         'status',
+        'custom_allergies',
     ];
 
     /**
@@ -64,6 +65,11 @@ class User extends Authenticatable implements Exportable, Importable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function allergies()
+    {
+        return $this->belongsToMany(Allergy::class);
     }
 
     public function userType()
