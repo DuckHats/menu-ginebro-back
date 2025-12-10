@@ -19,7 +19,7 @@ class AccountSuspensionMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Tu cuenta ha sido suspendida')
+        return $this->subject(config('email_subjects.account_suspension'))
             ->view('emails.account-suspension')
             ->with([
                 'reason' => $this->reason,

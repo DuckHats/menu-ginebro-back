@@ -146,4 +146,7 @@ class RouteConstants
     const ORDER_DETAILS_PATCH = '/order_details/{id}';
 
     const ORDER_DETAILS_DESTROY = '/order_details/{id}';
+
+    // Allergy Routes
+    const ALLERGIES = '/allergies';
 }

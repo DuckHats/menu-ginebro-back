@@ -2,6 +2,7 @@
 
 namespace App\Services\Model;
 
+use App\Constants\ErrorCodes;
 use App\Helpers\ApiResponse;
 use App\Helpers\ValidationHelper;
 use App\Http\Resources\UserResource;
@@ -25,13 +26,13 @@ class UserService
 
             return UserResource::collection($users)->additional([
                 'status' => 'success',
-                'message' => 'List of users retrieved successfully.',
+                'message' => config('messages.users.list_retrieved'),
                 'code' => ApiResponse::OK_STATUS,
             ]);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'FETCH_FAILED',
-                'Error while retrieving users.',
+                ErrorCodes::FETCH_FAILED,
+                config('messages.errors.fetch_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -44,8 +45,8 @@ class UserService
 
         if (! $validatedData['success']) {
             return ApiResponse::error(
-                'VALIDATION_ERROR',
-                'Invalid parameters provided.',
+                ErrorCodes::VALIDATION_ERROR,
+                config('messages.generic.validation_error'),
                 $validatedData['errors'],
                 ApiResponse::INVALID_PARAMETERS_STATUS
             );
@@ -55,11 +56,11 @@ class UserService
             $user = new User($validatedData['data']);
             $user->save();
 
-            return ApiResponse::success(new UserResource($user), 'User created successfully.', ApiResponse::CREATED_STATUS);
+            return ApiResponse::success(new UserResource($user), config('messages.users.created_success'), ApiResponse::CREATED_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'CREATE_FAILED',
-                'Error while creating user.',
+                ErrorCodes::CREATE_FAILED,
+                config('messages.errors.create_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -77,8 +78,8 @@ class UserService
             $user = $user->first();
             if (! $user) {
                 return ApiResponse::error(
-                    'NOT_FOUND',
-                    'User not found.',
+                    ErrorCodes::NOT_FOUND,
+                    config('messages.users.not_found'),
                     [],
                     ApiResponse::NOT_FOUND_STATUS
                 );
@@ -86,11 +87,11 @@ class UserService
 
             $userResource = new UserResource($user);
 
-            return ApiResponse::success($userResource, 'User retrieved successfully.', ApiResponse::OK_STATUS);
+            return ApiResponse::success($userResource, config('messages.users.retrieved_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'FETCH_FAILED',
-                'Error while retrieving user.',
+                ErrorCodes::FETCH_FAILED,
+                config('messages.errors.fetch_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -104,8 +105,8 @@ class UserService
 
         if (! $validatedData['success']) {
             return ApiResponse::error(
-                'VALIDATION_ERROR',
-                'Invalid parameters provided.',
+                ErrorCodes::VALIDATION_ERROR,
+                config('messages.generic.validation_error'),
                 $validatedData['errors'],
                 ApiResponse::INVALID_PARAMETERS_STATUS
             );
@@ -115,8 +116,8 @@ class UserService
             $user = User::find($id);
             if (! $user) {
                 return ApiResponse::error(
-                    'NOT_FOUND',
-                    'User not found.',
+                    ErrorCodes::NOT_FOUND,
+                    config('messages.users.not_found'),
                     [],
                     ApiResponse::NOT_FOUND_STATUS
                 );
@@ -130,11 +131,11 @@ class UserService
                 $user->allergies()->sync($validatedData['data']['allergies']);
             }
 
-            return ApiResponse::success(new UserResource($user), 'User updated successfully.', ApiResponse::OK_STATUS);
+            return ApiResponse::success(new UserResource($user), config('messages.users.updated_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'UPDATE_FAILED',
-                'Error while updating user.',
+                ErrorCodes::UPDATE_FAILED,
+                config('messages.errors.update_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -148,8 +149,8 @@ class UserService
 
         if (! $validatedData['success']) {
             return ApiResponse::error(
-                'VALIDATION_ERROR',
-                'Invalid parameters provided.',
+                ErrorCodes::VALIDATION_ERROR,
+                config('messages.generic.validation_error'),
                 $validatedData['errors'],
                 ApiResponse::INVALID_PARAMETERS_STATUS
             );
@@ -159,8 +160,8 @@ class UserService
             $user = User::find($id);
             if (! $user) {
                 return ApiResponse::error(
-                    'NOT_FOUND',
-                    'User not found.',
+                    ErrorCodes::NOT_FOUND,
+                    config('messages.users.not_found'),
                     [],
                     ApiResponse::NOT_FOUND_STATUS
                 );
@@ -170,11 +171,11 @@ class UserService
 
             $user->update($validatedData['data']);
 
-            return ApiResponse::success(new UserResource($user), 'User updated successfully.', ApiResponse::OK_STATUS);
+            return ApiResponse::success(new UserResource($user), config('messages.users.updated_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'UPDATE_FAILED',
-                'Error while updating user.',
+                ErrorCodes::UPDATE_FAILED,
+                config('messages.errors.update_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -187,8 +188,8 @@ class UserService
             $user = User::find($id);
             if (! $user) {
                 return ApiResponse::error(
-                    'NOT_FOUND',
-                    'User not found.',
+                    ErrorCodes::NOT_FOUND,
+                    config('messages.users.not_found'),
                     [],
                     ApiResponse::NOT_FOUND_STATUS
                 );
@@ -198,11 +199,11 @@ class UserService
 
             $user->delete();
 
-            return ApiResponse::success([], 'User deleted successfully.', ApiResponse::NO_CONTENT_STATUS);
+            return ApiResponse::success([], config('messages.users.deleted_success'), ApiResponse::NO_CONTENT_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'DELETE_FAILED',
-                'Error while deleting user.',
+                ErrorCodes::DELETE_FAILED,
+                config('messages.errors.delete_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -216,8 +217,8 @@ class UserService
 
         if (! $validatedData['success']) {
             return ApiResponse::error(
-                'VALIDATION_ERROR',
-                'Invalid parameters provided.',
+                ErrorCodes::VALIDATION_ERROR,
+                config('messages.generic.validation_error'),
                 $validatedData['errors'],
                 ApiResponse::INVALID_PARAMETERS_STATUS
             );
@@ -227,8 +228,8 @@ class UserService
             $user = User::find($id);
             if (! $user) {
                 return ApiResponse::error(
-                    'NOT_FOUND',
-                    'User not found.',
+                    ErrorCodes::NOT_FOUND,
+                    config('messages.users.not_found'),
                     [],
                     ApiResponse::NOT_FOUND_STATUS
                 );
@@ -237,11 +238,11 @@ class UserService
             $user->profile_picture_url = $validatedData['data']['avatar'];
             $user->save();
 
-            return ApiResponse::success(new UserResource($user), 'Avatar updated successfully.', ApiResponse::OK_STATUS);
+            return ApiResponse::success(new UserResource($user), config('messages.users.avatar_updated'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'UPDATE_FAILED',
-                'Error while updating user.',
+                ErrorCodes::UPDATE_FAILED,
+                config('messages.errors.update_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -254,8 +255,8 @@ class UserService
         $validatedData = ValidationHelper::validateRequest($request, 'users', 'disableUser', $placeholders);
         if (! $validatedData['success']) {
             return ApiResponse::error(
-                'VALIDATION_ERROR',
-                'Invalid parameters provided.',
+                ErrorCodes::VALIDATION_ERROR,
+                config('messages.generic.validation_error'),
                 $validatedData['errors'],
                 ApiResponse::INVALID_PARAMETERS_STATUS
             );
@@ -267,8 +268,8 @@ class UserService
             $user = User::find($id);
             if (! $user) {
                 return ApiResponse::error(
-                    'NOT_FOUND',
-                    'User not found.',
+                    ErrorCodes::NOT_FOUND,
+                    config('messages.users.not_found'),
                     [],
                     ApiResponse::NOT_FOUND_STATUS
                 );
@@ -277,11 +278,11 @@ class UserService
             $user->status = User::STATUS_INACTIVE;
             $user->save();
 
-            return ApiResponse::success(new UserResource($user), 'User disabled successfully.', ApiResponse::OK_STATUS);
+            return ApiResponse::success(new UserResource($user), config('messages.users.disabled_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'UPDATE_FAILED',
-                'Error while banning user.',
+                ErrorCodes::UPDATE_FAILED,
+                config('messages.errors.banning_user_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -294,8 +295,8 @@ class UserService
         $validatedData = ValidationHelper::validateRequest($request, 'users', 'enableUser', $placeholders);
         if (! $validatedData['success']) {
             return ApiResponse::error(
-                'VALIDATION_ERROR',
-                'Invalid parameters provided.',
+                ErrorCodes::VALIDATION_ERROR,
+                config('messages.generic.validation_error'),
                 $validatedData['errors'],
                 ApiResponse::INVALID_PARAMETERS_STATUS
             );
@@ -307,8 +308,8 @@ class UserService
             $user = User::find($id);
             if (! $user) {
                 return ApiResponse::error(
-                    'NOT_FOUND',
-                    'User not found.',
+                    ErrorCodes::NOT_FOUND,
+                    config('messages.users.not_found'),
                     [],
                     ApiResponse::NOT_FOUND_STATUS
                 );
@@ -317,11 +318,11 @@ class UserService
             $user->status = User::STATUS_ACTIVE;
             $user->save();
 
-            return ApiResponse::success(new UserResource($user), 'User enabled successfully.', ApiResponse::OK_STATUS);
+            return ApiResponse::success(new UserResource($user), config('messages.users.enabled_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'UPDATE_FAILED',
-                'Error while banning user.',
+                ErrorCodes::UPDATE_FAILED,
+                config('messages.errors.banning_user_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -355,22 +356,22 @@ class UserService
             $user = User::find($requestUser->id);
             if (! $user) {
                 return ApiResponse::error(
-                    'NOT_FOUND',
-                    'User not found.',
+                    ErrorCodes::NOT_FOUND,
+                    config('messages.users.not_found'),
                     [],
                     ApiResponse::NOT_FOUND_STATUS
                 );
             }
 
             if ($user->isAdmin() || $user->isCook()) {
-                return ApiResponse::success(['admin' => true], 'User is admin.', ApiResponse::OK_STATUS);
+                return ApiResponse::success(['admin' => true], config('messages.users.is_admin'), ApiResponse::OK_STATUS);
             } else {
-                return ApiResponse::success(['admin' => false], 'User is not admin.', ApiResponse::OK_STATUS);
+                return ApiResponse::success(['admin' => false], config('messages.users.is_not_admin'), ApiResponse::OK_STATUS);
             }
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'FUNCTION_FAILED',
-                'Error while cheking if user is admin.',
+                ErrorCodes::FUNCTION_FAILED,
+                config('messages.errors.checking_admin_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
