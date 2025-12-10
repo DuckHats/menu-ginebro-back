@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             OrderStatusSeeder::class,
             OrdersSeeder::class,
             MenusAndDishesSeeder::class,
+            AllergySeeder::class,
         ]);
     }
 }

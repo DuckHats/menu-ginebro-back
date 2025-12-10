@@ -24,6 +24,8 @@ class UserResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'allergies' => $this->whenLoaded('allergies'),
+            'custom_allergies' => $this->custom_allergies,
         ];
     }
 }

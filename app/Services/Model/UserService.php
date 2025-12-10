@@ -70,7 +70,7 @@ class UserService
     {
         try {
             Gate::authorize('view', $request->user());
-            $user = User::where('id', $id);
+            $user = User::where('id', $id)->with('allergies');
             // Uncomment the following line if you want to apply relations
             // $this->applyRelations($user, $request);
 
@@ -125,6 +125,10 @@ class UserService
             Gate::authorize('update', $user);
 
             $user->update($validatedData['data']);
+
+            if (isset($validatedData['data']['allergies'])) {
+                $user->allergies()->sync($validatedData['data']['allergies']);
+            }
 
             return ApiResponse::success(new UserResource($user), 'User updated successfully.', ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
@@ -363,7 +367,6 @@ class UserService
             } else {
                 return ApiResponse::success(['admin' => false], 'User is not admin.', ApiResponse::OK_STATUS);
             }
-
         } catch (\Throwable $e) {
             return ApiResponse::error(
                 'FUNCTION_FAILED',
