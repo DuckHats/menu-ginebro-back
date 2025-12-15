@@ -18,6 +18,7 @@ class AuthSessionTest extends TestCase
         $password = 'password123';
         $adminType = UserType::factory()->create(['id' => 1, 'name' => 'administrador']);
         $user = User::factory()->create([
+            'email' => 'test@example.com',
             'password' => Hash::make($password),
             'status' => User::STATUS_ACTIVE,
             'user_type_id' => $adminType->id,
@@ -56,7 +57,6 @@ class AuthSessionTest extends TestCase
                 'password' => $password,
             ], $headers);
 
-            dd($loginResponse->getContent());
         $loginResponse->assertStatus(200);
         $this->assertAuthenticatedAs($user);
 
