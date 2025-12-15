@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserType;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class AuthControllerTest extends TestCase
@@ -45,21 +46,18 @@ class AuthControllerTest extends TestCase
             'status' => User::STATUS_ACTIVE,
             'user_type_id' => $this->userType->id,
         ]);
-        $this->token = $this->user->createToken('auth_token')->plainTextToken;
 
         $this->adminUser = User::factory()->create([
             'password' => Hash::make('password123'),
             'status' => User::STATUS_ACTIVE,
             'user_type_id' => $this->adminType->id,
         ]);
-        $this->adminToken = $this->adminUser->createToken('auth_token')->plainTextToken;
 
         $this->cookUser = User::factory()->create([
             'password' => Hash::make('password123'),
             'status' => User::STATUS_ACTIVE,
             'user_type_id' => $this->cookType->id,
         ]);
-        $this->cookToken = $this->cookUser->createToken('auth_token')->plainTextToken;
     }
 
     /** @test */
@@ -201,7 +199,9 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_can_logout_a_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)->postJson(route('auth.logout'));
+        Sanctum::actingAs($this->user);
+
+        $response = $this->postJson(route('auth.logout'));
 
         $response->assertStatus(200);
     }
@@ -247,29 +247,5 @@ class AuthControllerTest extends TestCase
             'email' => $this->cookUser->email,
             'user_type_id' => $this->cookType->id,
         ]);
-    }
-
-    /** @test */
-    public function it_can_login_admin_user_with_token()
-    {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
-            ->postJson(route('auth.login'), [
-                'user' => $this->adminUser->email,
-                'password' => 'password123',
-            ]);
-
-        $response->assertStatus(200);
-    }
-
-    /** @test */
-    public function it_can_login_cook_user_with_token()
-    {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->cookToken)
-            ->postJson(route('auth.login'), [
-                'user' => $this->cookUser->email,
-                'password' => 'password123',
-            ]);
-
-        $response->assertStatus(200);
     }
 }

@@ -5,8 +5,12 @@ use App\Http\Controllers\SetupController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Middleware\AdminAuth;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
+use Illuminate\Http\Request;
 
 Route::get('/', WelcomeController::class);
+
+Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 if (env('APP_ENV') === 'local') {
     Route::get('/setup', [SetupController::class, 'setup']);
