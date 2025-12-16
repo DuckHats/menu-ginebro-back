@@ -7,6 +7,8 @@ use App\Http\Middleware\AdminAuth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 use Illuminate\Http\Request;
+use App\Services\Generic\AuthService;
+use App\Http\Controllers\DevAuthController;
 
 Route::get('/', WelcomeController::class);
 
@@ -14,6 +16,15 @@ Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 if (env('APP_ENV') === 'local') {
     Route::get('/setup', [SetupController::class, 'setup']);
+
+        // Dev-only auth visualizer (cookie/session flow)
+        Route::prefix('dev/auth')->controller(DevAuthController::class)->group(function () {
+                Route::get('/', 'show');
+                Route::post('/login', 'login');
+                Route::post('/register', 'register');
+                Route::post('/logout', 'logout');
+                Route::post('/logout-all', 'logoutAll');
+        });
 }
 
 // Rutes d'autenticació admin
