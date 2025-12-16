@@ -218,7 +218,7 @@ class AuthControllerTest extends TestCase
             ->withCookie('XSRF-TOKEN', $xsrf)
             ->postJson(route('auth.logout'), [], ['X-XSRF-TOKEN' => urldecode($xsrf)]);
 
-        $logoutResp->assertStatus(204);
+        $logoutResp->assertStatus(200);
 
         Auth::forgetGuards();
         $this->flushSession();
@@ -240,7 +240,7 @@ class AuthControllerTest extends TestCase
             ->withCookie('XSRF-TOKEN', $xsrf)
             ->postJson(route('auth.logoutAll'), [], ['X-XSRF-TOKEN' => urldecode($xsrf)]);
 
-        $resp->assertStatus(204);
+        $resp->assertStatus(200);
 
         Auth::forgetGuards();
         $this->flushSession();

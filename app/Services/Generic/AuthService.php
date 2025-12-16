@@ -81,7 +81,8 @@ class AuthService
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
+
         if ($request->hasSession()) {
             $request->session()->invalidate();
             $request->session()->regenerateToken();
@@ -94,7 +95,7 @@ class AuthService
 
         DB::table('sessions')->where('user_id', $userId)->delete();
 
-        Auth::logout();
+        Auth::guard('web')->logout();
 
         if ($request->hasSession()) {
             $request->session()->invalidate();
