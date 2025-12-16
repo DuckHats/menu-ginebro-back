@@ -64,6 +64,23 @@ class AuthController extends Controller
         }
     }
 
+    public function logoutAllSessions(Request $request)
+    {
+        try {
+            $this->authService->logoutAllSessions($request);
+
+            // Reuse same success message
+            return ApiResponse::success([], config('messages.auth.logout_success'));
+        } catch (\Throwable $e) {
+            return ApiResponse::error(
+                ErrorCodes::LOGOUT_FAILED,
+                config('messages.errors.logout_failed'),
+                ['exception' => $e->getMessage()],
+                ApiResponse::NO_CONTENT_STATUS
+            );
+        }
+    }
+
     public function sendResetCode(Request $request)
     {
         try {

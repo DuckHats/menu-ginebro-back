@@ -23,10 +23,7 @@ class SetupController extends Controller
         }
 
         if (Auth::attempt(['email' => 'AdminSetup@admin.com', 'password' => 'password123'])) {
-
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            return response($token, 200);
+            return response('Setup OK', 200);
         }
 
         return response('Failed to login', 500);

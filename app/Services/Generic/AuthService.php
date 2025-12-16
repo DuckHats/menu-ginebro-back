@@ -31,13 +31,15 @@ class AuthService
         $user = User::create($fields);
 
         Auth::login($user);
-        $token = $user->createToken('auth_token')->plainTextToken;
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
 
+        // Send welcome email
         EmailHelper::sendEmail($user->email, WelcomeMail::class, [$user]);
 
         return [
             'user' => $user,
-            'token' => $token,
         ];
     }
 
@@ -50,10 +52,14 @@ class AuthService
 
         $validatedData = $validationResult['data'];
 
-        if (! Auth::attempt(['email' => $validatedData['user'], 'password' => $validatedData['password']])) {
-            if (! Auth::attempt(['username' => $validatedData['user'], 'password' => $validatedData['password']])) {
-                throw new \Exception(config('messages.auth.invalid_credentials'));
-            }
+        if (! Auth::attempt([
+            'email' => $validatedData['user'],
+            'password' => $validatedData['password'],
+        ]) && ! Auth::attempt([
+            'username' => $validatedData['user'],
+            'password' => $validatedData['password'],
+        ])) {
+            throw new \Exception(config('messages.auth.invalid_credentials'));
         }
 
         $user = Auth::user();
@@ -63,18 +69,39 @@ class AuthService
             throw new \Exception(config('messages.auth.account_inactive'));
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
 
         return [
             'user' => $user,
-            'token' => $token,
         ];
     }
 
+
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        Auth::logout();
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
     }
+
+    public function logoutAllSessions(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        DB::table('sessions')->where('user_id', $userId)->delete();
+
+        Auth::logout();
+
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+    }
+
 
     public function sendResetCode(Request $request)
     {
@@ -234,14 +261,15 @@ class AuthService
         ]);
 
         Auth::login($user);
-        $token = $user->createToken('auth_token')->plainTextToken;
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
 
         EmailHelper::sendEmail($user->email, WelcomeMail::class, [$user]);
         EmailVerification::where('email', $email)->delete();
 
         return [
-            'user' => $user,
-            'token' => $token,
+            'user' => $user
         ];
     }
 }

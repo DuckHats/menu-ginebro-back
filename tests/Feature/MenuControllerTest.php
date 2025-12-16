@@ -31,7 +31,7 @@ class MenuControllerTest extends TestCase
             'user_type_id' => $adminType->id,
         ]);
 
-        $this->token = $this->user->createToken('auth_token')->plainTextToken;
+        // use session-based auth in tests
 
         // Crear un menú per a les proves
         $this->menu = Menu::factory()->create();
@@ -42,7 +42,10 @@ class MenuControllerTest extends TestCase
     {
         Menu::factory(5)->create();
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('menus.index'));
 
         $response->assertStatus(200);
@@ -55,7 +58,10 @@ class MenuControllerTest extends TestCase
             'day' => '2025-01-01',
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->postJson(route('menus.store'), $menuData);
 
         $response->assertStatus(201);
@@ -65,7 +71,10 @@ class MenuControllerTest extends TestCase
     /** @test */
     public function it_validates_required_fields_when_creating_menu()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->postJson(route('menus.store'), []);
 
         $response->assertStatus(400);
@@ -76,7 +85,10 @@ class MenuControllerTest extends TestCase
     {
         $menuDate = $this->menu->day;
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('menus.show', $menuDate));
 
         $response->assertStatus(200);
@@ -85,7 +97,10 @@ class MenuControllerTest extends TestCase
     /** @test */
     public function it_returns_404_if_menu_not_found()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('menus.show', '0022-01-12'));
 
         $response->assertStatus(404);
@@ -95,7 +110,10 @@ class MenuControllerTest extends TestCase
     public function it_can_update_a_menu()
     {
         $updatedData = ['day' => '2025-01-02'];
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->putJson(route('menus.update', $this->menu->id), $updatedData);
 
         $response->assertStatus(200);
@@ -107,7 +125,10 @@ class MenuControllerTest extends TestCase
     {
         $updatedData = ['day' => '2025-01-02'];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->patchJson(route('menus.patch', $this->menu->id), $updatedData);
 
         $response->assertStatus(200);
@@ -117,7 +138,10 @@ class MenuControllerTest extends TestCase
     /** @test */
     public function it_can_delete_a_menu()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->deleteJson(route('menus.destroy', $this->menu->id));
 
         $response->assertStatus(204);
@@ -127,7 +151,10 @@ class MenuControllerTest extends TestCase
     /** @test */
     public function it_can_export_menus_in_json()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('menus.export', ['format' => 'json']));
 
         $response->assertStatus(200);
@@ -137,7 +164,10 @@ class MenuControllerTest extends TestCase
     /** @test */
     public function it_can_export_menus_in_excel()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('menus.export', ['format' => 'xlsx']));
 
         $response->assertStatus(200);
@@ -147,7 +177,10 @@ class MenuControllerTest extends TestCase
     /** @test */
     public function it_can_export_menus_in_csv()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('menus.export', ['format' => 'csv']));
 
         $response->assertStatus(200);
