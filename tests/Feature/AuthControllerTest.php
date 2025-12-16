@@ -7,7 +7,9 @@ use App\Models\PasswordReset;
 use App\Models\User;
 use App\Models\UserType;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+// Using cookie-based session flow for SPA auth tests
 use Tests\TestCase;
 
 class AuthControllerTest extends TestCase
@@ -45,21 +47,18 @@ class AuthControllerTest extends TestCase
             'status' => User::STATUS_ACTIVE,
             'user_type_id' => $this->userType->id,
         ]);
-        $this->token = $this->user->createToken('auth_token')->plainTextToken;
 
         $this->adminUser = User::factory()->create([
             'password' => Hash::make('password123'),
             'status' => User::STATUS_ACTIVE,
             'user_type_id' => $this->adminType->id,
         ]);
-        $this->adminToken = $this->adminUser->createToken('auth_token')->plainTextToken;
 
         $this->cookUser = User::factory()->create([
             'password' => Hash::make('password123'),
             'status' => User::STATUS_ACTIVE,
             'user_type_id' => $this->cookType->id,
         ]);
-        $this->cookToken = $this->cookUser->createToken('auth_token')->plainTextToken;
     }
 
     /** @test */
@@ -149,40 +148,47 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_can_login_a_user()
     {
-        $loginData = [
-            'user' => $this->user->email,
-            'password' => 'password123',
-        ];
-
-        $response = $this->postJson(route('auth.login'), $loginData);
+        $result = $this->loginViaSession($this->user->email, 'password123');
+        $response = $result['response'];
+        $sessionCookie = $result['session_cookie'];
 
         $response->assertStatus(200);
+        $this->assertAuthenticatedAs($this->user);
+
+        // Ensure protected endpoint is accessible using returned session cookie
+        $meResp = $this->withCookie(config('session.cookie'), $sessionCookie)
+            ->getJson(route('users.me'));
+        $meResp->assertStatus(200);
     }
 
     /** @test */
     public function it_can_login_a_admin()
     {
-        $loginData = [
-            'user' => $this->adminUser->email,
-            'password' => 'password123',
-        ];
-
-        $response = $this->postJson(route('auth.login'), $loginData);
+        $result = $this->loginViaSession($this->adminUser->email, 'password123');
+        $response = $result['response'];
+        $sessionCookie = $result['session_cookie'];
 
         $response->assertStatus(200);
+        $this->assertAuthenticatedAs($this->adminUser);
+
+        $meResp = $this->withCookie(config('session.cookie'), $sessionCookie)
+            ->getJson(route('users.me'));
+        $meResp->assertStatus(200);
     }
 
     /** @test */
     public function it_can_login_a_cooker()
     {
-        $loginData = [
-            'user' => $this->cookUser->email,
-            'password' => 'password123',
-        ];
-
-        $response = $this->postJson(route('auth.login'), $loginData);
+        $result = $this->loginViaSession($this->cookUser->email, 'password123');
+        $response = $result['response'];
+        $sessionCookie = $result['session_cookie'];
 
         $response->assertStatus(200);
+        $this->assertAuthenticatedAs($this->cookUser);
+
+        $meResp = $this->withCookie(config('session.cookie'), $sessionCookie)
+            ->getJson(route('users.me'));
+        $meResp->assertStatus(200);
     }
 
     /** @test */
@@ -201,10 +207,55 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_can_logout_a_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)->postJson(route('auth.logout'));
+        // Perform login with cookie/session flow
+        $result = $this->loginViaSession($this->user->email, 'password123');
+        $response = $result['response'];
+        $sessionCookie = $result['session_cookie'];
+        $xsrf = $result['xsrf'];
 
-        $response->assertStatus(200);
+        // Logout using session cookie and CSRF header
+        $logoutResp = $this->withCookie(config('session.cookie'), $sessionCookie)
+            ->withCookie('XSRF-TOKEN', $xsrf)
+            ->postJson(route('auth.logout'), [], ['X-XSRF-TOKEN' => urldecode($xsrf)]);
+
+        $logoutResp->assertStatus(200);
+
+        Auth::forgetGuards();
+        $this->flushSession();
+
+        $meResp = $this->withCookie(config('session.cookie'), $sessionCookie)
+            ->getJson(route('users.me'));
+
+        $meResp->assertStatus(401);
     }
+
+    /** @test */
+    public function it_can_logout_all_sessions()
+    {
+        $result = $this->loginViaSession($this->user->email, 'password123');
+        $sessionCookie = $result['session_cookie'];
+        $xsrf = $result['xsrf'];
+
+        $resp = $this->withCookie(config('session.cookie'), $sessionCookie)
+            ->withCookie('XSRF-TOKEN', $xsrf)
+            ->postJson(route('auth.logoutAll'), [], ['X-XSRF-TOKEN' => urldecode($xsrf)]);
+
+        $resp->assertStatus(200);
+
+        Auth::forgetGuards();
+        $this->flushSession();
+
+        $meResp = $this->withCookie(config('session.cookie'), $sessionCookie)
+            ->getJson(route('users.me'));
+
+        $meResp->assertStatus(401);
+    }
+
+    /**
+     * Helper to get CSRF cookie and perform login using cookies (SPA flow).
+     * Returns array: ['response' => $response, 'xsrf' => $xsrfCookie, 'session_cookie' => $sessionCookie]
+     */
+    // loginViaSession is provided by Tests\TestCase
 
     /** @test */
     public function it_can_send_reset_password_code()
@@ -247,29 +298,5 @@ class AuthControllerTest extends TestCase
             'email' => $this->cookUser->email,
             'user_type_id' => $this->cookType->id,
         ]);
-    }
-
-    /** @test */
-    public function it_can_login_admin_user_with_token()
-    {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
-            ->postJson(route('auth.login'), [
-                'user' => $this->adminUser->email,
-                'password' => 'password123',
-            ]);
-
-        $response->assertStatus(200);
-    }
-
-    /** @test */
-    public function it_can_login_cook_user_with_token()
-    {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->cookToken)
-            ->postJson(route('auth.login'), [
-                'user' => $this->cookUser->email,
-                'password' => 'password123',
-            ]);
-
-        $response->assertStatus(200);
     }
 }

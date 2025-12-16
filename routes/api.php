@@ -33,8 +33,9 @@ Route::middleware('throttle:api')->group(function () {
             Route::post(RouteConstants::REGISTER, 'register')->name('auth.register');
             Route::post(RouteConstants::LOGIN, 'login')->name('auth.login');
 
-            Route::post(RouteConstants::LOGOUT, 'logout')->name('auth.logout')->middleware('auth:sanctum');
-            Route::post(RouteConstants::LOGOUT_ALL_SESSIONS, 'logoutAllSessions')->name('auth.logoutAll')->middleware('auth:sanctum');
+            Route::post(RouteConstants::LOGOUT, 'logout')->name('auth.logout')->middleware('auth');
+            Route::post(RouteConstants::LOGOUT_ALL_SESSIONS, 'logoutAllSessions')->name('auth.logoutAll')->middleware('auth');
+
             Route::post(RouteConstants::FORGOT_PASSWORD, 'sendResetCode')->name('auth.sendResetCode');
             Route::post(RouteConstants::RESET_PASSWORD, 'resetPassword')->name('auth.resetPassword');
 

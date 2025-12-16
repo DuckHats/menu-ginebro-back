@@ -27,13 +27,15 @@ class OrderStatusControllerTest extends TestCase
             'password' => Hash::make('password123'),
             'user_type_id' => $adminType->id,
         ]);
-        $this->token = $this->user->createToken('auth_token')->plainTextToken;
     }
 
     public function test_it_can_list_order_status()
     {
         OrderStatus::factory(5)->create();
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('orderStatus.index'));
 
         $response->assertStatus(200);

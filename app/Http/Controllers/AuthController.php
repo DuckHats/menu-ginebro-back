@@ -6,6 +6,7 @@ use App\Constants\ErrorCodes;
 use App\Helpers\ApiResponse;
 use App\Services\Generic\AuthService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
@@ -53,13 +54,34 @@ class AuthController extends Controller
         try {
             $this->authService->logout($request);
 
-            return ApiResponse::success([], config('messages.auth.logout_success'));
+            return ApiResponse::success([], config('messages.auth.logout_success'), ApiResponse::OK_STATUS)
+                ->withCookie(Cookie::forget(config('session.cookie')))
+                ->withCookie(Cookie::forget('XSRF-TOKEN'));
         } catch (\Throwable $e) {
             return ApiResponse::error(
                 ErrorCodes::LOGOUT_FAILED,
                 config('messages.errors.logout_failed'),
                 ['exception' => $e->getMessage()],
-                ApiResponse::NO_CONTENT_STATUS
+                ApiResponse::INTERNAL_SERVER_ERROR_STATUS
+            );
+        }
+    }
+
+    public function logoutAllSessions(Request $request)
+    {
+        try {
+            $this->authService->logoutAllSessions($request);
+
+            // Reuse same success message and clear cookies in client
+            return ApiResponse::success([], config('messages.auth.logout_success'), ApiResponse::OK_STATUS)
+                ->withCookie(Cookie::forget(config('session.cookie')))
+                ->withCookie(Cookie::forget('XSRF-TOKEN'));
+        } catch (\Throwable $e) {
+            return ApiResponse::error(
+                ErrorCodes::LOGOUT_FAILED,
+                config('messages.errors.logout_failed'),
+                ['exception' => $e->getMessage()],
+                ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
         }
     }
