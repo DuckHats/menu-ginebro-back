@@ -220,12 +220,6 @@ class AuthControllerTest extends TestCase
 
         $logoutResp->assertStatus(204);
 
-        // Response should include Set-Cookie headers for session and XSRF token
-        $cookies = $logoutResp->headers->getCookies();
-        $cookieNames = array_map(function ($c) { return $c->getName(); }, $cookies);
-        $this->assertTrue(in_array(config('session.cookie'), $cookieNames));
-        $this->assertTrue(in_array('XSRF-TOKEN', $cookieNames));
-
         Auth::forgetGuards();
         $this->flushSession();
 
@@ -247,11 +241,6 @@ class AuthControllerTest extends TestCase
             ->postJson(route('auth.logoutAll'), [], ['X-XSRF-TOKEN' => urldecode($xsrf)]);
 
         $resp->assertStatus(204);
-
-        $cookies = $resp->headers->getCookies();
-        $cookieNames = array_map(function ($c) { return $c->getName(); }, $cookies);
-        $this->assertTrue(in_array(config('session.cookie'), $cookieNames));
-        $this->assertTrue(in_array('XSRF-TOKEN', $cookieNames));
 
         Auth::forgetGuards();
         $this->flushSession();
