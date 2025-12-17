@@ -15,4 +15,11 @@ return [
         'password' => 'Password123',
         'user_type_id' => 1,
     ],
+    'kitchenUser' => [
+        'name' => 'Cuina',
+        'last_name' => 'Ginebro',
+        'email' => 'cuina@ginebro.cat',
+        'password' => 'Password123',
+        'user_type_id' => 3,
+    ],
 ];
