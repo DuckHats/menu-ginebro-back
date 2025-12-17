@@ -2,6 +2,7 @@
 
 namespace App\Services\Model;
 
+use App\Constants\ErrorCodes;
 use App\Helpers\ApiResponse;
 use App\Http\Resources\MenuResource;
 use App\Models\Menu;
@@ -57,14 +58,14 @@ class MenuService extends BaseService
             $item = $query->first();
 
             if (! $item) {
-                return ApiResponse::error('NOT_FOUND', 'Item not found.', [], ApiResponse::NOT_FOUND_STATUS);
+                return ApiResponse::error(ErrorCodes::NOT_FOUND, config('messages.generic.not_found'), [], ApiResponse::NOT_FOUND_STATUS);
             }
 
-            return ApiResponse::success(new ($this->resourceClass())($item), 'Item retrieved successfully.', ApiResponse::OK_STATUS);
+            return ApiResponse::success(new ($this->resourceClass())($item), config('messages.generic.operation_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             Log::error('Error retrieving item', ['exception' => $e->getMessage()]);
 
-            return ApiResponse::error('NOT_FOUND', 'Item not found.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
+            return ApiResponse::error(ErrorCodes::NOT_FOUND, config('messages.generic.not_found'), ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
     }
 }

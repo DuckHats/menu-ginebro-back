@@ -35,7 +35,7 @@ class DishControllerTest extends TestCase
             'user_type_id' => $adminType->id,
         ]);
 
-        $this->token = $this->user->createToken('auth_token')->plainTextToken;
+        // session-based auth will be used in tests
 
         // Crear un tipo de plato y un plato para las pruebas
         $menu = Menu::factory()->create();
@@ -54,7 +54,10 @@ class DishControllerTest extends TestCase
             'dish_type_id' => $this->dishType->id,
         ]);
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('dishes.index'));
 
         $response->assertStatus(200);
@@ -69,7 +72,10 @@ class DishControllerTest extends TestCase
             'options' => json_encode(['option1', 'option2']),
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->postJson(route('dishes.store'), $dishData);
 
         $response->assertStatus(201);
@@ -82,7 +88,10 @@ class DishControllerTest extends TestCase
     /** @test */
     public function it_validates_required_fields_when_creating_dish()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->postJson(route('dishes.store'), []);
 
         $response->assertStatus(400);
@@ -91,7 +100,10 @@ class DishControllerTest extends TestCase
     /** @test */
     public function it_can_show_a_dish_with_dish_type()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('dishes.show', $this->dish->id));
 
         $response->assertStatus(200)
@@ -101,7 +113,10 @@ class DishControllerTest extends TestCase
     /** @test */
     public function it_returns_404_if_dish_not_found()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('dishes.show', 9999));
 
         $response->assertStatus(404);
@@ -115,7 +130,10 @@ class DishControllerTest extends TestCase
             'dish_type_id' => $this->dishType->id,
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->putJson(route('dishes.update', $this->dish->id), $updatedData);
 
         $response->assertStatus(200);
@@ -130,7 +148,10 @@ class DishControllerTest extends TestCase
     {
         $updatedData = ['dish_type_id' => $this->dishType->id];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->patchJson(route('dishes.patch', $this->dish->id), $updatedData);
 
         $response->assertStatus(200);
@@ -140,7 +161,10 @@ class DishControllerTest extends TestCase
     /** @test */
     public function it_can_delete_a_dish()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->deleteJson(route('dishes.destroy', $this->dish->id));
 
         $response->assertStatus(204);

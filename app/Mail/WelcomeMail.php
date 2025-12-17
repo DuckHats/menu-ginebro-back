@@ -19,7 +19,7 @@ class WelcomeMail extends Mailable
 
     public function build()
     {
-        return $this->subject('¡Bienvenido a ' . config('app.name') . '!')
+        return $this->subject(str_replace(':app_name', config('app.name'), config('email_subjects.welcome')))
             ->view('emails.welcome')
             ->with([
                 'user' => $this->user,

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\ErrorCodes;
 use App\Helpers\ApiResponse;
 use App\Services\Generic\AuthService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
@@ -20,11 +22,11 @@ class AuthController extends Controller
         try {
             $data = $this->authService->register($request);
 
-            return ApiResponse::success($data, 'Registered successfully', ApiResponse::CREATED_STATUS);
+            return ApiResponse::success($data, config('messages.auth.register_success'), ApiResponse::CREATED_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'REGISTRATION_FAILED',
-                'Error while creating user',
+                ErrorCodes::REGISTRATION_FAILED,
+                config('messages.errors.registration_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -36,11 +38,11 @@ class AuthController extends Controller
         try {
             $data = $this->authService->login($request);
 
-            return ApiResponse::success($data, 'Login successful', ApiResponse::OK_STATUS);
+            return ApiResponse::success($data, config('messages.auth.login_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'LOGIN_FAILED',
-                'Error during login',
+                ErrorCodes::LOGIN_FAILED,
+                config('messages.errors.login_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::FORBIDDEN_STATUS
             );
@@ -52,13 +54,34 @@ class AuthController extends Controller
         try {
             $this->authService->logout($request);
 
-            return ApiResponse::success([], 'Logged out successfully');
+            return ApiResponse::success([], config('messages.auth.logout_success'), ApiResponse::OK_STATUS)
+                ->withCookie(Cookie::forget(config('session.cookie')))
+                ->withCookie(Cookie::forget('XSRF-TOKEN'));
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'LOGOUT_FAILED',
-                'Error while logging out',
+                ErrorCodes::LOGOUT_FAILED,
+                config('messages.errors.logout_failed'),
                 ['exception' => $e->getMessage()],
-                ApiResponse::NO_CONTENT_STATUS
+                ApiResponse::INTERNAL_SERVER_ERROR_STATUS
+            );
+        }
+    }
+
+    public function logoutAllSessions(Request $request)
+    {
+        try {
+            $this->authService->logoutAllSessions($request);
+
+            // Reuse same success message and clear cookies in client
+            return ApiResponse::success([], config('messages.auth.logout_success'), ApiResponse::OK_STATUS)
+                ->withCookie(Cookie::forget(config('session.cookie')))
+                ->withCookie(Cookie::forget('XSRF-TOKEN'));
+        } catch (\Throwable $e) {
+            return ApiResponse::error(
+                ErrorCodes::LOGOUT_FAILED,
+                config('messages.errors.logout_failed'),
+                ['exception' => $e->getMessage()],
+                ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
         }
     }
@@ -68,11 +91,11 @@ class AuthController extends Controller
         try {
             $this->authService->sendResetCode($request);
 
-            return ApiResponse::success([], 'The reset code has been sent to your email.', ApiResponse::OK_STATUS);
+            return ApiResponse::success([], config('messages.auth.reset_code_sent'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'SEND_RESET_CODE_FAILED',
-                'Error while sending reset code',
+                ErrorCodes::SEND_RESET_CODE_FAILED,
+                config('messages.errors.send_reset_code_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -84,11 +107,11 @@ class AuthController extends Controller
         try {
             $this->authService->resetPassword($request);
 
-            return ApiResponse::success([], 'Password reset successfully.', ApiResponse::OK_STATUS);
+            return ApiResponse::success([], config('messages.auth.password_reset_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'RESET_PASSWORD_FAILED',
-                'Error while resetting password',
+                ErrorCodes::RESET_PASSWORD_FAILED,
+                config('messages.errors.reset_password_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -100,11 +123,11 @@ class AuthController extends Controller
         try {
             $this->authService->sendEmailVerificationCode($request);
 
-            return ApiResponse::success([], 'The verification code has been sent to your email.', ApiResponse::OK_STATUS);
+            return ApiResponse::success([], config('messages.auth.verification_code_sent'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'SEND_VERIFICATION_CODE_FAILED',
-                'Error while sending verification code',
+                ErrorCodes::SEND_VERIFICATION_CODE_FAILED,
+                config('messages.errors.send_verification_code_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -116,11 +139,11 @@ class AuthController extends Controller
         try {
             $this->authService->verifyEmail($request);
 
-            return ApiResponse::success([], 'Email verified successfully.', ApiResponse::OK_STATUS);
+            return ApiResponse::success([], config('messages.auth.email_verified_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             return ApiResponse::error(
-                'VERIFY_EMAIL_FAILED',
-                'Error while verifying email',
+                ErrorCodes::VERIFY_EMAIL_FAILED,
+                config('messages.errors.verify_email_failed'),
                 ['exception' => $e->getMessage()],
                 ApiResponse::INTERNAL_SERVER_ERROR_STATUS
             );
@@ -132,9 +155,9 @@ class AuthController extends Controller
         try {
             $this->authService->sendRegisterCode($request);
 
-            return ApiResponse::success([], 'Verification code sent.');
+            return ApiResponse::success([], config('messages.auth.register_code_sent'));
         } catch (\Throwable $e) {
-            return ApiResponse::error('SEND_REGISTER_CODE_FAILED', 'Error sending verification code.', ['exception' => $e->getMessage()]);
+            return ApiResponse::error(ErrorCodes::SEND_REGISTER_CODE_FAILED, config('messages.errors.send_register_code_failed'), ['exception' => $e->getMessage()]);
         }
     }
 
@@ -143,9 +166,9 @@ class AuthController extends Controller
         try {
             $data = $this->authService->completeRegister($request);
 
-            return ApiResponse::success($data, 'Registered successfully.', ApiResponse::CREATED_STATUS);
+            return ApiResponse::success($data, config('messages.auth.register_complete_success'), ApiResponse::CREATED_STATUS);
         } catch (\Throwable $e) {
-            return ApiResponse::error('COMPLETE_REGISTER_FAILED', 'Error during registration.', ['exception' => $e->getMessage()]);
+            return ApiResponse::error(ErrorCodes::COMPLETE_REGISTER_FAILED, config('messages.errors.complete_register_failed'), ['exception' => $e->getMessage()]);
         }
     }
 }

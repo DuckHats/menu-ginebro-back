@@ -31,7 +31,7 @@ class ImportServiceTest extends TestCase
             'user_type_id' => $adminType->id,
         ]);
 
-        $this->token = $this->adminUser->createToken('auth_token')->plainTextToken;
+        // session-based auth will be used in tests
     }
 
     /** @test */
@@ -53,7 +53,10 @@ class ImportServiceTest extends TestCase
             ],
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->adminUser, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->postJson(route('users.import'), $payload);
 
         $response->assertStatus(200);
@@ -81,7 +84,10 @@ class ImportServiceTest extends TestCase
             ],
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->adminUser, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->postJson(route('users.import'), $payload);
 
         $response->assertStatus(400);
@@ -108,7 +114,10 @@ class ImportServiceTest extends TestCase
             ],
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->adminUser, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->postJson(route('menus.import'), $payload);
 
         $response->assertStatus(200);
@@ -135,7 +144,10 @@ class ImportServiceTest extends TestCase
             ],
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->adminUser, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->postJson(route('menus.import'), $payload);
 
         $response->assertStatus(400);

@@ -2,6 +2,7 @@
 
 namespace App\Services\Generic;
 
+use App\Constants\ErrorCodes;
 use App\Helpers\ApiResponse;
 use App\Helpers\ValidationHelper;
 use App\Services\Contracts\ServiceInterface;
@@ -29,11 +30,11 @@ abstract class BaseService implements ServiceInterface
             $items = $query->get();
 
             return ($this->resourceClass())::collection($items)
-                ->additional(['status' => 'success', 'message' => 'List retrieved successfully.', 'code' => ApiResponse::OK_STATUS]);
+                ->additional(['status' => 'success', 'message' => config('messages.generic.operation_success'), 'code' => ApiResponse::OK_STATUS]);
         } catch (\Throwable $e) {
             Log::error('Error fetching data', ['exception' => $e->getMessage()]);
 
-            return ApiResponse::error('FETCH_FAILED', 'Error while retrieving data.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
+            return ApiResponse::error(ErrorCodes::FETCH_FAILED, config('messages.errors.fetch_failed'), ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
     }
 
@@ -56,14 +57,14 @@ abstract class BaseService implements ServiceInterface
             $item = $query->first();
 
             if (! $item) {
-                return ApiResponse::error('NOT_FOUND', 'Item not found.', [], ApiResponse::NOT_FOUND_STATUS);
+                return ApiResponse::error(ErrorCodes::NOT_FOUND, config('messages.generic.not_found'), [], ApiResponse::NOT_FOUND_STATUS);
             }
 
-            return ApiResponse::success(new ($this->resourceClass())($item), 'Item retrieved successfully.', ApiResponse::OK_STATUS);
+            return ApiResponse::success(new ($this->resourceClass())($item), config('messages.generic.operation_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             Log::error('Error retrieving item', ['exception' => $e->getMessage()]);
 
-            return ApiResponse::error('NOT_FOUND', 'Item not found.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
+            return ApiResponse::error(ErrorCodes::NOT_FOUND, config('messages.generic.not_found'), ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
     }
 
@@ -75,13 +76,13 @@ abstract class BaseService implements ServiceInterface
     public function create(Request $request, string $imageFieldName = 'image_url')
     {
         if (! $this->isAuthorized('create')) {
-            return ApiResponse::error('UNAUTHORIZED', 'No tens permisos.', [], ApiResponse::FORBIDDEN_STATUS);
+            return ApiResponse::error(ErrorCodes::UNAUTHORIZED, config('messages.generic.unauthorized'), [], ApiResponse::FORBIDDEN_STATUS);
         }
 
         $validatedData = $this->validateRequest($request, 'store');
 
         if (! $validatedData['success']) {
-            return ApiResponse::error('VALIDATION_ERROR', 'Invalid parameters provided.', $validatedData['errors'], ApiResponse::INVALID_PARAMETERS_STATUS);
+            return ApiResponse::error(ErrorCodes::VALIDATION_ERROR, config('messages.generic.validation_error'), $validatedData['errors'], ApiResponse::INVALID_PARAMETERS_STATUS);
         }
 
         try {
@@ -92,11 +93,11 @@ abstract class BaseService implements ServiceInterface
             $this->syncRelations($item, $data);
             $item->load($this->getRelations());
 
-            return ApiResponse::success(new ($this->resourceClass())($item), 'Item created successfully.', ApiResponse::CREATED_STATUS);
+            return ApiResponse::success(new ($this->resourceClass())($item), config('messages.generic.operation_success'), ApiResponse::CREATED_STATUS);
         } catch (\Throwable $e) {
             Log::error('Error creating item', ['exception' => $e->getMessage()]);
 
-            return ApiResponse::error('CREATE_FAILED', 'Error while creating item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
+            return ApiResponse::error(ErrorCodes::CREATE_FAILED, config('messages.errors.create_failed'), ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
     }
 
@@ -104,17 +105,17 @@ abstract class BaseService implements ServiceInterface
     {
         $item = $this->model->find($id);
         if (! $item) {
-            return ApiResponse::error('NOT_FOUND', 'Item not found.', [], ApiResponse::NOT_FOUND_STATUS);
+            return ApiResponse::error(ErrorCodes::NOT_FOUND, config('messages.generic.not_found'), [], ApiResponse::NOT_FOUND_STATUS);
         }
 
         if (! $this->isAuthorized('update', $item)) {
-            return ApiResponse::error('UNAUTHORIZED', 'No tens permisos.', [], ApiResponse::FORBIDDEN_STATUS);
+            return ApiResponse::error(ErrorCodes::UNAUTHORIZED, config('messages.generic.unauthorized'), [], ApiResponse::FORBIDDEN_STATUS);
         }
 
         $validatedData = $this->validateRequest($request, 'update', ['id' => $id]);
 
         if (! $validatedData['success']) {
-            return ApiResponse::error('VALIDATION_ERROR', 'Invalid parameters provided.', $validatedData['errors'], ApiResponse::INVALID_PARAMETERS_STATUS);
+            return ApiResponse::error(ErrorCodes::VALIDATION_ERROR, config('messages.generic.validation_error'), $validatedData['errors'], ApiResponse::INVALID_PARAMETERS_STATUS);
         }
 
         try {
@@ -122,11 +123,11 @@ abstract class BaseService implements ServiceInterface
             $this->syncRelations($item, $validatedData['data']);
             $item->load($this->getRelations());
 
-            return ApiResponse::success(new ($this->resourceClass())($item), 'Item updated successfully.', ApiResponse::OK_STATUS);
+            return ApiResponse::success(new ($this->resourceClass())($item), config('messages.generic.operation_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             Log::error('Error updating item', ['exception' => $e->getMessage()]);
 
-            return ApiResponse::error('UPDATE_FAILED', 'Error while updating item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
+            return ApiResponse::error(ErrorCodes::UPDATE_FAILED, config('messages.errors.update_failed'), ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
     }
 
@@ -134,17 +135,17 @@ abstract class BaseService implements ServiceInterface
     {
         $item = $this->model->find($id);
         if (! $item) {
-            return ApiResponse::error('NOT_FOUND', 'Item not found.', [], ApiResponse::NOT_FOUND_STATUS);
+            return ApiResponse::error(ErrorCodes::NOT_FOUND, config('messages.generic.not_found'), [], ApiResponse::NOT_FOUND_STATUS);
         }
 
         if (! $this->isAuthorized('update', $item)) {
-            return ApiResponse::error('UNAUTHORIZED', 'No tens permisos.', [], ApiResponse::FORBIDDEN_STATUS);
+            return ApiResponse::error(ErrorCodes::UNAUTHORIZED, config('messages.generic.unauthorized'), [], ApiResponse::FORBIDDEN_STATUS);
         }
 
         $validatedData = $this->validateRequest($request, 'patch', ['id' => $id]);
 
         if (! $validatedData['success']) {
-            return ApiResponse::error('VALIDATION_ERROR', 'Invalid parameters provided.', $validatedData['errors'], ApiResponse::INVALID_PARAMETERS_STATUS);
+            return ApiResponse::error(ErrorCodes::VALIDATION_ERROR, config('messages.generic.validation_error'), $validatedData['errors'], ApiResponse::INVALID_PARAMETERS_STATUS);
         }
 
         try {
@@ -152,11 +153,11 @@ abstract class BaseService implements ServiceInterface
             $this->syncRelations($item, $validatedData['data']);
             $item->load($this->getRelations());
 
-            return ApiResponse::success(new ($this->resourceClass())($item), 'Item updated successfully.', ApiResponse::OK_STATUS);
+            return ApiResponse::success(new ($this->resourceClass())($item), config('messages.generic.operation_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
             Log::error('Error patching item', ['exception' => $e->getMessage()]);
 
-            return ApiResponse::error('UPDATE_FAILED', 'Error while patching item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
+            return ApiResponse::error(ErrorCodes::UPDATE_FAILED, config('messages.errors.update_failed'), ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
     }
 
@@ -164,21 +165,21 @@ abstract class BaseService implements ServiceInterface
     {
         $item = $this->model->find($id);
         if (! $item) {
-            return ApiResponse::error('NOT_FOUND', 'Item not found.', [], ApiResponse::NOT_FOUND_STATUS);
+            return ApiResponse::error(ErrorCodes::NOT_FOUND, config('messages.generic.not_found'), [], ApiResponse::NOT_FOUND_STATUS);
         }
 
         if (! $this->isAuthorized('delete', $item)) {
-            return ApiResponse::error('UNAUTHORIZED', 'No tens permisos.', [], ApiResponse::FORBIDDEN_STATUS);
+            return ApiResponse::error(ErrorCodes::UNAUTHORIZED, config('messages.generic.unauthorized'), [], ApiResponse::FORBIDDEN_STATUS);
         }
 
         try {
             $item->delete();
 
-            return ApiResponse::success([], 'Item deleted successfully.', ApiResponse::NO_CONTENT_STATUS);
+            return ApiResponse::success([], config('messages.generic.operation_success'), ApiResponse::NO_CONTENT_STATUS);
         } catch (\Throwable $e) {
             Log::error('Error deleting item', ['exception' => $e->getMessage()]);
 
-            return ApiResponse::error('DELETE_FAILED', 'Error while deleting item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
+            return ApiResponse::error(ErrorCodes::DELETE_FAILED, config('messages.errors.delete_failed'), ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
     }
 

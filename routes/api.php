@@ -1,6 +1,7 @@
 <?php
 
 use App\Constants\RouteConstants;
+use App\Http\Controllers\AllergyController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DishController;
 use App\Http\Controllers\MenuController;
@@ -32,14 +33,14 @@ Route::middleware('throttle:api')->group(function () {
             Route::post(RouteConstants::REGISTER, 'register')->name('auth.register');
             Route::post(RouteConstants::LOGIN, 'login')->name('auth.login');
 
-            Route::post(RouteConstants::LOGOUT, 'logout')->name('auth.logout')->middleware('auth:sanctum');
-            Route::post(RouteConstants::LOGOUT_ALL_SESSIONS, 'logoutAllSessions')->name('auth.logoutAll')->middleware('auth:sanctum');
+            Route::post(RouteConstants::LOGOUT, 'logout')->name('auth.logout')->middleware('auth');
+            Route::post(RouteConstants::LOGOUT_ALL_SESSIONS, 'logoutAllSessions')->name('auth.logoutAll')->middleware('auth');
+
             Route::post(RouteConstants::FORGOT_PASSWORD, 'sendResetCode')->name('auth.sendResetCode');
             Route::post(RouteConstants::RESET_PASSWORD, 'resetPassword')->name('auth.resetPassword');
 
             Route::post(RouteConstants::VERIFY_EMAIL, 'sendEmailVerificationCode')->name('auth.sendEmailVerificationCode')->middleware('auth:sanctum');
             Route::post(RouteConstants::VERIFY_EMAIL_CONFIRM, 'verifyEmail')->name('auth.verifyEmail')->middleware('auth:sanctum');
-
         });
 
         // User routes
@@ -59,7 +60,6 @@ Route::middleware('throttle:api')->group(function () {
 
             Route::post(RouteConstants::USERS_DISABLE, 'disableUser')->name('users.disable')->middleware('auth:sanctum');
             Route::post(RouteConstants::USERS_ENABLE, 'enableUser')->name('users.enable')->middleware('auth:sanctum');
-
         });
 
         // Menu routes
@@ -119,6 +119,12 @@ Route::middleware('throttle:api')->group(function () {
         // Order type routes
         Route::controller(OrderTypeController::class)->group(function () {
             Route::get(RouteConstants::ORDER_TYPE, 'index')->name('orderType.index')->middleware('auth:sanctum');
+        });
+
+        // Allergy routes
+        Route::controller(AllergyController::class)->group(function () {
+            Route::get(RouteConstants::ALLERGIES, 'index')->name('allergies.index')->middleware('auth:sanctum');
+            Route::post(RouteConstants::ALLERGIES, 'updateUserAllergies')->name('allergies.update')->middleware('auth:sanctum');
         });
 
         //

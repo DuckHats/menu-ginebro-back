@@ -19,7 +19,7 @@ class AccountReactivationMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Tu cuenta ha sido reactivada')
+        return $this->subject(config('email_subjects.account_reactivation'))
             ->view('emails.account-reactivation')
             ->with([
                 'user' => $this->user,

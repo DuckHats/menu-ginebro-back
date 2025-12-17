@@ -46,7 +46,7 @@ class OrderControllerTest extends TestCase
             'password' => Hash::make('password123'),
             'user_type_id' => $adminType->id,
         ]);
-        $this->token = $this->user->createToken('auth_token')->plainTextToken;
+        // session-based auth will be used in tests
 
         // Creamos menus para usar en los platos
         $this->menu = Menu::factory(5)->create([
@@ -85,7 +85,10 @@ class OrderControllerTest extends TestCase
             'order_status_id' => $this->orderStatus->id,
         ]);
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('orders.index'));
 
         $response->assertStatus(200);
@@ -101,7 +104,10 @@ class OrderControllerTest extends TestCase
             'order_date' => now()->format('Y-m-d'),
         ]);
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('orders.ordersbyDate', $date));
 
         $response->assertStatus(200);
@@ -115,7 +121,10 @@ class OrderControllerTest extends TestCase
             'order_status_id' => $this->orderStatus->id,
         ]);
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('orders.ordersbyUser', $this->user->id));
 
         $response->assertStatus(200);
@@ -135,7 +144,10 @@ class OrderControllerTest extends TestCase
             'option3' => 'Option 3',
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->postJson(route('orders.store'), $orderData);
 
         $response->assertStatus(201)
@@ -149,7 +161,10 @@ class OrderControllerTest extends TestCase
 
     public function test_it_validates_required_fields_when_creating_order()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->postJson(route('orders.store'), []);
 
         $response->assertStatus(400);
@@ -162,7 +177,10 @@ class OrderControllerTest extends TestCase
             'order_type_id' => $this->orderType->id,
             'order_status_id' => $this->orderStatus->id,
         ]);
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('orders.show', $order->id));
 
         $response->assertStatus(200);
@@ -170,7 +188,10 @@ class OrderControllerTest extends TestCase
 
     public function test_it_returns_404_if_order_not_found()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('orders.show', 9999));
 
         $response->assertStatus(404);
@@ -179,7 +200,10 @@ class OrderControllerTest extends TestCase
     public function test_it_can_update_order_status()
     {
         OrderStatus::factory()->create(['id' => 2, 'name' => 'Preparant']);
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->postJson(route('orders.updateStatus', $this->order->id), [
                 'order_status_id' => 2,
             ]);
@@ -189,21 +213,30 @@ class OrderControllerTest extends TestCase
 
     public function test_it_can_export_orders_in_json()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('orders.export', ['format' => 'json']));
         $response->assertStatus(200);
     }
 
     public function test_it_can_export_orders_in_excel()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('orders.export', ['format' => 'xlsx']));
         $response->assertStatus(200);
     }
 
     public function test_it_can_export_orders_in_csv()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('orders.export', ['format' => 'csv']));
         $response->assertStatus(200);
     }
@@ -218,7 +251,10 @@ class OrderControllerTest extends TestCase
             'order_date' => $date,
         ]);
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
             ->getJson(route('orders.checkDate', $date));
 
         $response->assertStatus(200)

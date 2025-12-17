@@ -19,7 +19,7 @@ class EmailVerificationMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Verifica tu dirección de correo electrónico')
+        return $this->subject(config('email_subjects.email_verification'))
             ->view('emails.verify-email')
             ->with([
                 'verificationCode' => $this->verificationCode,

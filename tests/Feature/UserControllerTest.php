@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\UserType;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class UserControllerTest extends TestCase
@@ -51,10 +52,6 @@ class UserControllerTest extends TestCase
             'status' => User::STATUS_ACTIVE,
             'user_type_id' => $cookType->id,
         ]);
-
-        $this->token = $this->user->createToken('auth_token')->plainTextToken;
-        $this->adminToken = $this->adminUser->createToken('auth_token')->plainTextToken;
-        $this->cookToken = $this->cookUser->createToken('auth_token')->plainTextToken;
     }
 
     /** @test */
@@ -62,8 +59,9 @@ class UserControllerTest extends TestCase
     {
         User::factory(5)->create();
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
-            ->getJson(route('users.index'));
+        Sanctum::actingAs($this->adminUser);
+
+        $response = $this->getJson(route('users.index'));
         $response->assertStatus(200);
     }
 
@@ -80,8 +78,9 @@ class UserControllerTest extends TestCase
             'status' => User::STATUS_ACTIVE,
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
-            ->postJson(route('users.store'), $userData);
+        Sanctum::actingAs($this->user);
+
+        $response = $this->postJson(route('users.store'), $userData);
 
         $response->assertStatus(201);
     }
@@ -89,8 +88,9 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_validates_required_fields_when_creating_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
-            ->postJson(route('users.store'), []);
+        Sanctum::actingAs($this->user);
+
+        $response = $this->postJson(route('users.store'), []);
 
         $response->assertStatus(400);
     }
@@ -98,8 +98,9 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_can_show_a_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
-            ->getJson(route('users.show', $this->user->id));
+        Sanctum::actingAs($this->adminUser);
+
+        $response = $this->getJson(route('users.show', $this->user->id));
 
         $response->assertStatus(200);
     }
@@ -107,8 +108,9 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_returns_404_if_user_not_found()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
-            ->getJson(route('users.show', 9999));
+        Sanctum::actingAs($this->adminUser);
+
+        $response = $this->getJson(route('users.show', 9999));
 
         $response->assertStatus(404);
     }
@@ -116,8 +118,9 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_check_for_admin_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
-            ->getJson(route('users.adminCheck'));
+        Sanctum::actingAs($this->adminUser);
+
+        $response = $this->getJson(route('users.adminCheck'));
 
         $response->assertStatus(200)
             ->assertJsonFragment(['admin' => true]);
@@ -126,8 +129,9 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_check_for_admin_user_fails()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
-            ->getJson(route('users.adminCheck'));
+        Sanctum::actingAs($this->user);
+
+        $response = $this->getJson(route('users.adminCheck'));
 
         $response->assertStatus(200)
             ->assertJsonFragment(['admin' => false]);
@@ -138,8 +142,9 @@ class UserControllerTest extends TestCase
     {
         $updatedData = ['name' => 'Updated Name'];
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
-            ->patchJson(route('users.patch', $this->user->id), $updatedData);
+        Sanctum::actingAs($this->user);
+
+        $response = $this->patchJson(route('users.patch', $this->user->id), $updatedData);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('users', ['name' => 'Updated Name']);
@@ -148,8 +153,9 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_can_delete_a_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
-            ->deleteJson(route('users.destroy', $this->user->id));
+        Sanctum::actingAs($this->user);
+
+        $response = $this->deleteJson(route('users.destroy', $this->user->id));
 
         $response->assertStatus(204);
         $this->assertDatabaseMissing('users', ['id' => $this->user->id]);
@@ -160,8 +166,9 @@ class UserControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
-            ->postJson(route('users.disable', $user->id));
+        Sanctum::actingAs($this->adminUser);
+
+        $response = $this->postJson(route('users.disable', $user->id));
 
         $response->assertStatus(200);
 
@@ -176,8 +183,9 @@ class UserControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
-            ->postJson(route('users.enable', $user->id));
+        Sanctum::actingAs($this->adminUser);
+
+        $response = $this->postJson(route('users.enable', $user->id));
 
         $response->assertStatus(200);
 
@@ -190,8 +198,9 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_should_fail_if_i_want_to_disable_other_user()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
-            ->postJson(route('users.disable', $this->cookUser->id));
+        Sanctum::actingAs($this->user);
+
+        $response = $this->postJson(route('users.disable', $this->cookUser->id));
 
         $response->assertStatus(500);
     }
@@ -199,24 +208,27 @@ class UserControllerTest extends TestCase
     /** @test */
     public function it_can_export_users_in_json()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
-            ->getJson(route('users.export', ['format' => 'json']));
+        Sanctum::actingAs($this->adminUser);
+
+        $response = $this->getJson(route('users.export', ['format' => 'json']));
         $response->assertStatus(200);
     }
 
     /** @test */
     public function it_can_export_users_in_csv()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
-            ->getJson(route('users.export', ['format' => 'csv']));
+        Sanctum::actingAs($this->adminUser);
+
+        $response = $this->getJson(route('users.export', ['format' => 'csv']));
         $response->assertStatus(200);
     }
 
     /** @test */
     public function it_can_export_users_in_xlsx()
     {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->adminToken)
-            ->getJson(route('users.export', ['format' => 'xlsx']));
+        Sanctum::actingAs($this->adminUser);
+
+        $response = $this->getJson(route('users.export', ['format' => 'xlsx']));
         $response->assertStatus(200);
     }
 }

@@ -59,7 +59,7 @@ class OrderService extends BaseService
                 'order_date' => $data['order_date'],
                 'order_type_id' => $data['order_type_id'],
                 'order_status_id' => $data['order_status_id'],
-                'allergies' => $data['allergies'] ?? null,
+                'allergies' => $this->getUserAllergies(Auth()->user(), $data['allergies'] ?? null),
                 'has_tupper' => $data['has_tupper'] ?? false,
             ]);
 
@@ -175,5 +175,26 @@ class OrderService extends BaseService
 
             return ApiResponse::error('RETRIEVE_FAILED', 'Error while retrieving item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
+    }
+
+    private function getUserAllergies($user, $providedAllergies = null)
+    {
+        $userAllergies = $user->allergies->pluck('name')->toArray();
+
+        if ($user->custom_allergies) {
+            $customAllergies = array_map('trim', explode(',', $user->custom_allergies));
+            $userAllergies = array_merge($userAllergies, $customAllergies);
+        }
+
+        if ($providedAllergies) {
+            // If allergies are provided in the request, we might want to append them or replace?
+            // The requirement says: "si el usuario tiene una alergia vinculada tiene que poner la alergia en el campo correspondiente"
+            // It implies automatic population. If the request sends allergies, maybe it's an override or addition.
+            // Assuming addition for safety.
+            $provided = array_map('trim', explode(',', $providedAllergies));
+            $userAllergies = array_merge($userAllergies, $provided);
+        }
+
+        return implode(', ', array_unique($userAllergies));
     }
 }
