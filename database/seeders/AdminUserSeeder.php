@@ -28,6 +28,14 @@ class AdminUserSeeder extends Seeder
             'user_type_id' => config('welcome.kitchenUser.user_type_id'),
         ]);
 
+        User::create([
+            'name' => config('welcome.basicUser.name'),
+            'last_name' => config('welcome.basicUser.last_name'),
+            'email' => config('welcome.basicUser.email'),
+            'password' => bcrypt(config('welcome.basicUser.password')),
+            'user_type_id' => config('welcome.basicUser.user_type_id'),
+        ]);
+
         $this->command->info('Admin and Kitchen users created successfully.');
     }
 }
