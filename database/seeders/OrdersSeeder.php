@@ -15,7 +15,8 @@ class OrdersSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::all();
+        $basicUserEmail = config('welcome.basicUser.email');
+        $users = User::where('user_type_id', User::ROLE_USER)->where('email', '!=', $basicUserEmail)->get();
         $platos_primero = [
             'Amanida verda',
             'Sopa de fideus',

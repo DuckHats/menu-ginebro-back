@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             AllergySeeder::class,
             OrderTypeSeeder::class,
             OrderStatusSeeder::class,
+            ConfigurationSeeder::class,
         ];
 
         if (app()->environment('local')) {

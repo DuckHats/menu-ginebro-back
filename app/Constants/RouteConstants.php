@@ -149,4 +149,14 @@ class RouteConstants
 
     // Allergy Routes
     const ALLERGIES = '/allergies';
+
+    // Configuration Routes
+    const CONFIGURATIONS = '/configurations';
+
+    const CONFIGURATIONS_UPDATE = '/configurations/update';
+
+    // Image Routes
+    const IMAGES = '/images';
+
+    const IMAGES_DETAIL = '/images/{id}';
 }

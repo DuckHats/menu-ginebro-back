@@ -22,4 +22,11 @@ return [
         'password' => 'Password123',
         'user_type_id' => 3,
     ],
+    'basicUser' => [
+        'name' => 'Usuari',
+        'last_name' => 'Ginebro',
+        'email' => 'user@ginebro.cat',
+        'password' => 'Password123',
+        'user_type_id' => 2,
+    ],
 ];
