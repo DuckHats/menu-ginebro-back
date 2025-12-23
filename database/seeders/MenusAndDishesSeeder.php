@@ -23,9 +23,29 @@ class MenusAndDishesSeeder extends Seeder
         $segonId = DishType::where('name', 'Segon')->first()->id;
         $postreId = DishType::where('name', 'Postre')->first()->id;
 
-        $platos_primero = ['Ensalada', 'Sopa', 'Macarrones', 'Gazpacho', 'Arroz'];
-        $platos_segundo = ['Pollo', 'Pescado', 'Ternera', 'Cerdo', 'Tofu'];
-        $platos_postre = ['Fruta', 'Yogur', 'Helado', 'Flan', 'Natillas'];
+        $platos_primero = [
+            'Amanida verda',
+            'Sopa de fideus',
+            'Macarrons a la bolonyesa',
+            'Crema de verdures',
+            'Arròs a la cubana'
+        ];
+
+        $platos_segundo = [
+            'Pollastre a la planxa',
+            'Lluç al forn',
+            'Mandonguilles amb tomàquet',
+            'Lloms de porc amb patates',
+            'Truita de patates'
+        ];
+
+        $platos_postre = [
+            'Fruita del temps',
+            'Iogurt natural',
+            'Flam d’ou',
+            'Gelat de vainilla',
+            'Coca casolana'
+        ];
 
         for ($i = -15; $i <= 15; $i++) {
             $day = Carbon::today()->copy()->addDays($i)->format('Y-m-d');

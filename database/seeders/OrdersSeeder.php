@@ -16,9 +16,30 @@ class OrdersSeeder extends Seeder
     public function run(): void
     {
         $users = User::all();
-        $platos_primero = ['Ensalada', 'Sopa', 'Macarrones'];
-        $platos_segundo = ['Pollo', 'Pescado', 'Ternera'];
-        $platos_postre = ['Fruta', 'Yogur', 'Helado'];
+        $platos_primero = [
+            'Amanida verda',
+            'Sopa de fideus',
+            'Macarrons a la bolonyesa',
+            'Crema de verdures',
+            'Arròs a la cubana'
+        ];
+
+        $platos_segundo = [
+            'Pollastre a la planxa',
+            'Lluç al forn',
+            'Mandonguilles amb tomàquet',
+            'Lloms de porc amb patates',
+            'Truita de patates'
+        ];
+
+        $platos_postre = [
+            'Fruita del temps',
+            'Iogurt natural',
+            'Flam d’ou',
+            'Gelat de vainilla',
+            'Coca casolana'
+        ];
+
 
         foreach ($users as $user) {
             for ($i = -7; $i <= 7; $i++) {

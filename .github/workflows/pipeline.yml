@@ -65,3 +65,46 @@ jobs:
           DB_USERNAME: user
           DB_PASSWORD: password
         run: php artisan test
+
+      - name: 🔔 Notificar a Slack
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          STATUS="✅ Tests correctes"
+          COLOR="good"
+
+          if [ "${{ job.status }}" != "success" ]; then
+            STATUS="❌ Error als tests"
+            COLOR="danger"
+          fi
+
+          PAYLOAD=$(jq -n \
+            --arg status "$STATUS" \
+            --arg repo "${{ github.repository }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg actor "${{ github.actor }}" \
+            --arg sha "${{ github.sha }}" \
+            --arg workflow "${{ github.workflow }}" \
+            '{
+              attachments: [
+                {
+                  color: $color,
+                  title: $status,
+                  fields: [
+                    { title: "Repository", value: $repo, short: true },
+                    { title: "Branch", value: $branch, short: true },
+                    { title: "Autor", value: $actor, short: true },
+                    { title: "Workflow", value: $workflow, short: true },
+                    { title: "Commit", value: $sha, short: false }
+                  ],
+                  footer: "GitHub Actions",
+                  ts: (now | floor)
+                }
+              ]
+            }' --arg color "$COLOR")
+
+          curl -X POST -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            "$SLACK_WEBHOOK_URL"
+

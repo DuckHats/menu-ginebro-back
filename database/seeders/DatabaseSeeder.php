@@ -12,24 +12,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
-        // Executar seeders en ordre
-        $this->call([
+        $seeders = [
             UserTypeSeeder::class,
             AdminUserSeeder::class,
-            UsersSeeder::class,
-            ImagesSeeder::class,
+            AllergySeeder::class,
             OrderTypeSeeder::class,
             OrderStatusSeeder::class,
-            OrdersSeeder::class,
-            MenusAndDishesSeeder::class,
-            AllergySeeder::class,
-        ]);
+        ];
+
+        if (app()->environment('local')) {
+            $seeders = array_merge($seeders, [
+                UsersSeeder::class,
+                ImagesSeeder::class,
+                OrdersSeeder::class,
+                MenusAndDishesSeeder::class,
+            ]);
+        }
+
+        $this->call($seeders);
     }
 }
