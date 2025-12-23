@@ -156,4 +156,9 @@ class User extends Authenticatable implements Exportable, Importable
             'status' => 'required|in:0,1',
         ];
     }
+
+    public function preprocessImportData(array $data): array
+    {
+        return $data;
+    }
 }
