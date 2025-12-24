@@ -27,10 +27,10 @@ class UserFactory extends Factory
         return [
             'name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
-            'email' => fake()->unique()->safeEmail(),
+            'email' => fake()->firstName() . fake()->lastName() . '@ginebro.cat',
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
-            'user_type_id' => User::ROLE_USER, // always user in the basic factory
+            'user_type_id' => User::ROLE_USER,
             'remember_token' => Str::random(10),
         ];
     }

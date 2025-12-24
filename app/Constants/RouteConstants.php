@@ -25,6 +25,10 @@ class RouteConstants
 
     const VERIFY_EMAIL_CONFIRM = '/verify/email/confirm';
 
+    const GOOGLE_AUTH = '/auth/google';
+
+    const GOOGLE_AUTH_CALLBACK = '/auth/google/callback';
+
     // User Routes
     const USERS = '/users';
 
