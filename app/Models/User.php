@@ -40,6 +40,8 @@ class User extends Authenticatable implements Exportable, Importable
         'user_type_id',
         'status',
         'custom_allergies',
+        'google_id',
+        'avatar',
     ];
 
     /**
