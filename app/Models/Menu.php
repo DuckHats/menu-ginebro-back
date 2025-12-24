@@ -71,4 +71,46 @@ class Menu extends Model implements Exportable, Importable
             'dishes.*.options' => 'required|array|min:1',
         ];
     }
+
+    public function preprocessImportData(array $data): array
+    {
+        if (isset($data[0]) && is_array($data[0]) && array_key_exists('dishes', $data[0])) {
+            return $data;
+        }
+
+        $processed = [];
+        foreach ($data as $row) {
+            if (empty($row['day'])) continue;
+
+            $dishes = [];
+
+            $mapping = [
+                'dish_1' => 1,
+                'dish_2' => 2,
+                'dish_3' => 3
+            ];
+
+            foreach ($mapping as $col => $typeId) {
+                if (!empty($row[$col])) {
+
+                    $options = array_map('trim', explode(',', $row[$col]));
+                    $options = array_filter($options);
+
+                    if (!empty($options)) {
+                        $dishes[] = [
+                            'dish_type_id' => $typeId,
+                            'options' => array_values($options)
+                        ];
+                    }
+                }
+            }
+
+            $processed[] = [
+                'day' => $row['day'],
+                'dishes' => $dishes
+            ];
+        }
+
+        return $processed;
+    }
 }

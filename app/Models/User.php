@@ -40,6 +40,8 @@ class User extends Authenticatable implements Exportable, Importable
         'user_type_id',
         'status',
         'custom_allergies',
+        'google_id',
+        'avatar',
     ];
 
     /**
@@ -155,5 +157,10 @@ class User extends Authenticatable implements Exportable, Importable
             'user_type_id' => 'required|exists:user_types,id',
             'status' => 'required|in:0,1',
         ];
+    }
+
+    public function preprocessImportData(array $data): array
+    {
+        return $data;
     }
 }

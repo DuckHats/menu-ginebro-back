@@ -113,18 +113,16 @@ return [
         'not_found' => 'Allergy not found.',
     ],
 
-    'generic' => [
-        // Success messages
-        'operation_success' => 'Operation completed successfully.',
-        'creation_in_progress' => 'Creation in progress.',
+    'configurations' => [
+        'list_retrieved' => 'List of configurations retrieved successfully.',
+        'updated_success' => 'Configurations updated successfully.',
+    ],
 
-        // Error messages
-        'invalid_parameters' => 'Invalid parameters provided.',
-        'validation_error' => 'Validation error.',
-        'not_found' => 'Resource not found.',
-        'unauthorized' => 'Unauthorized access.',
-        'forbidden' => 'Access forbidden.',
-        'internal_error' => 'An internal error occurred.',
+    'images' => [
+        'list_retrieved' => 'List of images retrieved successfully.',
+        'created_success' => 'Image uploaded successfully.',
+        'deleted_success' => 'Image deleted successfully.',
+        'not_found' => 'Image not found.',
     ],
 
     'errors' => [
@@ -145,5 +143,7 @@ return [
         'complete_register_failed' => 'Error during registration.',
         'banning_user_failed' => 'Error while banning user.',
         'checking_admin_failed' => 'Error while cheking if user is admin.',
+        'invalid_data' => 'Invalid data provided.',
+        'no_image_uploaded' => 'No image uploaded.',
     ],
 ];

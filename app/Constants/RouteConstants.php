@@ -25,6 +25,10 @@ class RouteConstants
 
     const VERIFY_EMAIL_CONFIRM = '/verify/email/confirm';
 
+    const GOOGLE_AUTH = '/auth/google';
+
+    const GOOGLE_AUTH_CALLBACK = '/auth/google/callback';
+
     // User Routes
     const USERS = '/users';
 
@@ -149,4 +153,14 @@ class RouteConstants
 
     // Allergy Routes
     const ALLERGIES = '/allergies';
+
+    // Configuration Routes
+    const CONFIGURATIONS = '/configurations';
+
+    const CONFIGURATIONS_UPDATE = '/configurations/update';
+
+    // Image Routes
+    const IMAGES = '/images';
+
+    const IMAGES_DETAIL = '/images/{id}';
 }

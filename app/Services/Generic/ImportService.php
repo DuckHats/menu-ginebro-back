@@ -27,6 +27,12 @@ class ImportService
             return ApiResponse::error('INVALID_FORMAT', 'Format not supported.');
         }
 
+        if ($format === 'csv' && is_string($data)) {
+            $data = $this->parseCsv($data);
+        }
+
+        $data = $this->model->preprocessImportData($data);
+
         if (! is_array($data)) {
             return ApiResponse::error('INVALID_DATA', 'Data need to be an array.');
         }
@@ -51,5 +57,22 @@ class ImportService
         }
 
         return ApiResponse::success('Import in progress.');
+    }
+
+    private function parseCsv($csvString)
+    {
+        $lines = explode("\n", trim($csvString));
+        $header = str_getcsv(array_shift($lines));
+        $data = [];
+
+        foreach ($lines as $line) {
+            if (empty(trim($line))) continue;
+            $row = str_getcsv($line);
+            if (count($header) === count($row)) {
+                $data[] = array_combine($header, $row);
+            }
+        }
+
+        return $data;
     }
 }

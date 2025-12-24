@@ -3,7 +3,9 @@
 use App\Constants\RouteConstants;
 use App\Http\Controllers\AllergyController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\DishController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderDetailsController;
@@ -125,6 +127,20 @@ Route::middleware('throttle:api')->group(function () {
         Route::controller(AllergyController::class)->group(function () {
             Route::get(RouteConstants::ALLERGIES, 'index')->name('allergies.index')->middleware('auth:sanctum');
             Route::post(RouteConstants::ALLERGIES, 'updateUserAllergies')->name('allergies.update')->middleware('auth:sanctum');
+        });
+
+        // Configuration routes
+        Route::controller(ConfigurationController::class)->group(function () {
+            Route::get(RouteConstants::CONFIGURATIONS, 'index')->name('configurations.index')->middleware('auth:sanctum');
+            Route::post(RouteConstants::CONFIGURATIONS_UPDATE, 'update')->name('configurations.update')->middleware('auth:sanctum');
+        });
+
+        // Image routes
+        Route::controller(ImageController::class)->group(function () {
+            Route::get(RouteConstants::IMAGES, 'index')->name('images.index')->middleware('auth:sanctum');
+            Route::post(RouteConstants::IMAGES, 'store')->name('images.store')->middleware('auth:sanctum');
+            Route::put(RouteConstants::IMAGES_DETAIL, 'update')->name('images.update')->middleware('auth:sanctum');
+            Route::delete(RouteConstants::IMAGES_DETAIL, 'destroy')->name('images.destroy')->middleware('auth:sanctum');
         });
 
         //

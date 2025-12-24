@@ -3,25 +3,29 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Carbon\Carbon;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Image>
  */
 class ImageFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
+        $imagePath = config('app.url') . '/img/menu/menu_example.png';
+
+        // Data d'inici aleatòria
+        $startDate = Carbon::parse($this->faker->date());
+
+        // Data final = mateix dia, mes següent
+        $endDate = $startDate->copy()->addMonth();
+
         return [
-            'path' => $this->faker->imageUrl(),
-            'start_date' => $this->faker->date(),
-            'end_date' => $this->faker->date(),
-            'month' => $this->faker->monthName(),
-            'year' => $this->faker->year(),
+            'path' => $imagePath,
+            'start_date' => $startDate->toDateString(),
+            'end_date' => $endDate->toDateString(),
+            'month' => $startDate->monthName,
+            'year' => $startDate->year,
         ];
     }
 }
