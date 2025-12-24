@@ -21,6 +21,9 @@ class ConfigurationSeeder extends Seeder
             'redsys_merchant_code' => '999008881',
             'redsys_terminal' => '1',
             'redsys_key' => 'sq7HjrUOBfKmC576ILgskD5srU870gJ7',
+            'taper_price' => '1.00',
+            'half_menu_first_price' => '4.50',
+            'half_menu_second_price' => '4.50',
         ];
 
         foreach ($settings as $key => $value) {
