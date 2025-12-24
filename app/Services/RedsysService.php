@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Log;
 use App\Models\Configuration;
 
 class RedsysService
@@ -22,10 +23,10 @@ class RedsysService
             'redsys_key'
         ])->pluck('value', 'key');
 
-        $this->merchantUrl = $configs['redsys_url'] ?? config('services.redsys.url');
-        $this->merchantCode = $configs['redsys_merchant_code'] ?? config('services.redsys.merchant_code');
-        $this->terminal = $configs['redsys_terminal'] ?? config('services.redsys.terminal');
-        $this->key = $configs['redsys_key'] ?? config('services.redsys.key');
+        $this->merchantUrl = $configs['redsys_url'];
+        $this->merchantCode = $configs['redsys_merchant_code'];
+        $this->terminal = $configs['redsys_terminal'];
+        $this->key = $configs['redsys_key'];
     }
 
     public function getPaymentParameters($amount, $orderId, $user)
@@ -35,20 +36,21 @@ class RedsysService
 
         // Frontend URL for callbacks
         $frontendUrl = config('services.frontend.url');
-        $callbackUrl = route('api.payment.notify'); // Using route() helper requires Named Route
+        $callbackUrl = route('api.payment.notify');
 
+        // Redsys Redirect parameters are Case-Sensitive and use specific CamelCase
         $parameters = [
-            'DS_MERCHANT_AMOUNT' => $amountCents,
-            'DS_MERCHANT_ORDER' => strval($orderId),
-            'DS_MERCHANT_MERCHANTCODE' => $this->merchantCode,
-            'DS_MERCHANT_CURRENCY' => $this->currency,
-            'DS_MERCHANT_TRANSACTIONTYPE' => $this->transactionType,
-            'DS_MERCHANT_TERMINAL' => $this->terminal,
-            'DS_MERCHANT_MERCHANTURL' => $callbackUrl,
-            'DS_MERCHANT_URLOK' => "{$frontendUrl}/payment/result?status=ok",
-            'DS_MERCHANT_URLKO' => "{$frontendUrl}/payment/result?status=ko",
-            'DS_MERCHANT_PRODUCTDESCRIPTION' => 'Carrega de saldo: ' . $user->email,
-            'DS_MERCHANT_TITULAR' => substr($user->name . ' ' . $user->last_name, 0, 60),
+            'Ds_Merchant_Amount' => strval($amountCents),
+            'Ds_Merchant_Order' => strval($orderId),
+            'Ds_Merchant_MerchantCode' => strval($this->merchantCode),
+            'Ds_Merchant_Currency' => strval($this->currency),
+            'Ds_Merchant_TransactionType' => strval($this->transactionType),
+            'Ds_Merchant_Terminal' => strval($this->terminal),
+            'Ds_Merchant_MerchantURL' => strval($callbackUrl),
+            'Ds_Merchant_UrlOK' => strval("{$frontendUrl}/payment/result?status=ok"),
+            'Ds_Merchant_UrlKO' => strval("{$frontendUrl}/payment/result?status=ko"),
+            'Ds_Merchant_ProductDescription' => 'Carrega de saldo: ' . $user->email,
+            'Ds_Merchant_Titular' => substr($user->name . ' ' . $user->last_name, 0, 60),
         ];
 
         $paramsBase64 = base64_encode(json_encode($parameters));
@@ -67,39 +69,51 @@ class RedsysService
         // 1. Decode Key (Base64)
         $key = base64_decode($this->key);
 
-        // 2. Encrypt OrderId with 3DES
-        // Pad orderId with null bytes to 8 multiple length if needed? Redsys usually expects strict length or padding.
-        // For standard 3DES via OpenSSL:
-        $orderId = $orderId;
+        // 2. Encrypt OrderId with TripleDES (DES-EDE3-CBC)
+        // Redsys implementation requires padding to multiple of 8 if it's not (12 is not).
+        // Standard practice is padding with null bytes to 16 bytes for 12 chars order.
+        $l = ceil(strlen($orderId) / 8) * 8;
+        $orderIdPadded = $orderId . str_repeat("\0", $l - strlen($orderId));
 
-        // Redsys specific 3DES implementation via OpenSSL
-        // IV is usually zero bytes
-        $iv = implode(array_map("chr", array(0, 0, 0, 0, 0, 0, 0, 0)));
+        $iv = "\0\0\0\0\0\0\0\0";
+        $key3des = openssl_encrypt($orderIdPadded, 'des-ede3-cbc', $key, OPENSSL_RAW_DATA | OPENSSL_NO_PADDING, $iv);
 
-        $key3des = openssl_encrypt($orderId, 'DES-EDE3-CBC', $key, OPENSSL_RAW_DATA, $iv);
+        // 3. HMAC SHA256 of params with the derived key
+        $res = hash_hmac('sha256', $params, $key3des, true);
 
-        // 3. HMAC SHA256 of params with the new 3DES key
-        return base64_encode(hash_hmac('sha256', $params, $key3des, true));
+        return base64_encode($res);
     }
 
     public function checkSignature($params, $signatureRecieved)
     {
-        // Decode params
-        $decodedParams = json_decode(base64_decode($params), true);
-        $orderId = $decodedParams['DS_ORDER'] ?? $decodedParams['DS_MERCHANT_ORDER'] ?? null;
+        $decodedParams = $this->decodeParams($params);
+        $orderId = $decodedParams['Ds_Order'] ?? $decodedParams['Ds_Merchant_Order'] ?? null;
 
         if (!$orderId) {
+            Log::warning('Redsys checkSignature: OrderId not found in params');
             return false;
         }
 
         $calcSignature = $this->generateSignature($params, $orderId);
 
-        // Use a safe comparison
-        return str_replace(['+', '/'], ['-', '_'], $calcSignature) === str_replace(['+', '/'], ['-', '_'], $signatureRecieved) || $calcSignature === $signatureRecieved;
+        // Standard comparison
+        if ($calcSignature === $signatureRecieved) return true;
+
+        // URL-safe comparison
+        $signatureRecievedNormal = str_replace(['-', '_'], ['+', '/'], $signatureRecieved);
+        if ($calcSignature === $signatureRecievedNormal) return true;
+
+        $calcSignatureUrlSafe = str_replace(['+', '/'], ['-', '_'], $calcSignature);
+        if ($calcSignatureUrlSafe === $signatureRecieved) return true;
+
+        Log::error("Redsys Signature Mismatch: Recieved: {$signatureRecieved}, Calculated: {$calcSignature}");
+        return false;
     }
 
     public function decodeParams($params)
     {
-        return json_decode(base64_decode($params), true);
+        $normalized = str_replace(['-', '_'], ['+', '/'], $params);
+        $decoded = base64_decode($normalized);
+        return json_decode($decoded, true);
     }
 }

@@ -34,11 +34,4 @@ return [
     'frontend' => [
         'url' => env('FRONTEND_URL', 'http://localhost:4200'),
     ],
-
-    'redsys' => [
-        'url' => env('REDSYS_URL', 'https://sis-t.redsys.es:25443/sis/realizarPago'),
-        'merchant_code' => env('REDSYS_MERCHANT_CODE', '999008881'),
-        'terminal' => env('REDSYS_TERMINAL', '1'),
-        'key' => env('REDSYS_KEY', 'sq7HjrUOBfKmC576ILgskD5srU870gJ7'),
-    ],
 ];

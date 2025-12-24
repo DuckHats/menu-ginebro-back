@@ -47,25 +47,32 @@ class PaymentController extends Controller
 
     public function notify(Request $request)
     {
+        Log::info('Redsys Notification Recieved', $request->all());
+
         // Redsys sends parameters in Ds_MerchantParameters (base64) and Ds_Signature
         $params = $request->input('Ds_MerchantParameters');
         $signature = $request->input('Ds_Signature');
 
         if (!$params || !$signature) {
-            Log::error('Redsys Notification: Missing parameters');
+            Log::error('Redsys Notification: Missing parameters (Ds_MerchantParameters or Ds_Signature)');
             return response()->json(['status' => 'ko'], 400);
         }
 
         if (!$this->redsysService->checkSignature($params, $signature)) {
-            Log::error('Redsys Notification: Invalid signature');
+            Log::error('Redsys Notification: Invalid signature verification failed');
             return response()->json(['status' => 'ko'], 400);
         }
 
         $decoded = $this->redsysService->decodeParams($params);
-        $orderId = $decoded['Ds_Order'];
-        $responseCode = intval($decoded['Ds_Response']);
+        $orderId = $decoded['Ds_Order'] ?? $decoded['Ds_Merchant_Order'] ?? null;
+        $responseCode = isset($decoded['Ds_Response']) ? intval($decoded['Ds_Response']) : -1;
 
-        Log::info("Redsys Notification for Order: {$orderId}, Response: {$responseCode}");
+        if (!$orderId) {
+            Log::error('Redsys Notification: OrderId not found in decoded parameters', $decoded);
+            return response()->json(['status' => 'ko'], 400);
+        }
+
+        Log::info("Redsys Notification Processed - Order: {$orderId}, Response: {$responseCode}");
 
         $transaction = Transaction::where('order_id', $orderId)->first();
 

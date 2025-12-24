@@ -17,6 +17,10 @@ class ConfigurationSeeder extends Seeder
             'order_deadline_days_ahead' => '1',
             'menu_price' => '6.50',
             'app_active' => '1',
+            'redsys_url' => 'https://sis-t.redsys.es:25443/sis/realizarPago',
+            'redsys_merchant_code' => '999008881',
+            'redsys_terminal' => '1',
+            'redsys_key' => 'sq7HjrUOBfKmC576ILgskD5srU870gJ7',
         ];
 
         foreach ($settings as $key => $value) {
