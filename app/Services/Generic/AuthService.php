@@ -4,10 +4,10 @@ namespace App\Services\Generic;
 
 use App\Helpers\EmailHelper;
 use App\Helpers\ValidationHelper;
+use App\Jobs\RegisterEndActions;
 use App\Mail\EmailVerificationMail;
 use App\Mail\PasswordChangedMail;
 use App\Mail\ResetPasswordCodeMail;
-use App\Mail\WelcomeMail;
 use App\Models\EmailVerification;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -35,8 +35,8 @@ class AuthService
             $request->session()->regenerate();
         }
 
-        // Send welcome email
-        EmailHelper::sendEmail($user->email, WelcomeMail::class, [$user]);
+        // Dispatch background actions (welcome email, etc.)
+        RegisterEndActions::dispatch($user);
 
         return [
             'user' => $user,
@@ -262,11 +262,8 @@ class AuthService
         ]);
 
         Auth::login($user);
-        if ($request->hasSession()) {
-            $request->session()->regenerate();
-        }
-
-        EmailHelper::sendEmail($user->email, WelcomeMail::class, [$user]);
+        // Dispatch background actions (welcome email, etc.)
+        RegisterEndActions::dispatch($user);
         EmailVerification::where('email', $email)->delete();
 
         return [

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\PaymentEndActions;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\RedsysService;
@@ -100,6 +101,8 @@ class PaymentController extends Controller
                 $user = $transaction->user;
                 $user->balance += $transaction->amount;
                 $user->save();
+
+                PaymentEndActions::dispatch($user, $transaction->amount);
             }
         } else {
             $transaction->update([

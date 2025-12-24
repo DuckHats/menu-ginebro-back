@@ -4,6 +4,7 @@ namespace App\Services\Model;
 
 use App\Helpers\ApiResponse;
 use App\Http\Resources\OrderResource;
+use App\Jobs\OrderEndActions;
 use App\Models\Order;
 use App\Models\Configuration;
 use App\Models\Transaction;
@@ -95,6 +96,9 @@ class OrderService extends BaseService
                 'description' => 'Pagament de comanda - ' . $data['order_date'],
                 'internal_order_id' => $item->id,
             ]);
+
+            // 6. Dispatch background actions (confirmation email, etc.)
+            OrderEndActions::dispatch($user, $item);
 
             DB::commit();
 
