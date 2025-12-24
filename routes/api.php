@@ -5,7 +5,6 @@ use App\Http\Controllers\AllergyController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\DishController;
-use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
@@ -44,10 +43,6 @@ Route::middleware('throttle:api')->group(function () {
 
             Route::post(RouteConstants::VERIFY_EMAIL, 'sendEmailVerificationCode')->name('auth.sendEmailVerificationCode')->middleware('auth:sanctum');
             Route::post(RouteConstants::VERIFY_EMAIL_CONFIRM, 'verifyEmail')->name('auth.verifyEmail')->middleware('auth:sanctum');
-
-            // Google Auth
-            Route::get(RouteConstants::GOOGLE_AUTH, [GoogleAuthController::class, 'redirectToGoogle']);
-            Route::get(RouteConstants::GOOGLE_AUTH_CALLBACK, [GoogleAuthController::class, 'handleGoogleCallback']);
         });
 
         // User routes
