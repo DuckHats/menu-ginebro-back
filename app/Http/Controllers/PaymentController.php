@@ -36,6 +36,8 @@ class PaymentController extends Controller
         $transaction = Transaction::create([
             'user_id' => $user->id,
             'amount' => $amount,
+            'type' => Transaction::TYPE_TOPUP,
+            'description' => 'Recàrrega de saldo',
             'status' => 'pending',
             'order_id' => $orderId,
         ]);

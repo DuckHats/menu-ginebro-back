@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\Configuration;
+use App\Models\Transaction;
 use App\Services\Generic\BaseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -84,6 +85,16 @@ class OrderService extends BaseService
 
             // 4. Deduct Balance
             $this->deductUserBalance($user, $totalPrice);
+
+            // 5. Record Transaction
+            Transaction::create([
+                'user_id' => $user->id,
+                'amount' => -$totalPrice,
+                'type' => Transaction::TYPE_ORDER,
+                'status' => 'completed',
+                'description' => 'Pagament de comanda - ' . $data['order_date'],
+                'internal_order_id' => $item->id,
+            ]);
 
             DB::commit();
 

@@ -164,4 +164,9 @@ class RouteConstants
     const IMAGES = '/images';
 
     const IMAGES_DETAIL = '/images/{id}';
+
+    // Transaction Routes
+    const TRANSACTIONS = '/transactions';
+
+    const TRANSACTIONS_ADMIN = '/admin/transactions';
 }

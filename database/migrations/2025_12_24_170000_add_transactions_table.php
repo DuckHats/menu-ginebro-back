@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 10, 2);
+            $table->enum('type', ['topup', 'order', 'correction'])->default('topup');
+            $table->string('description')->nullable();
+            $table->foreignId('internal_order_id')->nullable()->constrained('orders')->onDelete('set null');
             $table->string('status')->default('pending'); // pending, completed, failed
-            $table->string('order_id')->unique(); // Redsys Order ID
+            $table->string('order_id')->nullable(); // ID de Redsys
             $table->string('response_code')->nullable();
             $table->string('authorization_code')->nullable();
             $table->timestamps();
