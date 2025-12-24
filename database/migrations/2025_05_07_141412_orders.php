@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('order_date');
             $table->string('allergies')->nullable();
             $table->boolean('has_tupper')->default(false);
+            $table->decimal('total_price', 10, 2)->default(0);
             $table->foreignId('order_type_id')->constrained('order_types')->onDelete('cascade');
             $table->foreignId('order_status_id')->default(1)->constrained('order_status')->onDelete('cascade');
             $table->timestamps();

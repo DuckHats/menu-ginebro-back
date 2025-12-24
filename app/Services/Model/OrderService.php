@@ -5,6 +5,7 @@ namespace App\Services\Model;
 use App\Helpers\ApiResponse;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
+use App\Models\Configuration;
 use App\Services\Generic\BaseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -51,16 +52,28 @@ class OrderService extends BaseService
 
         try {
             $data = $validatedData['data'];
+            $user = Auth()->user();
+
+            // 1. Calculate and Validate Price
+            $totalPrice = $this->calculateOrderPrice($data['order_type_id'], $data['has_tupper'] ?? false);
+
+            // 2. Validate Balance
+            $balanceCheck = $this->validateBalance($user, $totalPrice);
+            if (! $balanceCheck['success']) {
+                return ApiResponse::error('INSUFFICIENT_BALANCE', $balanceCheck['message'], [], ApiResponse::UNPROCESSABLE_ENTITY_STATUS);
+            }
 
             DB::beginTransaction();
 
+            // 3. Create Order
             $item = Order::create([
-                'user_id' => Auth()->user()->id,
+                'user_id' => $user->id,
                 'order_date' => $data['order_date'],
                 'order_type_id' => $data['order_type_id'],
                 'order_status_id' => $data['order_status_id'],
-                'allergies' => $this->getUserAllergies(Auth()->user(), $data['allergies'] ?? null),
+                'allergies' => $this->getUserAllergies($user),
                 'has_tupper' => $data['has_tupper'] ?? false,
+                'total_price' => $totalPrice,
             ]);
 
             $item->orderDetail()->create([
@@ -68,6 +81,9 @@ class OrderService extends BaseService
                 'option2' => $data['option2'] ?? null,
                 'option3' => $data['option3'] ?? null,
             ]);
+
+            // 4. Deduct Balance
+            $this->deductUserBalance($user, $totalPrice);
 
             DB::commit();
 
@@ -80,6 +96,64 @@ class OrderService extends BaseService
 
             return ApiResponse::error('CREATE_FAILED', 'Error while creating item.', ['exception' => $e->getMessage()], ApiResponse::INTERNAL_SERVER_ERROR_STATUS);
         }
+    }
+
+    /**
+     * Calculate the final order price based on configurations and type.
+     */
+    private function calculateOrderPrice(int $orderTypeId, bool $hasTupper): float
+    {
+        $configs = Configuration::whereIn('key', [
+            'menu_price',
+            'taper_price',
+            'half_menu_first_price',
+            'half_menu_second_price'
+        ])->pluck('value', 'key');
+
+        $menuPrice = floatval($configs['menu_price'] ?? 0);
+        $taperPrice = floatval($configs['taper_price'] ?? 0);
+        $halfFirstPrice = floatval($configs['half_menu_first_price'] ?? 0);
+        $halfSecondPrice = floatval($configs['half_menu_second_price'] ?? 0);
+
+        $orderType = \App\Models\OrderType::find($orderTypeId);
+        $typeName = $orderType ? $orderType->name : '';
+
+        $basePrice = 0;
+        if (str_contains($typeName, 'Primer plat') && str_contains($typeName, 'Segon plat')) {
+            $basePrice = $menuPrice;
+        } elseif (str_contains($typeName, 'Primer plat')) {
+            $basePrice = $halfFirstPrice;
+        } elseif (str_contains($typeName, 'Segon plat')) {
+            $basePrice = $halfSecondPrice;
+        }
+
+        $totalPrice = $basePrice + ($hasTupper ? $taperPrice : 0);
+
+        return round($totalPrice, 2);
+    }
+
+    /**
+     * Validate if the user has enough balance.
+     */
+    private function validateBalance($user, float $amount): array
+    {
+        if ($user->balance < $amount) {
+            return [
+                'success' => false,
+                'message' => 'No tens prou saldo per fer aquesta comanda.',
+            ];
+        }
+
+        return ['success' => true];
+    }
+
+    /**
+     * Deduct the amount from the user balance.
+     */
+    private function deductUserBalance($user, float $amount): void
+    {
+        $user->balance -= $amount;
+        $user->save();
     }
 
     public function updateOrderStatusBy_ID(Request $request, $id)
@@ -177,22 +251,13 @@ class OrderService extends BaseService
         }
     }
 
-    private function getUserAllergies($user, $providedAllergies = null)
+    private function getUserAllergies($user)
     {
         $userAllergies = $user->allergies->pluck('name')->toArray();
 
         if ($user->custom_allergies) {
             $customAllergies = array_map('trim', explode(',', $user->custom_allergies));
             $userAllergies = array_merge($userAllergies, $customAllergies);
-        }
-
-        if ($providedAllergies) {
-            // If allergies are provided in the request, we might want to append them or replace?
-            // The requirement says: "si el usuario tiene una alergia vinculada tiene que poner la alergia en el campo correspondiente"
-            // It implies automatic population. If the request sends allergies, maybe it's an override or addition.
-            // Assuming addition for safety.
-            $provided = array_map('trim', explode(',', $providedAllergies));
-            $userAllergies = array_merge($userAllergies, $provided);
         }
 
         return implode(', ', array_unique($userAllergies));

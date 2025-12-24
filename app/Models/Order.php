@@ -16,6 +16,7 @@ class Order extends Model implements Exportable
         'order_date',
         'allergies',
         'has_tupper',
+        'total_price',
         'order_type_id',
         'order_status_id',
     ];
@@ -57,6 +58,7 @@ class Order extends Model implements Exportable
                     'Data' => $order->order_date ?? 'N/A',
                     'Alergies' => $order->allergies ?? 'N/A',
                     'Tupper' => $order->has_tupper ? 'Sí' : 'No',
+                    'Preu' => number_format($order->total_price, 2, ',', '.') . '€',
                 ];
             });
     }
@@ -74,6 +76,7 @@ class Order extends Model implements Exportable
             'Data',
             'Alergies',
             'Tupper',
+            'Preu',
         ];
     }
 }
