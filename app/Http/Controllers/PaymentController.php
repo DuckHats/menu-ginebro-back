@@ -21,7 +21,7 @@ class PaymentController extends Controller
     public function initiate(Request $request)
     {
         $request->validate([
-            'amount' => 'required|numeric|min:1',
+            'amount' => 'required|numeric|min:1|max:150',
         ]);
 
         $user = $request->user();
