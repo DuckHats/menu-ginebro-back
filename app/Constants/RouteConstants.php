@@ -25,6 +25,11 @@ class RouteConstants
 
     const VERIFY_EMAIL_CONFIRM = '/verify/email/confirm';
 
+    //Payment Routes
+    const PAYMENT_INITIATE = '/payment/initiate';
+
+    const PAYMENT_NOTIFY = '/payment/notify';
+
     // User Routes
     const USERS = '/users';
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\DishController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\OrderDetailsController;
 use App\Http\Controllers\OrderStatusController;
 use App\Http\Controllers\OrderTypeController;
@@ -44,6 +45,10 @@ Route::middleware('throttle:api')->group(function () {
             Route::post(RouteConstants::VERIFY_EMAIL, 'sendEmailVerificationCode')->name('auth.sendEmailVerificationCode')->middleware('auth:sanctum');
             Route::post(RouteConstants::VERIFY_EMAIL_CONFIRM, 'verifyEmail')->name('auth.verifyEmail')->middleware('auth:sanctum');
         });
+
+        // Public Payment Notification (Redsys Callback) - No Sanctum middleware usually, or IP restricted
+        Route::post(RouteConstants::PAYMENT_NOTIFY, [PaymentController::class, 'notify'])->name('api.payment.notify');
+        Route::post(RouteConstants::PAYMENT_INITIATE, [PaymentController::class, 'initiate'])->name('api.payment.initiate')->middleware('auth:sanctum');
 
         // User routes
         Route::controller(UserController::class)->group(function () {

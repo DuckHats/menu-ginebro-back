@@ -40,6 +40,7 @@ class User extends Authenticatable implements Exportable, Importable
         'user_type_id',
         'status',
         'custom_allergies',
+        'balance',
     ];
 
     /**
@@ -60,11 +61,17 @@ class User extends Authenticatable implements Exportable, Importable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'balance' => 'decimal:2',
     ];
 
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 
     public function allergies()

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->foreignId('user_type_id')->default(2)->constrained('user_types')->onDelete('cascade');
             $table->integer('status')->default(1);
+            $table->decimal('balance', 10, 2)->default(0.00);
             $table->rememberToken();
             $table->timestamps();
         });
