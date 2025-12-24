@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('viewPulse', static function (?User $user) {
-            return env('APP_ENV') == 'local';
+            return session()->has('admin_authenticated');
         });
     }
 }
