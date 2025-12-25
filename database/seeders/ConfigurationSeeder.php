@@ -24,6 +24,9 @@ class ConfigurationSeeder extends Seeder
             'taper_price' => '1.00',
             'half_menu_first_price' => '4.50',
             'half_menu_second_price' => '4.50',
+            'order_per_page' => '50',
+            'user_per_page' => '15',
+            'transaction_per_page' => '15',
         ];
 
         foreach ($settings as $key => $value) {
