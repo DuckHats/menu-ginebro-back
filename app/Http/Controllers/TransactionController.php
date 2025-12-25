@@ -28,7 +28,7 @@ class TransactionController extends Controller
      */
     public function adminIndex(Request $request)
     {
-        if (!$request->user()->isAdmin) {
+        if (!$request->user()->isAdmin()) {
             return ApiResponse::error('UNAUTHORIZED', 'No tens permisos.', [], ApiResponse::FORBIDDEN_STATUS);
         }
 
