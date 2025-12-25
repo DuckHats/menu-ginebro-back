@@ -16,13 +16,22 @@ class UserService
     public function getUsers(Request $request)
     {
         try {
-            $query = User::query();
-            // Uncomment the following line if you want to apply relations
-            // $this->applyRelations($query, $request);
-
-            $users = $query->get();
-
             Gate::authorize('viewAll', $request->user());
+
+            $query = User::query();
+
+            // Apply Sorting
+            $sortBy = $request->get('sort_by', 'created_at');
+            $sortOrder = $request->get('sort_order', 'desc');
+            $allowedColumns = ['id', 'name', 'email', 'balance', 'status', 'created_at'];
+
+            if (in_array($sortBy, $allowedColumns)) {
+                $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
+            }
+
+            // Apply Pagination
+            $perPage = $request->get('per_page', 15);
+            $users = $query->paginate($perPage);
 
             return UserResource::collection($users)->additional([
                 'status' => 'success',

@@ -22,15 +22,31 @@ abstract class BaseService implements ServiceInterface
         try {
             $query = $this->model->query();
 
+            // Set relations
             $relations = $this->getRelations();
             if (! empty($relations)) {
                 $query->with($relations);
             }
 
-            $items = $query->get();
+            // Apply Sorting
+            $sortBy = $request->get('sort_by', 'created_at');
+            $sortOrder = $request->get('sort_order', 'desc');
+            $allowedColumns = array_merge(['id', 'created_at', 'updated_at'], $this->model->getFillable());
+
+            if (in_array($sortBy, $allowedColumns)) {
+                $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
+            }
+
+            // Apply Pagination
+            $perPage = $request->get('per_page', 15);
+            $items = $query->paginate($perPage);
 
             return ($this->resourceClass())::collection($items)
-                ->additional(['status' => 'success', 'message' => config('messages.generic.operation_success'), 'code' => ApiResponse::OK_STATUS]);
+                ->additional([
+                    'status' => 'success',
+                    'message' => config('messages.generic.operation_success'),
+                    'code' => ApiResponse::OK_STATUS
+                ]);
         } catch (\Throwable $e) {
             Log::error('Error fetching data', ['exception' => $e->getMessage()]);
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ApiResponse;
+use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 
@@ -14,13 +15,28 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $query = Transaction::where('user_id', $user->id)->with(['internalOrder']);
 
-        $transactions = Transaction::where('user_id', $user->id)
-            ->with(['internalOrder'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Apply Sorting
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $allowedColumns = ['id', 'amount', 'type', 'status', 'created_at'];
 
-        return ApiResponse::success($transactions, 'Transactions retrieved successfully.');
+        if (in_array($sortBy, $allowedColumns)) {
+            $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        // Apply Pagination
+        $perPage = $request->get('per_page', 15);
+        $transactions = $query->paginate($perPage);
+
+        return TransactionResource::collection($transactions)->additional([
+            'status' => 'success',
+            'message' => 'Transactions retrieved successfully.',
+            'code' => ApiResponse::OK_STATUS,
+        ]);
     }
 
     /**
@@ -32,10 +48,27 @@ class TransactionController extends Controller
             return ApiResponse::error('UNAUTHORIZED', 'No tens permisos.', [], ApiResponse::FORBIDDEN_STATUS);
         }
 
-        $transactions = Transaction::with(['user', 'internalOrder'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Transaction::with(['user', 'internalOrder']);
 
-        return ApiResponse::success($transactions, 'All transactions retrieved successfully.');
+        // Apply Sorting
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $allowedColumns = ['id', 'user_id', 'amount', 'type', 'status', 'created_at'];
+
+        if (in_array($sortBy, $allowedColumns)) {
+            $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        // Apply Pagination
+        $perPage = $request->get('per_page', 15);
+        $transactions = $query->paginate($perPage);
+
+        return \App\Http\Resources\TransactionResource::collection($transactions)->additional([
+            'status' => 'success',
+            'message' => 'All transactions retrieved successfully.',
+            'code' => ApiResponse::OK_STATUS,
+        ]);
     }
 }

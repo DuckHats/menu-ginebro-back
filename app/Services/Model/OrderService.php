@@ -211,13 +211,28 @@ class OrderService extends BaseService
     public function getByDate(Request $request, $date)
     {
         try {
-            $item = Order::where('order_date', $date)->with($this->getRelations())->get();
+            $query = Order::where('order_date', $date)->with($this->getRelations());
 
-            if ($item) {
-                return ApiResponse::success($this->resourceClass()::collection($item), 'Item retrieved successfully.', ApiResponse::OK_STATUS);
+            // Apply Sorting
+            $sortBy = $request->get('sort_by', 'created_at');
+            $sortOrder = $request->get('sort_order', 'desc');
+            $allowedColumns = ['id', 'user_id', 'total_price', 'created_at'];
+
+            if (in_array($sortBy, $allowedColumns)) {
+                $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
             } else {
-                return ApiResponse::error('NOT_FOUND', 'Item not found.', [], ApiResponse::NOT_FOUND_STATUS);
+                $query->orderBy('created_at', 'desc');
             }
+
+            // Apply Pagination
+            $perPage = $request->get('per_page', 15);
+            $items = $query->paginate($perPage);
+
+            return $this->resourceClass()::collection($items)->additional([
+                'status' => 'success',
+                'message' => 'Items retrieved successfully.',
+                'code' => ApiResponse::OK_STATUS,
+            ]);
         } catch (\Throwable $e) {
             Log::error('Error retrieving order by date', ['exception' => $e->getMessage()]);
 
@@ -228,13 +243,28 @@ class OrderService extends BaseService
     public function getByUser(Request $request, $userId)
     {
         try {
-            $item = Order::where('user_id', $userId)->with($this->getRelations())->get();
+            $query = Order::where('user_id', $userId)->with($this->getRelations());
 
-            if ($item) {
-                return ApiResponse::success($this->resourceClass()::collection($item), 'Item retrieved successfully.', ApiResponse::OK_STATUS);
+            // Apply Sorting
+            $sortBy = $request->get('sort_by', 'created_at');
+            $sortOrder = $request->get('sort_order', 'desc');
+            $allowedColumns = ['id', 'total_price', 'created_at'];
+
+            if (in_array($sortBy, $allowedColumns)) {
+                $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
             } else {
-                return ApiResponse::error('NOT_FOUND', 'Item not found.', [], ApiResponse::NOT_FOUND_STATUS);
+                $query->orderBy('created_at', 'desc');
             }
+
+            // Apply Pagination
+            $perPage = $request->get('per_page', 15);
+            $items = $query->paginate($perPage);
+
+            return $this->resourceClass()::collection($items)->additional([
+                'status' => 'success',
+                'message' => 'Items retrieved successfully.',
+                'code' => ApiResponse::OK_STATUS,
+            ]);
         } catch (\Throwable $e) {
             Log::error('Error retrieving order by user', ['exception' => $e->getMessage()]);
 
