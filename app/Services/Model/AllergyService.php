@@ -11,7 +11,7 @@ class AllergyService
     public function getAll(Request $request)
     {
         return ApiResponse::success(
-            Allergy::select('id', 'name')->orderBy('name')->get()
+            Allergy::select('id', 'name', 'description')->orderBy('name')->get()
         );
     }
 
