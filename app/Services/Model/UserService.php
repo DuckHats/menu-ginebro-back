@@ -16,13 +16,34 @@ class UserService
     public function getUsers(Request $request)
     {
         try {
-            $query = User::query();
-            // Uncomment the following line if you want to apply relations
-            // $this->applyRelations($query, $request);
-
-            $users = $query->get();
-
             Gate::authorize('viewAll', $request->user());
+
+            $query = User::query();
+
+            // Apply Search
+            if ($request->has('search') && ! empty($request->search)) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            }
+
+            // Apply Sorting
+            $sortBy = $request->get('sort_by', 'created_at');
+            $sortOrder = $request->get('sort_order', 'desc');
+            $allowedColumns = ['id', 'name', 'last_name', 'email', 'balance', 'status', 'created_at'];
+
+            if (in_array($sortBy, $allowedColumns)) {
+                $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
+            } else {
+                $query->orderBy('created_at', 'desc');
+            }
+
+            // Apply Pagination
+            $perPage = $request->get('per_page', 15);
+            $users = $query->paginate($perPage);
 
             return UserResource::collection($users)->additional([
                 'status' => 'success',

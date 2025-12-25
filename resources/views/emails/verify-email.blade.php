@@ -1,82 +1,30 @@
-<!DOCTYPE html>
-<html lang="ca">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Verificació de correu electrònic</title>
-  <style>
-    body {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background-color: #f3f4f6;
-      margin: 0;
-      padding: 0;
-      color: #111827;
-    }
+@extends('emails.layout')
 
-    .container {
-      max-width: 600px;
-      margin: 40px auto;
-      background-color: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
+@section('title', 'Verifica el teu correu')
 
-    .header {
-      background-color: #009ca6;
-      color: white;
-      padding: 24px;
-      text-align: center;
-    }
+@section('content')
+    <div class="badge">SEGURETAT</div>
+    <h2>Verifica el teu correu</h2>
+    <p>Gràcies per registrar-te al menjador del <strong>Ginebró</strong>. Per seguretat, necessitem que verifiquis la teva
+        adreça electrònica.</p>
 
-    .header h2 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    .content {
-      padding: 24px;
-    }
-
-    .content p {
-      font-size: 16px;
-      line-height: 1.5;
-      margin: 16px 0;
-    }
-
-    .content h3 {
-      background-color: #e0f7fa;
-      padding: 10px 20px;
-      text-align: center;
-      color: #065e63;
-      font-weight: bold;
-      border-radius: 8px;
-      margin: 24px 0;
-    }
-
-    .footer {
-      text-align: center;
-      font-size: 13px;
-      color: #6b7280;
-      padding: 16px;
-      background-color: #f9fafb;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h2>Confirmació del teu correu electrònic</h2>
+    <div
+        style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 40px; text-align: center; margin: 32px 0;">
+        <span
+            style="display: block; font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 16px;">El
+            teu codi de verificació</span>
+        <div
+            style="display: inline-block; padding: 20px 40px; background-color: #009ca6; color: #ffffff; font-size: 36px; font-weight: 900; letter-spacing: 0.25em; border-radius: 16px; box-shadow: 0 8px 16px rgba(0, 156, 166, 0.15);">
+            {{ $code }}
+        </div>
+        <p style="margin: 24px 0 0; color: #94a3b8; font-size: 12px; font-weight: 500;">Aquest codi és d'ús únic i caducarà
+            en 15 minuts.</p>
     </div>
-    <div class="content">
-      <p>Hola,</p>
-      <p>Benvingut al nostre menjador! Per començar a utilitzar la nostra plataforma i accedir a la informació dels teus fills, verifica el teu correu electrònic amb aquest codi:</p>
-      <h3>{{ $verificationCode }}</h3>
-      <p>Si no has sol·licitat aquest registre, pots ignorar aquest missatge.</p>
-    </div>
-    <div class="footer">
-      &copy; 2025 Menjador Ginebró. Tots els drets reservats.
-    </div>
-  </div>
-</body>
-</html>
+
+    <p style="text-align: center;">Introdueix aquest codi a l'aplicació per completar el procés de registre.</p>
+
+    <div class="divider"></div>
+
+    <p style="font-size: 14px; color: #94a3b8; text-align: center; margin-bottom: 0;">Si no has intentat registrar-te, pots
+        ignorar aquest missatge amb total seguretat.</p>
+@endsection

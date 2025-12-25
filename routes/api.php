@@ -8,9 +8,10 @@ use App\Http\Controllers\DishController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\OrderDetailsController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\OrderStatusController;
 use App\Http\Controllers\OrderTypeController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,10 @@ Route::middleware('throttle:api')->group(function () {
             Route::post(RouteConstants::VERIFY_EMAIL, 'sendEmailVerificationCode')->name('auth.sendEmailVerificationCode')->middleware('auth:sanctum');
             Route::post(RouteConstants::VERIFY_EMAIL_CONFIRM, 'verifyEmail')->name('auth.verifyEmail')->middleware('auth:sanctum');
         });
+
+        // Public Payment Notification (Redsys Callback) - No Sanctum middleware usually, or IP restricted
+        Route::post(RouteConstants::PAYMENT_NOTIFY, [PaymentController::class, 'notify'])->name('api.payment.notify');
+        Route::post(RouteConstants::PAYMENT_INITIATE, [PaymentController::class, 'initiate'])->name('api.payment.initiate')->middleware('auth:sanctum');
 
         // User routes
         Route::controller(UserController::class)->group(function () {
@@ -143,19 +148,10 @@ Route::middleware('throttle:api')->group(function () {
             Route::delete(RouteConstants::IMAGES_DETAIL, 'destroy')->name('images.destroy')->middleware('auth:sanctum');
         });
 
-        //
-
-        // Order Details routes
-        // Route::controller(OrderDetailsController::class)->group(function () {
-        //     Route::get(RouteConstants::ORDER_DETAILS, 'index')->name('order_details.index')->middleware('auth:sanctum');
-        //     Route::get(RouteConstants::ORDER_DETAILS_EXPORT, 'export')->name('order_details.export')->middleware('auth:sanctum');
-
-        //     Route::get(RouteConstants::ORDER_DETAILS_DETAIL, 'show')->name('order_details.show')->middleware('auth:sanctum');
-
-        //     Route::post(RouteConstants::ORDER_DETAILS_CREATE, 'store')->name('order_details.store')->middleware('auth:sanctum');
-        //     Route::put(RouteConstants::ORDER_DETAILS_UPDATE, 'update')->name('order_details.update')->middleware('auth:sanctum');
-        //     Route::patch(RouteConstants::ORDER_DETAILS_PATCH, 'patch')->name('order_details.patch')->middleware('auth:sanctum');
-        //     Route::delete(RouteConstants::ORDER_DETAILS_DESTROY, 'destroy')->name('order_details.destroy')->middleware('auth:sanctum');
-        // });
+        // Transaction routes
+        Route::controller(TransactionController::class)->group(function () {
+            Route::get(RouteConstants::TRANSACTIONS, 'index')->name('transactions.index')->middleware('auth:sanctum');
+            Route::get(RouteConstants::TRANSACTIONS_ADMIN, 'adminIndex')->name('transactions.admin')->middleware('auth:sanctum');
+        });
     });
 });
