@@ -211,17 +211,71 @@ class OrderService extends BaseService
     public function getByDate(Request $request, $date)
     {
         try {
-            $query = Order::where('order_date', $date)->with($this->getRelations());
+            $query = Order::query()->with($this->getRelations());
+
+            if ($date) {
+                $query->where('order_date', $date);
+            }
+
+            // Apply Search
+            if ($request->has('search') && ! empty($request->search)) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    })
+                        ->orWhere('order_date', 'like', "%{$search}%")
+                        ->orWhere('allergies', 'like', "%{$search}%")
+                        ->orWhereHas('orderDetail', function ($dq) use ($search) {
+                            $dq->where('option1', 'like', "%{$search}%")
+                                ->orWhere('option2', 'like', "%{$search}%")
+                                ->orWhere('option3', 'like', "%{$search}%");
+                        });
+                });
+            }
 
             // Apply Sorting
             $sortBy = $request->get('sort_by', 'created_at');
             $sortOrder = $request->get('sort_order', 'desc');
-            $allowedColumns = ['id', 'user_id', 'total_price', 'created_at'];
 
-            if (in_array($sortBy, $allowedColumns)) {
-                $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
-            } else {
-                $query->orderBy('created_at', 'desc');
+            switch ($sortBy) {
+                case 'user':
+                    $query->join('users', 'orders.user_id', '=', 'users.id')
+                        ->orderBy('users.name', $sortOrder)
+                        ->select('orders.*');
+                    break;
+                case 'type':
+                    $query->join('order_types', 'orders.order_type_id', '=', 'order_types.id')
+                        ->orderBy('order_types.name', $sortOrder)
+                        ->select('orders.*');
+                    break;
+                case 'status':
+                    $query->join('order_statuses', 'orders.order_status_id', '=', 'order_statuses.id')
+                        ->orderBy('order_statuses.label', $sortOrder)
+                        ->select('orders.*');
+                    break;
+                case 'plates':
+                    $query->join('order_details', 'orders.id', '=', 'order_details.order_id')
+                        ->orderBy('order_details.option1', $sortOrder)
+                        ->select('orders.*');
+                    break;
+                case 'allergies':
+                    $query->orderBy('allergies', $sortOrder);
+                    break;
+                case 'total_price':
+                    $query->orderBy('total_price', $sortOrder);
+                    break;
+                case 'order_date':
+                    $query->orderBy('order_date', $sortOrder);
+                    break;
+                case 'id':
+                    $query->orderBy('id', $sortOrder);
+                    break;
+                default:
+                    $query->orderBy('created_at', 'desc');
+                    break;
             }
 
             // Apply Pagination

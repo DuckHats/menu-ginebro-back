@@ -20,13 +20,25 @@ class UserService
 
             $query = User::query();
 
+            // Apply Search
+            if ($request->has('search') && ! empty($request->search)) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            }
+
             // Apply Sorting
             $sortBy = $request->get('sort_by', 'created_at');
             $sortOrder = $request->get('sort_order', 'desc');
-            $allowedColumns = ['id', 'name', 'email', 'balance', 'status', 'created_at'];
+            $allowedColumns = ['id', 'name', 'last_name', 'email', 'balance', 'status', 'created_at'];
 
             if (in_array($sortBy, $allowedColumns)) {
                 $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
+            } else {
+                $query->orderBy('created_at', 'desc');
             }
 
             // Apply Pagination
