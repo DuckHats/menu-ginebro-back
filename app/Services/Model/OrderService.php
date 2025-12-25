@@ -252,8 +252,8 @@ class OrderService extends BaseService
                         ->select('orders.*');
                     break;
                 case 'status':
-                    $query->join('order_statuses', 'orders.order_status_id', '=', 'order_statuses.id')
-                        ->orderBy('order_statuses.label', $sortOrder)
+                    $query->join('order_status', 'orders.order_status_id', '=', 'order_status.id')
+                        ->orderBy('order_status.name', $sortOrder)
                         ->select('orders.*');
                     break;
                 case 'plates':
