@@ -2,118 +2,225 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
 use App\Models\Configuration;
+use Illuminate\Support\Facades\Log;
 
 class RedsysService
 {
-    private $merchantUrl;
-    private $merchantCode;
-    private $terminal;
-    private $key;
-    private $transactionType = '0'; // Autorización
-    private $currency = '978'; // EUR
+    /* -----------------------------------------------------------------
+     |  REDSYS CONSTANTS
+     |------------------------------------------------------------------*/
+
+    private const TRANSACTION_TYPE_AUTH = '0';
+    private const CURRENCY_EUR = '978';
+    private const SIGNATURE_VERSION = 'HMAC_SHA256_V1';
+
+    /* -----------------------------------------------------------------
+     |  CONFIGURATION
+     |------------------------------------------------------------------*/
+
+    private string $merchantUrl;
+    private string $merchantCode;
+    private string $terminal;
+    private string $key;
 
     public function __construct()
+    {
+        $this->loadConfiguration();
+    }
+
+    /* -----------------------------------------------------------------
+     |  PUBLIC API
+     |------------------------------------------------------------------*/
+
+    public function getPaymentParameters(float $amount, string $orderId, $user): array
+    {
+        $parameters = $this->buildMerchantParameters($amount, $orderId, $user);
+        $paramsBase64 = $this->encodeParameters($parameters);
+
+        return [
+            'url'       => $this->merchantUrl,
+            'version'   => self::SIGNATURE_VERSION,
+            'params'    => $paramsBase64,
+            'signature' => $this->generateSignature($paramsBase64, $orderId),
+        ];
+    }
+
+    public function checkSignature(string $params, string $receivedSignature): bool
+    {
+        $decodedParams = $this->decodeParams($params);
+        $orderId = $this->extractOrderId($decodedParams);
+
+        if (!$orderId) {
+            Log::warning('Redsys checkSignature: OrderId not found');
+            return false;
+        }
+
+        return $this->signaturesMatch(
+            $this->generateSignature($params, $orderId),
+            $receivedSignature
+        );
+    }
+
+    public function decodeParams(string $params): array
+    {
+        return json_decode(
+            base64_decode($this->normalizeBase64($params)),
+            true
+        );
+    }
+
+    /* -----------------------------------------------------------------
+     |  CONFIG LOADING
+     |------------------------------------------------------------------*/
+
+    private function loadConfiguration(): void
     {
         $configs = Configuration::whereIn('key', [
             'redsys_url',
             'redsys_merchant_code',
             'redsys_terminal',
-            'redsys_key'
+            'redsys_key',
         ])->pluck('value', 'key');
 
-        $this->merchantUrl = $configs['redsys_url'];
+        $this->merchantUrl  = $configs['redsys_url'];
         $this->merchantCode = $configs['redsys_merchant_code'];
-        $this->terminal = $configs['redsys_terminal'];
-        $this->key = $configs['redsys_key'];
+        $this->terminal     = $configs['redsys_terminal'];
+        $this->key          = $configs['redsys_key'];
     }
 
-    public function getPaymentParameters($amount, $orderId, $user)
+    /* -----------------------------------------------------------------
+     |  PARAMETER BUILDING
+     |------------------------------------------------------------------*/
+
+    private function buildMerchantParameters(float $amount, string $orderId, $user): array
     {
-        // Amount in cents
-        $amountCents = intval(round($amount * 100));
-
-        // Frontend URL for callbacks
-        $frontendUrl = config('services.frontend.url');
-        $callbackUrl = route('api.payment.notify');
-
-        // Redsys Redirect parameters are Case-Sensitive and use specific CamelCase
-        $parameters = [
-            'Ds_Merchant_Amount' => strval($amountCents),
-            'Ds_Merchant_Order' => strval($orderId),
-            'Ds_Merchant_MerchantCode' => strval($this->merchantCode),
-            'Ds_Merchant_Currency' => strval($this->currency),
-            'Ds_Merchant_TransactionType' => strval($this->transactionType),
-            'Ds_Merchant_Terminal' => strval($this->terminal),
-            'Ds_Merchant_MerchantURL' => strval($callbackUrl),
-            'Ds_Merchant_UrlOK' => strval("{$frontendUrl}/payment/result?status=ok"),
-            'Ds_Merchant_UrlKO' => strval("{$frontendUrl}/payment/result?status=ko"),
-            'Ds_Merchant_ProductDescription' => 'Carrega de saldo: ' . $user->email,
-            'Ds_Merchant_Titular' => substr($user->name . ' ' . $user->last_name, 0, 60),
-        ];
-
-        $paramsBase64 = base64_encode(json_encode($parameters));
-        $signature = $this->generateSignature($paramsBase64, $orderId);
-
         return [
-            'url' => $this->merchantUrl,
-            'version' => 'HMAC_SHA256_V1',
-            'params' => $paramsBase64,
-            'signature' => $signature,
+            'Ds_Merchant_Amount'             => $this->amountToCents($amount),
+            'Ds_Merchant_Order'              => $orderId,
+            'Ds_Merchant_MerchantCode'       => $this->merchantCode,
+            'Ds_Merchant_Currency'           => self::CURRENCY_EUR,
+            'Ds_Merchant_TransactionType'    => self::TRANSACTION_TYPE_AUTH,
+            'Ds_Merchant_Terminal'           => $this->terminal,
+            'Ds_Merchant_MerchantURL'        => route('api.payment.notify'),
+            'Ds_Merchant_UrlOK'              => $this->frontendResultUrl('ok'),
+            'Ds_Merchant_UrlKO'              => $this->frontendResultUrl('ko'),
+            'Ds_Merchant_ProductDescription' => "Carrega de saldo: {$user->email}",
+            'Ds_Merchant_Titular'            => $this->buildTitularName($user),
         ];
     }
 
-    private function generateSignature($params, $orderId)
+    private function frontendResultUrl(string $status): string
     {
-        // 1. Decode Key (Base64)
-        $key = base64_decode($this->key);
-
-        // 2. Encrypt OrderId with TripleDES (DES-EDE3-CBC)
-        // Redsys implementation requires padding to multiple of 8 if it's not (12 is not).
-        // Standard practice is padding with null bytes to 16 bytes for 12 chars order.
-        $l = ceil(strlen($orderId) / 8) * 8;
-        $orderIdPadded = $orderId . str_repeat("\0", $l - strlen($orderId));
-
-        $iv = "\0\0\0\0\0\0\0\0";
-        $key3des = openssl_encrypt($orderIdPadded, 'des-ede3-cbc', $key, OPENSSL_RAW_DATA | OPENSSL_NO_PADDING, $iv);
-
-        // 3. HMAC SHA256 of params with the derived key
-        $res = hash_hmac('sha256', $params, $key3des, true);
-
-        return base64_encode($res);
+        return config('services.frontend.url') . "/payment/result?status={$status}";
     }
 
-    public function checkSignature($params, $signatureRecieved)
+    private function buildTitularName($user): string
     {
-        $decodedParams = $this->decodeParams($params);
-        $orderId = $decodedParams['Ds_Order'] ?? $decodedParams['Ds_Merchant_Order'] ?? null;
+        return substr(
+            trim("{$user->name} {$user->last_name}"),
+            0,
+            60
+        );
+    }
 
-        if (!$orderId) {
-            Log::warning('Redsys checkSignature: OrderId not found in params');
-            return false;
+    private function amountToCents(float $amount): string
+    {
+        return (string) intval(round($amount * 100));
+    }
+
+    /* -----------------------------------------------------------------
+     |  ENCODING & SIGNATURE
+     |------------------------------------------------------------------*/
+
+    private function encodeParameters(array $parameters): string
+    {
+        return base64_encode(json_encode($parameters));
+    }
+
+    private function generateSignature(string $paramsBase64, string $orderId): string
+    {
+        $derivedKey = $this->deriveKeyFromOrder($orderId);
+
+        return base64_encode(
+            hash_hmac('sha256', $paramsBase64, $derivedKey, true)
+        );
+    }
+
+    private function deriveKeyFromOrder(string $orderId): string
+    {
+        $decodedKey = base64_decode($this->key);
+
+        $paddedOrder = $this->padOrderId($orderId);
+
+        return openssl_encrypt(
+            $paddedOrder,
+            'des-ede3-cbc',
+            $decodedKey,
+            OPENSSL_RAW_DATA | OPENSSL_NO_PADDING,
+            $this->initializationVector()
+        );
+    }
+
+    private function padOrderId(string $orderId): string
+    {
+        $blockSize = 8;
+        $length = ceil(strlen($orderId) / $blockSize) * $blockSize;
+
+        return $orderId . str_repeat("\0", $length - strlen($orderId));
+    }
+
+    private function initializationVector(): string
+    {
+        return str_repeat("\0", 8);
+    }
+
+    /* -----------------------------------------------------------------
+     |  SIGNATURE COMPARISON
+     |------------------------------------------------------------------*/
+
+    private function signaturesMatch(string $calculated, string $received): bool
+    {
+        if ($calculated === $received) {
+            return true;
         }
 
-        $calcSignature = $this->generateSignature($params, $orderId);
+        $receivedNormalized = $this->normalizeBase64($received);
+        if ($calculated === $receivedNormalized) {
+            return true;
+        }
 
-        // Standard comparison
-        if ($calcSignature === $signatureRecieved) return true;
+        $calculatedUrlSafe = $this->urlSafeBase64($calculated);
+        if ($calculatedUrlSafe === $received) {
+            return true;
+        }
 
-        // URL-safe comparison
-        $signatureRecievedNormal = str_replace(['-', '_'], ['+', '/'], $signatureRecieved);
-        if ($calcSignature === $signatureRecievedNormal) return true;
+        Log::error('Redsys Signature Mismatch', [
+            'received'    => $received,
+            'calculated'  => $calculated,
+        ]);
 
-        $calcSignatureUrlSafe = str_replace(['+', '/'], ['-', '_'], $calcSignature);
-        if ($calcSignatureUrlSafe === $signatureRecieved) return true;
-
-        Log::error("Redsys Signature Mismatch: Recieved: {$signatureRecieved}, Calculated: {$calcSignature}");
         return false;
     }
 
-    public function decodeParams($params)
+    private function normalizeBase64(string $value): string
     {
-        $normalized = str_replace(['-', '_'], ['+', '/'], $params);
-        $decoded = base64_decode($normalized);
-        return json_decode($decoded, true);
+        return str_replace(['-', '_'], ['+', '/'], $value);
+    }
+
+    private function urlSafeBase64(string $value): string
+    {
+        return str_replace(['+', '/'], ['-', '_'], $value);
+    }
+
+    /* -----------------------------------------------------------------
+     |  HELPERS
+     |------------------------------------------------------------------*/
+
+    private function extractOrderId(array $decodedParams): ?string
+    {
+        return $decodedParams['Ds_Order']
+            ?? $decodedParams['Ds_Merchant_Order']
+            ?? null;
     }
 }

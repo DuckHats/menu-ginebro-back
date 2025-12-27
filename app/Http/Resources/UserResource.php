@@ -22,11 +22,12 @@ class UserResource extends JsonResource
             'email_verified_at' => $this->email_verified_at,
             'user_type_id' => $this->user_type_id,
             'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
             'allergies' => $this->whenLoaded('allergies'),
             'custom_allergies' => $this->custom_allergies,
             'balance' => $this->balance,
+            'avatar' => $this->avatar,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

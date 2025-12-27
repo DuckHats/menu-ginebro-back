@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Jobs\PaymentEndActions;
 use App\Models\Transaction;
-use App\Models\User;
 use App\Services\RedsysService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,106 +11,214 @@ use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
-    private $redsysService;
+    public function __construct(
+        private readonly RedsysService $redsysService
+    ) {}
 
-    public function __construct(RedsysService $redsysService)
-    {
-        $this->redsysService = $redsysService;
-    }
+    /* -----------------------------------------------------------------
+     |  PUBLIC ENDPOINTS
+     |------------------------------------------------------------------*/
 
     public function initiate(Request $request)
     {
-        $request->validate([
-            'amount' => 'required|numeric|min:1|max:150',
-        ]);
+        $this->validateInitiateRequest($request);
 
-        $user = $request->user();
+        $user   = $request->user();
         $amount = $request->amount;
+        $orderId = $this->generateOrderId();
 
-        // Create unique order ID (numeric, max 12 chars usually for Redsys, but letters allowed in some versions. 
-        // Redsys expects DS_MERCHANT_ORDER to be max 12 chars alphanumeric.
-        // We'll use a timestamp + random component, ensuring it is 12 chars.
-        // Or simple sequential/random if easier. Let's try 12 chars alphanumeric.
-        $orderId = substr(time() . Str::upper(Str::random(4)), 0, 12);
+        $transaction = $this->createTransaction($user->id, $amount, $orderId);
 
-        $transaction = Transaction::create([
-            'user_id' => $user->id,
-            'amount' => $amount,
-            'type' => Transaction::TYPE_TOPUP,
-            'description' => 'Recàrrega de saldo',
-            'status' => 'pending',
-            'order_id' => $orderId,
-        ]);
-
-        $paymentParams = $this->redsysService->getPaymentParameters($amount, $orderId, $user);
-
-        return response()->json($paymentParams);
+        return response()->json(
+            $this->redsysService->getPaymentParameters($amount, $orderId, $user)
+        );
     }
 
     public function notify(Request $request)
     {
-        Log::info('Redsys Notification Recieved', $request->all());
+        Log::info('Redsys Notification Received', $request->all());
 
-        // Redsys sends parameters in Ds_MerchantParameters (base64) and Ds_Signature
-        $params = $request->input('Ds_MerchantParameters');
-        $signature = $request->input('Ds_Signature');
+        [$params, $signature] = $this->getRedsysNotificationParams($request);
 
-        if (!$params || !$signature) {
-            Log::error('Redsys Notification: Missing parameters (Ds_MerchantParameters or Ds_Signature)');
-            return response()->json(['status' => 'ko'], 400);
-        }
-
-        if (!$this->redsysService->checkSignature($params, $signature)) {
-            Log::error('Redsys Notification: Invalid signature verification failed');
-            return response()->json(['status' => 'ko'], 400);
+        if (!$this->isValidSignature($params, $signature)) {
+            return $this->koResponse('Invalid signature');
         }
 
         $decoded = $this->redsysService->decodeParams($params);
-        $orderId = $decoded['Ds_Order'] ?? $decoded['Ds_Merchant_Order'] ?? null;
-        $responseCode = isset($decoded['Ds_Response']) ? intval($decoded['Ds_Response']) : -1;
+
+        $orderId       = $this->extractOrderId($decoded);
+        $responseCode  = $this->extractResponseCode($decoded);
 
         if (!$orderId) {
-            Log::error('Redsys Notification: OrderId not found in decoded parameters', $decoded);
-            return response()->json(['status' => 'ko'], 400);
+            return $this->koResponse('OrderId not found', 400, $decoded);
         }
 
-        Log::info("Redsys Notification Processed - Order: {$orderId}, Response: {$responseCode}");
-
-        $transaction = Transaction::where('order_id', $orderId)->first();
+        $transaction = $this->findTransaction($orderId);
 
         if (!$transaction) {
-            Log::error("Redsys Notification: Transaction not found for order {$orderId}");
-            return response()->json(['status' => 'ko'], 404);
+            return $this->koResponse("Transaction not found for order {$orderId}", 404);
         }
 
-        // 0000 to 0099 are authenticated authorizations (OK)
-        // 0900 is authorized refund (OK for refund, but here we only do payment) - treat carefully if supporting refunds
-        // We focus on payment: 0000-0099
-        $isAuthorized = $responseCode >= 0 && $responseCode <= 99;
-
-        if ($isAuthorized) {
-            if ($transaction->status !== 'completed') {
-                $transaction->update([
-                    'status' => 'completed',
-                    'response_code' => $responseCode,
-                    'authorization_code' => $decoded['Ds_AuthorisationCode'] ?? null,
-                ]);
-
-                // Update User Balance
-                $user = $transaction->user;
-                $user->balance += $transaction->amount;
-                $user->save();
-
-                PaymentEndActions::dispatch($user, $transaction->amount);
-            }
-        } else {
-            $transaction->update([
-                'status' => 'failed',
-                'response_code' => $responseCode,
-                'authorization_code' => $decoded['Ds_AuthorisationCode'] ?? null,
-            ]);
-        }
+        $this->processTransactionResult(
+            $transaction,
+            $decoded,
+            $responseCode
+        );
 
         return response()->json(['status' => 'ok']);
+    }
+
+    /* -----------------------------------------------------------------
+     |  INITIATE HELPERS
+     |------------------------------------------------------------------*/
+
+    private function validateInitiateRequest(Request $request): void
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1|max:150',
+        ]);
+    }
+
+    private function generateOrderId(): string
+    {
+        // Max 12 chars alphanumeric (Redsys compatible)
+        return substr(time() . Str::upper(Str::random(4)), 0, 12);
+    }
+
+    private function createTransaction(int $userId, float $amount, string $orderId): Transaction
+    {
+        return Transaction::create([
+            'user_id'     => $userId,
+            'amount'      => $amount,
+            'type'        => Transaction::TYPE_TOPUP,
+            'description' => 'Recàrrega de saldo',
+            'status'      => 'pending',
+            'order_id'    => $orderId,
+        ]);
+    }
+
+    /* -----------------------------------------------------------------
+     |  NOTIFY HELPERS
+     |------------------------------------------------------------------*/
+
+    private function getRedsysNotificationParams(Request $request): array
+    {
+        $params    = $request->input('Ds_MerchantParameters');
+        $signature = $request->input('Ds_Signature');
+
+        if (!$params || !$signature) {
+            Log::error('Redsys Notification: Missing parameters');
+            abort(400, 'Missing Redsys parameters');
+        }
+
+        return [$params, $signature];
+    }
+
+    private function isValidSignature(string $params, string $signature): bool
+    {
+        if (!$this->redsysService->checkSignature($params, $signature)) {
+            Log::error('Redsys Notification: Invalid signature');
+            return false;
+        }
+
+        return true;
+    }
+
+    private function extractOrderId(array $decoded): ?string
+    {
+        return $decoded['Ds_Order']
+            ?? $decoded['Ds_Merchant_Order']
+            ?? null;
+    }
+
+    private function extractResponseCode(array $decoded): int
+    {
+        return isset($decoded['Ds_Response'])
+            ? (int) $decoded['Ds_Response']
+            : -1;
+    }
+
+    private function findTransaction(string $orderId): ?Transaction
+    {
+        return Transaction::where('order_id', $orderId)->first();
+    }
+
+    private function processTransactionResult(
+        Transaction $transaction,
+        array $decoded,
+        int $responseCode
+    ): void {
+        Log::info("Redsys processed", [
+            'order'    => $transaction->order_id,
+            'response' => $responseCode
+        ]);
+
+        if ($this->isAuthorized($responseCode)) {
+            $this->completeTransaction($transaction, $decoded, $responseCode);
+        } else {
+            $this->failTransaction($transaction, $decoded, $responseCode);
+        }
+    }
+
+    private function isAuthorized(int $responseCode): bool
+    {
+        // 0000–0099 = OK
+        return $responseCode >= 0 && $responseCode <= 99;
+    }
+
+    private function completeTransaction(
+        Transaction $transaction,
+        array $decoded,
+        int $responseCode
+    ): void {
+        if ($transaction->status === 'completed') {
+            return;
+        }
+
+        $transaction->update([
+            'status'             => 'completed',
+            'response_code'      => $responseCode,
+            'authorization_code' => $decoded['Ds_AuthorisationCode'] ?? null,
+        ]);
+
+        $this->increaseUserBalance($transaction);
+
+        PaymentEndActions::dispatch(
+            $transaction->user,
+            $transaction->amount
+        );
+    }
+
+    private function failTransaction(
+        Transaction $transaction,
+        array $decoded,
+        int $responseCode
+    ): void {
+        $transaction->update([
+            'status'             => 'failed',
+            'response_code'      => $responseCode,
+            'authorization_code' => $decoded['Ds_AuthorisationCode'] ?? null,
+        ]);
+    }
+
+    private function increaseUserBalance(Transaction $transaction): void
+    {
+        $user = $transaction->user;
+        $user->balance += $transaction->amount;
+        $user->save();
+    }
+
+    /* -----------------------------------------------------------------
+     |  RESPONSES
+     |------------------------------------------------------------------*/
+
+    private function koResponse(
+        string $message,
+        int $status = 400,
+        array $context = []
+    ) {
+        Log::error("Redsys Notification: {$message}", $context);
+
+        return response()->json(['status' => 'ko'], $status);
     }
 }
