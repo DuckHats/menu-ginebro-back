@@ -40,9 +40,21 @@ class AuthController extends Controller
 
             return ApiResponse::success($data, config('messages.auth.login_success'), ApiResponse::OK_STATUS);
         } catch (\Throwable $e) {
+            $errorCode = $e->getMessage();
+            $message = config('messages.errors.login_failed');
+
+            // Map specific error codes to their messages from config if they exist
+            if ($errorCode === ErrorCodes::INVALID_CREDENTIALS) {
+                $message = config('messages.auth.invalid_credentials');
+            } elseif ($errorCode === ErrorCodes::ACCOUNT_INACTIVE) {
+                $message = config('messages.auth.account_inactive');
+            } else {
+                $errorCode = ErrorCodes::LOGIN_FAILED;
+            }
+
             return ApiResponse::error(
-                ErrorCodes::LOGIN_FAILED,
-                config('messages.errors.login_failed'),
+                $errorCode,
+                $message,
                 ['exception' => $e->getMessage()],
                 ApiResponse::FORBIDDEN_STATUS
             );
@@ -157,7 +169,16 @@ class AuthController extends Controller
 
             return ApiResponse::success([], config('messages.auth.register_code_sent'));
         } catch (\Throwable $e) {
-            return ApiResponse::error(ErrorCodes::SEND_REGISTER_CODE_FAILED, config('messages.errors.send_register_code_failed'), ['exception' => $e->getMessage()]);
+            $errorCode = $e->getMessage();
+            $message = config('messages.errors.send_register_code_failed');
+
+            if ($errorCode === ErrorCodes::EMAIL_ALREADY_REGISTERED) {
+                $message = config('messages.auth.email_already_registered');
+            } else {
+                $errorCode = ErrorCodes::SEND_REGISTER_CODE_FAILED;
+            }
+
+            return ApiResponse::error($errorCode, $message, ['exception' => $e->getMessage()]);
         }
     }
 
@@ -168,7 +189,18 @@ class AuthController extends Controller
 
             return ApiResponse::success($data, config('messages.auth.register_complete_success'), ApiResponse::CREATED_STATUS);
         } catch (\Throwable $e) {
-            return ApiResponse::error(ErrorCodes::COMPLETE_REGISTER_FAILED, config('messages.errors.complete_register_failed'), ['exception' => $e->getMessage()]);
+            $errorCode = $e->getMessage();
+            $message = config('messages.errors.complete_register_failed');
+
+            if ($errorCode === ErrorCodes::INVALID_VERIFICATION_CODE) {
+                $message = config('messages.auth.invalid_verification_code');
+            } elseif ($errorCode === ErrorCodes::USER_ALREADY_EXISTS) {
+                $message = config('messages.auth.user_already_exists');
+            } else {
+                $errorCode = ErrorCodes::COMPLETE_REGISTER_FAILED;
+            }
+
+            return ApiResponse::error($errorCode, $message, ['exception' => $e->getMessage()]);
         }
     }
 }

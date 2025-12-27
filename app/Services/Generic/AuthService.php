@@ -2,6 +2,7 @@
 
 namespace App\Services\Generic;
 
+use App\Constants\ErrorCodes;
 use App\Helpers\EmailHelper;
 use App\Helpers\ValidationHelper;
 use App\Jobs\RegisterEndActions;
@@ -55,18 +56,15 @@ class AuthService
         if (! Auth::attempt([
             'email' => $validatedData['user'],
             'password' => $validatedData['password'],
-        ]) && ! Auth::attempt([
-            'username' => $validatedData['user'],
-            'password' => $validatedData['password'],
         ])) {
-            throw new \Exception(config('messages.auth.invalid_credentials'));
+            throw new \Exception(ErrorCodes::INVALID_CREDENTIALS);
         }
 
         $user = Auth::user();
 
         if ($user->status != User::STATUS_ACTIVE) {
             Auth::logout();
-            throw new \Exception(config('messages.auth.account_inactive'));
+            throw new \Exception(ErrorCodes::ACCOUNT_INACTIVE);
         }
 
         if ($request->hasSession()) {
@@ -213,7 +211,7 @@ class AuthService
         $email = $request->email;
 
         if (User::where('email', $email)->exists()) {
-            throw new \Exception(config('messages.auth.email_already_registered'));
+            throw new \Exception(ErrorCodes::EMAIL_ALREADY_REGISTERED);
         }
 
         $code = rand(100000, 999999);
@@ -244,11 +242,11 @@ class AuthService
             ->first();
 
         if (! $entry) {
-            throw new \Exception(config('messages.auth.invalid_verification_code'));
+            throw new \Exception(ErrorCodes::INVALID_VERIFICATION_CODE);
         }
 
         if (User::where('email', $email)->exists()) {
-            throw new \Exception(config('messages.auth.user_already_exists'));
+            throw new \Exception(ErrorCodes::USER_ALREADY_EXISTS);
         }
 
         $user = User::create([
