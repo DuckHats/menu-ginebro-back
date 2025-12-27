@@ -231,4 +231,37 @@ class UserControllerTest extends TestCase
         $response = $this->getJson(route('users.export', ['format' => 'xlsx']));
         $response->assertStatus(200);
     }
+
+    /** @test */
+    public function it_can_search_users()
+    {
+        User::factory()->create(['name' => 'SearchTarget']);
+        User::factory()->count(2)->create();
+
+        Sanctum::actingAs($this->adminUser);
+
+        $response = $this->getJson(route('users.index', ['search' => 'SearchTarget']));
+
+        $response->assertStatus(200);
+        $this->assertCount(1, $response->json('data'));
+        $this->assertEquals('SearchTarget', $response->json('data.0.name'));
+    }
+
+    /** @test */
+    public function it_can_sort_users()
+    {
+        User::query()->where('id', '!=', $this->adminUser->id)->delete();
+        User::factory()->create(['name' => 'Aardvark']);
+        User::factory()->create(['name' => 'Zebra']);
+
+        Sanctum::actingAs($this->adminUser);
+
+        $response = $this->getJson(route('users.index', ['sort_by' => 'name', 'sort_order' => 'asc']));
+        $response->assertStatus(200);
+        $this->assertEquals('Aardvark', $response->json('data.0.name'));
+
+        $response = $this->getJson(route('users.index', ['sort_by' => 'name', 'sort_order' => 'desc']));
+        $response->assertStatus(200);
+        $this->assertEquals('Zebra', $response->json('data.0.name'));
+    }
 }

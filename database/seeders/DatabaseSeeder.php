@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
                 ImagesSeeder::class,
                 OrdersSeeder::class,
                 MenusAndDishesSeeder::class,
+                TransactionsSeeder::class,
             ]);
         }
 

@@ -41,6 +41,11 @@ class GoogleAuthController extends Controller
             $user = User::where('google_id', $googleUser->id)->orWhere('email', $googleUser->email)->first();
 
             if ($user) {
+                if ($user->status != User::STATUS_ACTIVE) {
+                    $frontendUrl = config('services.frontend.url');
+                    return redirect("{$frontendUrl}/login?error=account_inactive");
+                }
+
                 // Update user with google info if linked or email matched
                 $user->update([
                     'google_id' => $googleUser->id,

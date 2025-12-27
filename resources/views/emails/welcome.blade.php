@@ -1,113 +1,42 @@
-<!DOCTYPE html>
-<html lang="ca">
+@extends('emails.layout')
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Benvingut al Menjador del Ginebró!</title>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background-color: #f3f4f6;
-            margin: 0;
-            padding: 0;
-            color: #111827;
-        }
+@section('title', 'Benvingut/da al Ginebró')
 
-        .container {
-            max-width: 600px;
-            margin: 40px auto;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
+@section('content')
+    <div class="badge">BENVINGUDA</div>
+    <h2>Hola, {{ $user->name }}!</h2>
+    <p>És un plaer donar-te la benvinguda a la plataforma del menjador del <strong>Ginebró</strong>. Hem creat aquest espai
+        perquè gestionar els teus àpats sigui una experiència àgil i moderna.</p>
 
-        .header {
-            background-color: #009ca6;
-            color: #ffffff;
-            padding: 24px;
-            text-align: center;
-        }
+    <div style="margin: 32px 0; border: 1px solid #e2e8f0; border-radius: 20px; padding: 32px; background-color: #ffffff;">
+        <h3 style="margin: 0 0 20px 0; font-size: 16px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">
+            Què pots fer ara mateix?</h3>
 
-        .header h2 {
-            margin: 0;
-            font-size: 22px;
-        }
-
-        .content {
-            padding: 24px;
-        }
-
-        .content h1 {
-            font-size: 20px;
-            color: #065e63;
-            margin-top: 0;
-        }
-
-        .content p {
-            font-size: 16px;
-            line-height: 1.6;
-            margin: 16px 0;
-        }
-
-        .content ul {
-            padding-left: 20px;
-            margin: 12px 0 24px;
-        }
-
-        .content ul li {
-            margin-bottom: 8px;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #009ca6;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            border: 1px solid #007b85;
-            transition: background-color 0.2s ease-in-out;
-        }
-
-        .button:hover {
-            background-color: #007b85;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 13px;
-            color: #6b7280;
-            padding: 16px;
-            background-color: #f9fafb;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <div class="header">
-            <h2>Benvingut al Menjador del Ginebró!</h2>
+        <div style="margin-bottom: 20px;">
+            <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">🗓️ Planifica la teva setmana</div>
+            <p style="margin: 0; font-size: 14px; color: #64748b;">Tria els teus menús preferits amb antelació i evita cues.
+            </p>
         </div>
-        <div class="content">
-            <h1>Hola, {{ $user->name }}!</h1>
-            <p>És un plaer donar-te la benvinguda a la nostra plataforma del menjador! Des d’aquí podràs:</p>
-            <ul>
-                <li>Fer noves comandes al menjador</li>
-                <li>Veure l’historial de les últimes comandes</li>
-            </ul>
-            <p>Si tens qualsevol dubte o necessitat, el nostre equip està a la teva disposició.</p>
-            <p>Que tinguis una experiència fantàstica amb nosaltres!</p>
-            <div style="text-align: center; margin-top: 32px;">
-                <a href="{{ $platformUrl }}" class="button" target="_blank">Accedeix a la Plataforma</a>
-            </div>
+
+        <div style="margin-bottom: 20px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
+            <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">💳 Gestiona el teu saldo</div>
+            <p style="margin: 0; font-size: 14px; color: #64748b;">Recarrega de forma segura i consulta el teu historial de
+                pagaments.</p>
         </div>
-        <div class="footer">
-            &copy; 2025 Menjador Ginebró. Tots els drets reservats.
+
+        <div style="padding-top: 20px; border-top: 1px solid #f1f5f9;">
+            <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">📊 Historial detallat</div>
+            <p style="margin: 0; font-size: 14px; color: #64748b;">Accedeix a totes les teves comandes i moviments en un sol
+                lloc.</p>
         </div>
     </div>
-</body>
 
-</html>
+    <div style="text-align: center;">
+        <a href="{{ $platformUrl }}" class="button">Comença ara</a>
+    </div>
+
+    <div class="divider"></div>
+
+    <p style="font-size: 14px; color: #94a3b8; text-align: center; margin-bottom: 0;">Si necessites ajuda, el nostre equip
+        d'atenció al client està aquí per a tu.</p>
+@endsection

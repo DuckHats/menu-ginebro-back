@@ -186,4 +186,44 @@ class MenuControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'text/plain; charset=UTF-8');
     }
+
+    /** @test */
+    public function it_can_sort_menus_by_day()
+    {
+        Menu::query()->delete();
+        Menu::factory()->create(['day' => '2025-01-05']);
+        Menu::factory()->create(['day' => '2025-01-01']);
+
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
+            ->getJson(route('menus.index', ['sort_by' => 'day', 'sort_order' => 'asc']));
+
+        $response->assertStatus(200);
+        $this->assertEquals('2025-01-01', $response->json('data.0.day'));
+
+        $response = $this->withCookie(config('session.cookie'), $session)
+            ->getJson(route('menus.index', ['sort_by' => 'day', 'sort_order' => 'desc']));
+
+        $response->assertStatus(200);
+        $this->assertEquals('2025-01-05', $response->json('data.0.day'));
+    }
+
+    /** @test */
+    public function it_can_paginate_menus()
+    {
+        Menu::query()->delete();
+        Menu::factory(20)->create();
+
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
+            ->getJson(route('menus.index', ['per_page' => 10]));
+
+        $response->assertStatus(200);
+        $this->assertCount(10, $response->json('data'));
+        $this->assertEquals(20, $response->json('meta.total'));
+    }
 }

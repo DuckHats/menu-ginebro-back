@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Constants\ErrorCodes;
 use App\Models\EmailVerification;
 use App\Models\PasswordReset;
 use App\Models\User;
@@ -201,7 +202,8 @@ class AuthControllerTest extends TestCase
 
         $response = $this->postJson(route('auth.login'), $loginData);
 
-        $response->assertStatus(403);
+        $response->assertStatus(403)
+            ->assertJsonFragment(['code' => ErrorCodes::INVALID_CREDENTIALS]);
     }
 
     /** @test */
