@@ -5,6 +5,7 @@ use App\Http\Controllers\AllergyController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\DishController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
@@ -45,10 +46,6 @@ Route::middleware('throttle:api')->group(function () {
             Route::post(RouteConstants::VERIFY_EMAIL, 'sendEmailVerificationCode')->name('auth.sendEmailVerificationCode')->middleware('auth:sanctum');
             Route::post(RouteConstants::VERIFY_EMAIL_CONFIRM, 'verifyEmail')->name('auth.verifyEmail')->middleware('auth:sanctum');
         });
-
-        // Public Payment Notification (Redsys Callback) - No Sanctum middleware usually, or IP restricted
-        Route::post(RouteConstants::PAYMENT_NOTIFY, [PaymentController::class, 'notify'])->name('api.payment.notify');
-        Route::post(RouteConstants::PAYMENT_INITIATE, [PaymentController::class, 'initiate'])->name('api.payment.initiate')->middleware('auth:sanctum');
 
         // User routes
         Route::controller(UserController::class)->group(function () {
@@ -152,6 +149,12 @@ Route::middleware('throttle:api')->group(function () {
         Route::controller(TransactionController::class)->group(function () {
             Route::get(RouteConstants::TRANSACTIONS, 'index')->name('transactions.index')->middleware('auth:sanctum');
             Route::get(RouteConstants::TRANSACTIONS_ADMIN, 'adminIndex')->name('transactions.admin')->middleware('auth:sanctum');
+        });
+
+        // Payment routes
+        Route::controller(PaymentController::class)->group(function () {
+            Route::post(RouteConstants::PAYMENT_NOTIFY, 'notify')->name('payment.notify');
+            Route::post(RouteConstants::PAYMENT_INITIATE, 'initiate')->name('payment.initiate')->middleware('auth:sanctum');
         });
     });
 });

@@ -16,8 +16,8 @@ Route::get('/', WelcomeController::class);
 
 // Google Auth (session-based)
 Route::prefix('api/v1')->group(function () {
-    Route::get(RouteConstants::GOOGLE_AUTH, [GoogleAuthController::class, 'redirectToGoogle']);
-    Route::get(RouteConstants::GOOGLE_AUTH_CALLBACK, [GoogleAuthController::class, 'handleGoogleCallback']);
+    Route::get(RouteConstants::GOOGLE_AUTH, [GoogleAuthController::class, 'redirectToGoogle'])->name('google.redirect');
+    Route::get(RouteConstants::GOOGLE_AUTH_CALLBACK, [GoogleAuthController::class, 'handleGoogleCallback'])->name('google.callback');
 });
 
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);

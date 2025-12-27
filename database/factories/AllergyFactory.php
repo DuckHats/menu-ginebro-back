@@ -18,6 +18,7 @@ class AllergyFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->word(),
+            'description' => $this->faker->sentence(),
         ];
     }
 }
