@@ -36,6 +36,8 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'user_type_id' => User::ROLE_USER,
             'remember_token' => Str::random(10),
+            'custom_allergies' => fake()->sentence(),
+            'balance' => fake()->numberBetween(0, 100),
         ];
     }
 

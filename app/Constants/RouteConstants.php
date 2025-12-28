@@ -25,6 +25,10 @@ class RouteConstants
 
     const VERIFY_EMAIL_CONFIRM = '/verify/email/confirm';
 
+    //Payment Routes
+    const PAYMENT_INITIATE = '/payment/initiate';
+
+    const PAYMENT_NOTIFY = '/payment/notify';
     const GOOGLE_AUTH = '/auth/google';
 
     const GOOGLE_AUTH_CALLBACK = '/auth/google/callback';
@@ -163,4 +167,9 @@ class RouteConstants
     const IMAGES = '/images';
 
     const IMAGES_DETAIL = '/images/{id}';
+
+    // Transaction Routes
+    const TRANSACTIONS = '/transactions';
+
+    const TRANSACTIONS_ADMIN = '/admin/transactions';
 }

@@ -11,17 +11,18 @@ class OrderResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'userData' => $this->whenLoaded('user', fn () => new UserResource($this->user)),
+            'userData' => $this->whenLoaded('user', fn() => new UserResource($this->user)),
 
             'order_date' => $this->order_date,
             'allergies' => $this->allergies,
             'has_tupper' => $this->has_tupper,
             'order_type_id' => $this->order_type_id,
-            'orderType' => $this->whenLoaded('orderType', fn () => new OrderTypeResource($this->orderType)),
+            'orderType' => $this->whenLoaded('orderType', fn() => new OrderTypeResource($this->orderType)),
             'order_status_id' => $this->order_status_id,
-            'orderStatus' => $this->whenLoaded('orderStatus', fn () => new OrderStatusResource($this->orderStatus)),
+            'orderStatus' => $this->whenLoaded('orderStatus', fn() => new OrderStatusResource($this->orderStatus)),
+            'total_price' => $this->total_price,
 
-            'orderDetail' => $this->whenLoaded('orderDetail', fn () => new OrderDetailResource($this->orderDetail)),
+            'orderDetail' => $this->whenLoaded('orderDetail', fn() => new OrderDetailResource($this->orderDetail)),
 
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -1,86 +1,31 @@
-<!DOCTYPE html>
-<html lang="ca">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Restabliment de Contrasenya</title>
-  <style>
-    body {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background-color: #f3f4f6;
-      margin: 0;
-      padding: 0;
-      color: #111827;
-    }
+@extends('emails.layout')
 
-    .container {
-      max-width: 600px;
-      margin: 40px auto;
-      background-color: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
+@section('title', 'Restabliment de Contrasenya')
 
-    .header {
-      background-color: #009ca6;
-      color: white;
-      padding: 24px;
-      text-align: center;
-    }
+@section('content')
+    <div class="badge">SEGURETAT</div>
+    <h2>Restableix la teva contrasenya</h2>
+    <p>Hem rebut una sol·licitud per canviar la contrasenya del teu compte al <strong>Ginebró</strong>. Per continuar,
+        utilitza el següent codi:</p>
 
-    .header h2 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    .content {
-      padding: 24px;
-    }
-
-    .content p {
-      font-size: 16px;
-      line-height: 1.5;
-      margin: 16px 0;
-    }
-
-    .code {
-      display: inline-block;
-      margin: 20px 0;
-      padding: 12px 24px;
-      background-color: #065e63;
-      color: #ffffff;
-      font-size: 18px;
-      letter-spacing: 2px;
-      border-radius: 8px;
-      font-weight: bold;
-    }
-
-    .footer {
-      text-align: center;
-      font-size: 13px;
-      color: #6b7280;
-      padding: 16px;
-      background-color: #f9fafb;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h2>Restabliment de la teva contrasenya</h2>
+    <div
+        style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 40px; text-align: center; margin: 32px 0;">
+        <span
+            style="display: block; font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 16px;">Codi
+            de recuperació</span>
+        <div
+            style="display: inline-block; padding: 20px 40px; background-color: #009ca6; color: #ffffff; font-size: 36px; font-weight: 900; letter-spacing: 0.25em; border-radius: 16px; box-shadow: 0 8px 16px rgba(0, 156, 166, 0.15);">
+            {{ $code }}
+        </div>
+        <p style="margin: 24px 0 0; color: #94a3b8; font-size: 12px; font-weight: 500;">Aquest codi és d'ús únic i caducarà
+            en 15 minuts.</p>
     </div>
-    <div class="content">
-      <p>Hola,</p>
-      <p>Hem rebut una sol·licitud per restablir la contrasenya del teu compte al nostre menjador.</p>
-      <p>Utilitza el següent codi per completar el procés:</p>
-      <div class="code">{{ $code }}</div>
-      <p>Aquest codi caducarà en 15 minuts.</p>
-      <p>Si no has fet aquesta sol·licitud, pots ignorar aquest missatge.</p>
-    </div>
-    <div class="footer">
-      &copy; 2025 Menjador Ginebró. Tots els drets reservats.
-    </div>
-  </div>
-</body>
-</html>
+
+    <p style="text-align: center;">Si el codi caduca, hauràs de tornar a realitzar la sol·licitud des de la pantalla d'inici
+        de sessió.</p>
+
+    <div class="divider"></div>
+
+    <p style="font-size: 14px; color: #94a3b8; text-align: center; margin-bottom: 0;">Si no has estat tu, et recomanem que
+        revisis la seguretat del teu correu electrònic.</p>
+@endsection

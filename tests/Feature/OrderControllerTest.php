@@ -40,6 +40,7 @@ class OrderControllerTest extends TestCase
 
         // Creamos el tipo de usuario administrador
         $adminType = UserType::factory()->create(['id' => 1, 'name' => 'administrador']);
+        UserType::factory()->create(['id' => 2, 'name' => 'usuari']);
 
         // Creamos usuario y token
         $this->user = User::factory()->create([
@@ -259,5 +260,61 @@ class OrderControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonFragment(['available' => false]);
+    }
+
+    public function test_it_can_search_orders_by_date()
+    {
+        $date = now()->format('Y-m-d');
+        $user = User::factory()->create(['name' => 'SpecificName']);
+        Order::factory()->create([
+            'user_id' => $user->id,
+            'order_date' => $date,
+            'order_type_id' => $this->orderType->id,
+            'order_status_id' => $this->orderStatus->id,
+        ]);
+        Order::factory()->create([
+            'user_id' => $this->user->id,
+            'order_date' => $date,
+            'order_type_id' => $this->orderType->id,
+            'order_status_id' => $this->orderStatus->id,
+        ]);
+
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
+            ->getJson(route('orders.ordersbyDate', ['date' => $date, 'search' => 'SpecificName']));
+
+        $response->assertStatus(200);
+        $this->assertCount(1, $response->json('data'));
+    }
+
+    public function test_it_can_sort_orders_by_date()
+    {
+        $date = now()->format('Y-m-d');
+        Order::query()->delete();
+        Order::factory()->create([
+            'user_id' => $this->user->id,
+            'order_date' => $date,
+            'total_price' => 10.00,
+            'order_type_id' => $this->orderType->id,
+            'order_status_id' => $this->orderStatus->id,
+        ]);
+        Order::factory()->create([
+            'user_id' => $this->user->id,
+            'order_date' => $date,
+            'total_price' => 5.00,
+            'order_type_id' => $this->orderType->id,
+            'order_status_id' => $this->orderStatus->id,
+        ]);
+
+        $login = $this->loginViaSession($this->user, 'password123');
+        $session = $login['session_cookie'];
+
+        $response = $this->withCookie(config('session.cookie'), $session)
+            ->getJson(route('orders.ordersbyDate', ['date' => $date, 'sort_by' => 'total_price', 'sort_order' => 'asc']));
+
+        $response->assertStatus(200);
+        $this->assertEquals(5.00, $response->json('data.0.total_price'));
     }
 }
