@@ -27,6 +27,10 @@ class ConfigurationSeeder extends Seeder
             'order_per_page' => '50',
             'user_per_page' => '15',
             'transaction_per_page' => '15',
+            'payment_provider' => 'redsys',
+            'stripe_key' => config('services.stripe.key'),
+            'stripe_secret' => config('services.stripe.secret'),
+            'stripe_webhook_secret' => config('services.stripe.webhook_secret'),
         ];
 
         foreach ($settings as $key => $value) {

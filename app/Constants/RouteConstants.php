@@ -29,6 +29,9 @@ class RouteConstants
     const PAYMENT_INITIATE = '/payment/initiate';
 
     const PAYMENT_NOTIFY = '/payment/notify';
+
+    const PAYMENT_NOTIFY_STRIPE = '/payment/notify/stripe';
+
     const GOOGLE_AUTH = '/auth/google';
 
     const GOOGLE_AUTH_CALLBACK = '/auth/google/callback';
