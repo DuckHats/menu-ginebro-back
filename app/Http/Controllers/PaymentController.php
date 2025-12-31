@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\PaymentEndActions;
+use App\Models\Configuration;
 use App\Models\Transaction;
 use App\Services\RedsysService;
+use App\Services\StripeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -12,7 +14,8 @@ use Illuminate\Support\Str;
 class PaymentController extends Controller
 {
     public function __construct(
-        private readonly RedsysService $redsysService
+        private readonly RedsysService $redsysService,
+        private readonly StripeService $stripeService
     ) {}
 
     /* -----------------------------------------------------------------
@@ -24,14 +27,59 @@ class PaymentController extends Controller
         $this->validateInitiateRequest($request);
 
         $user   = $request->user();
-        $amount = $request->amount;
+        $amount = (float) $request->amount;
         $orderId = $this->generateOrderId();
 
         $transaction = $this->createTransaction($user->id, $amount, $orderId);
 
+        $provider = Configuration::where('key', 'payment_provider')->value('value') ?? 'redsys';
+
+        if ($provider === 'stripe') {
+            try {
+                $url = $this->stripeService->createCheckoutSession($user, $amount, $orderId);
+                return response()->json([
+                    'action' => 'redirect',
+                    'url' => $url,
+                ]);
+            } catch (\Exception $e) {
+                Log::error("Stripe Error: " . $e->getMessage());
+                return response()->json(['error' => 'Payment initiation failed'], 500);
+            }
+        }
+
+        // Redsys Default
         return response()->json(
-            $this->redsysService->getPaymentParameters($amount, $orderId, $user)
+            array_merge(
+                ['action' => 'form_submit'],
+                $this->redsysService->getPaymentParameters($amount, $orderId, $user)
+            )
         );
+    }
+
+    public function notifyStripe(Request $request)
+    {
+        $payload = @file_get_contents('php://input');
+        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
+
+        $result = $this->stripeService->handleWebhook($payload, $sig_header);
+
+        if (!$result) {
+            return response()->json(['status' => 'ignored'], 400);
+        }
+
+        $orderId = $result['order_id'];
+        $transaction = $this->findTransaction($orderId);
+
+        if (!$transaction) {
+            Log::error("Transaction not found for Stripe order: {$orderId}");
+            return response()->json(['status' => 'not_found'], 404);
+        }
+
+        if ($result['status'] === 'completed') {
+            $this->completeTransaction($transaction, ['stripe_intent' => $result['payment_intent']], 0); // 0 for success
+        }
+
+        return response()->json(['status' => 'success']);
     }
 
     public function notify(Request $request)
@@ -82,6 +130,7 @@ class PaymentController extends Controller
     private function generateOrderId(): string
     {
         // Max 12 chars alphanumeric (Redsys compatible)
+        // Ensure Stripe also likes it (it does)
         return substr(time() . Str::upper(Str::random(4)), 0, 12);
     }
 
@@ -168,7 +217,7 @@ class PaymentController extends Controller
 
     private function completeTransaction(
         Transaction $transaction,
-        array $decoded,
+        array $extraData,
         int $responseCode
     ): void {
         if ($transaction->status === 'completed') {
@@ -178,7 +227,7 @@ class PaymentController extends Controller
         $transaction->update([
             'status'             => 'completed',
             'response_code'      => $responseCode,
-            'authorization_code' => $decoded['Ds_AuthorisationCode'] ?? null,
+            'authorization_code' => $extraData['Ds_AuthorisationCode'] ?? $extraData['stripe_intent'] ?? null,
         ]);
 
         $this->increaseUserBalance($transaction);

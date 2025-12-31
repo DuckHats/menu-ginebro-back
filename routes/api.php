@@ -5,7 +5,6 @@ use App\Http\Controllers\AllergyController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\DishController;
-use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
@@ -154,6 +153,7 @@ Route::middleware('throttle:api')->group(function () {
         // Payment routes
         Route::controller(PaymentController::class)->group(function () {
             Route::post(RouteConstants::PAYMENT_NOTIFY, 'notify')->name('payment.notify');
+            Route::post(RouteConstants::PAYMENT_NOTIFY_STRIPE, 'notifyStripe')->name('payment.notifyStripe');
             Route::post(RouteConstants::PAYMENT_INITIATE, 'initiate')->name('payment.initiate')->middleware('auth:sanctum');
         });
     });
